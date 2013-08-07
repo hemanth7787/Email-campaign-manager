@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+{% block head_title %} Login {% endblock %}
+
+{% block "body" %}
+<!-- <script>
+function reset_newcategory()
+  {
+  var x=document.getElementById("id_cat_name");
+  x.value="";
+  }
+</script>
+-->
+
+
+        <p class="lead">Manage categories to store email addresses .</p>
+        <p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
+
+
+
+
+
+
+
+<div class="row_fluid">
+<div class="span4">
+
+ <form  method="post" action="{% url addcat%}">
+	{% csrf_token %}
+        <h2 class="form-signin-heading">Add new category</h2>
+
+		{{add_cat_form|as_bootstrap}}
+		<br>
+		<button class="btn btn-large btn-primary" type="submit">Save </button>
+</form>
+{% if status = "saved" %}
+<p>Successfully saved</p>
+{%endif%}
+</div> <!-- /container -->
+
+
+<div class="span4">
+
+ <form  method="post" action="{% url delcat%}">
+	{% csrf_token %}
+        <h2 class="form-signin-heading">Delete a category</h2>
+			<p>Choose category</p>
+		<select name="del_id" id="delete">
+			{% for entry in categories %}
+    				<option value="{{ entry.id }}">{{ entry.cname }}</option>
+			{% endfor %}
+		</select>
+		<br>
+		<br>
+		<button class="btn btn-large btn-danger" type="submit">Delete </button>
+</form>
+{% if status = "deleted" %}
+<p>Successfully deleted</p>
+{%endif%}
+</div> <!-- /container -->
+
+</div>
+{% endblock %}

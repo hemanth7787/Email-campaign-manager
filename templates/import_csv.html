@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block head_title %} Login {% endblock %}
+
+{% block "body" %}
+        <p class="lead">Import address list in CSV format</p>
+        <p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
+
+<div class="container">
+ <form  enctype="multipart/form-data" method="post" action="">
+	{% csrf_token %}
+        <h2 class="form-signin-heading">Import CSV</h2>
+		{{iform}}
+		<br>
+		<button class="btn btn-large btn-primary" type="submit">Save </button>
+</form>
+</div> <!-- /container -->
+
+{% endblock %}

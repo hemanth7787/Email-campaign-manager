@@ -7,9 +7,11 @@ class Mail_address(models.Model):
         verbose_name_plural = 'email adresses'
     mail_list = models.ForeignKey('Mailing_list')
     mail_id = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=30)
-    middle_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    #first_name = models.CharField(max_length=30)
+    #middle_name = models.CharField(max_length=30)
+    #last_name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, blank=True)
+    subscribed = models.BooleanField(default=True)
     def __unicode__(self):
         return self.mail_id
 
