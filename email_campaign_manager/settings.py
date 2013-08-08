@@ -8,12 +8,18 @@ PROJECT_DIR = os.path.dirname(os.path.abspath("settings.py"))
 
 
 #Email Backend ] ---------
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 ADMINS = (
      ('Hemanth Kumar A.P', 'hemanth@codelattice.com'),
 )
+
+#Asynchronous task queue  ] --------------
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'redis://localhost:6379/0'
+
 
 MANAGERS = ADMINS
 
@@ -138,6 +144,7 @@ INSTALLED_APPS = (
     'ecm_core',
     'django.contrib.admin',
     'south',
+    'djcelery',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

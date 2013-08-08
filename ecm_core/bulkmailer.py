@@ -1,6 +1,5 @@
 from django.core.mail import send_mail,EmailMultiAlternatives
-
-#from models import Mail_address
+from models import Mail_address, Mailing_list, campaign
 
 #Parsecsv
 from django.utils.translation import ugettext_lazy as _
@@ -14,9 +13,22 @@ from django import forms
 from django.conf import settings
 from django.core.validators import email_re
 from models import Mail_address
+#import pdb
+
+from ecm_sengrid_xsmtpapi import simple_email
+
+def send_email(obj):
+	#pdb.set_trace()
+	subj=str(obj.subject)
+	html=str(obj.html)
+	sender = str(obj.sender)
+	for mlist in obj.mailing_list.all():
+		#logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
+		to_list = Mail_address.objects.filter(mail_list=mlist).values_list('mail_id')
+		simple_email(sender,subj,html,to_list)
 
 
-def explode_mail(f,cid,sid,subject):
+'''def explode_mail(f,cid,sid,subject):
 	template=f.read()
 	
 	#TODO: Remove below hardcoded sender email and use from_email=str(sid)
@@ -30,7 +42,7 @@ def explode_mail(f,cid,sid,subject):
 		msg = EmailMultiAlternatives(subject, text_content, from_email,[to])
 		#msg.headers= {'reply-to','hemanth@success.com'}
 		msg.attach_alternative(html_content, "text/html")	
-		msg.send()
+		msg.send()'''
 
 def check_email(email, ignore_errors=False):
     if settings.DEBUG:

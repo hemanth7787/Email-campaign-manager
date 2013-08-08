@@ -3,13 +3,14 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import Importform #,campainform,addcform
+from forms import Importform ,ListBasketForm #,campainform,addcform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 from models import Mail_address, Mailing_list, campaign
 #from loaddata import csv_to_db
-from bulkmailer import parse_csv
+from bulkmailer import parse_csv, send_email
 
+from tasks import celery_add_task
 
 
 @login_required(login_url='/login')
@@ -35,6 +36,27 @@ def Import_csv(request):
 			
 	return render(request,'import_csv.html',{'iform':iform ,})
 
+
+@login_required(login_url='/login')
+@csrf_protect
+def campain(request):
+	cform=ListBasketForm
+	if request.method == "POST":
+		cform=ListBasketForm(request.POST,request.FILES)
+		if cform.is_valid():
+			#cid = request.POST['cat_id']
+			#send_id = request.POST['email_id']
+			#send_id='noreply@orange-mailer.net'
+			#subj = request.POST['subj']
+			#explode_mail(request.FILES['t_file'],cid,send_id,subj)
+			obj = cform.save()
+			#send_email(obj)
+			celery_add_task.delay(obj)
+			messages.success(request,"Run campain successfull")
+	return render(request, "run_campain.html",{'cform':cform ,})
+
+
+#-------------------------------------------------------------------------------------
 
 @login_required(login_url='/login')
 @csrf_protect

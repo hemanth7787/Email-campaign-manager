@@ -29,8 +29,8 @@ class campaign(models.Model):
     class Meta:
         verbose_name = 'campaign'
         verbose_name_plural = 'campaigns'
-    subject      = models.CharField(max_length=100,help_text='Email Subject.')
-    sender       = models.EmailField(blank=False, null=True,help_text='Sender\'s Email ID. ( eg:info@gmail.com)')
+    subject      = models.CharField(max_length=100,)#help_text='Email Subject.')
+    sender       = models.EmailField(blank=False, null=True)#help_text='Sender\'s Email ID. ( eg:info@gmail.com)')
     mailing_list = models.ManyToManyField(
         'Mailing_list',
         help_text='Select atleast one mailing list :  ',
@@ -39,9 +39,9 @@ class campaign(models.Model):
         )   
     date_created = models.DateTimeField(editable=False, default=now())
     html = models.TextField(
-        verbose_name='Content', help_text=('Email body'),
+        verbose_name='Content', #help_text=('Email body'),
         null=True, blank=True
     )
     #status       = models.BooleanField(default=False)
-    def __unicode__(self):
+    def __unicode__(self):	
         return self.subject

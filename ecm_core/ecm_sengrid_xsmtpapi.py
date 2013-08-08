@@ -1,6 +1,8 @@
 import SmtpApiHeader
 import json
 from django.core.mail import EmailMultiAlternatives
+#import pdb
+#from celery import task
 
 def burst_email(sender,subject,html,to_list_unicode):
     hdr = SmtpApiHeader.SmtpApiHeader()
@@ -15,3 +17,11 @@ def burst_email(sender,subject,html,to_list_unicode):
     msg = EmailMultiAlternatives(subject, "", sender, [sender], headers={"X-SMTPAPI": hdr.asJSON()})
     msg.attach_alternative(html, "text/html")
     msg.send()
+
+#@task() 
+def simple_email(sender,subject,html,to_list_unicode):
+	#pdb.set_trace()
+	for i in to_list_unicode:
+		msg = EmailMultiAlternatives(subject, "", sender, i )
+		msg.attach_alternative(html, "text/html")
+		msg.send()

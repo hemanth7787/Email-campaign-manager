@@ -1,29 +1,20 @@
 {% extends "base.html" %}
-{% load bootstrap_toolkit %}
-{% block head_title %} Login {% endblock %}
+
+{% block head_title %} Campaigns {% endblock %}
 
 {% block "body" %}
+
         <p class="lead">Import a template select a category and thats it !</p>
         <p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
 
 
     <div class="container">
-<!--{% if status = "updated" %}
-<p>Emails send successfully</p>
-{%endif%}-->
       <form enctype="multipart/form-data" method="POST">
 		{% csrf_token %}
         <h2 class="form-signin-heading">Run Campain</h2>
-		{{ cform|as_bootstrap }}
-		<p> Select category below </p>
-		<select name="cat_id" id="cat_drop" >
-			{% for entry in categories %}
-    				<option value="{{ entry.id }}">{{ entry.cname }}</option>
-			{% endfor %}
-		</select>
-
+		{{ cform}}
 <br>
-        <button class="btn btn-large btn-primary" type="submit">Run Campain </button>
+        <button class="btn btn-large btn-primary" type="submit">Save </button>
       </form>
 
     </div> <!-- /container -->
