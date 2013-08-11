@@ -10,7 +10,9 @@ from models import Mail_address, Mailing_list, campaign
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv, send_email
 
-from tasks import celery_add_task
+from tasks import celery_sendmail_task
+
+from django.http import HttpResponse
 
 
 @login_required(login_url='/login')
@@ -27,7 +29,7 @@ def Import_csv(request):
 	if request.method == "POST":
 		iform=Importform(request.POST,request.FILES)
 		if iform.is_valid():
-			cid = request.POST['cat_drop']
+			cid = request.POST['mailing_list']
 			csv_file = iform.cleaned_data.get('csv_file')
 			#TODO handle_uploaded_file(csv_file,cid)
 			parse_csv(csv_file,cid,ignore_errors=True)
@@ -50,11 +52,22 @@ def campain(request):
 			#subj = request.POST['subj']
 			#explode_mail(request.FILES['t_file'],cid,send_id,subj)
 			obj = cform.save()
-			#send_email(obj)
-			celery_add_task.delay(obj)
+			unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
+			#send_email(obj,unsubscribe_url)
+			celery_sendmail_task.delay(obj,unsubscribe_url)
 			messages.success(request,"Run campain successfull")
 	return render(request, "run_campain.html",{'cform':cform ,})
 
+def unsubscribe(request,usid):
+	if not usid=='nill':
+		try:
+			contact=Mail_address.objects.get(uid=usid)
+			contact.subscribed=False
+			contact.save()
+		except:
+			pass
+	return HttpResponse("<h2>You have successfully unsubscribed from our mailing list.</h2>", content_type="text/html")
+	
 
 #-------------------------------------------------------------------------------------
 

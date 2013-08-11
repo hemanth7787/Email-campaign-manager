@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from uuid import uuid4
 
 class Mail_address(models.Model):
     class Meta:
@@ -12,8 +13,14 @@ class Mail_address(models.Model):
     #last_name = models.CharField(max_length=30)
     name = models.CharField(max_length=30, blank=True)
     subscribed = models.BooleanField(default=True)
+    uid        = models.CharField(max_length=100)
     def __unicode__(self):
         return self.mail_id
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.uid = str(uuid4())
+        super(Mail_address, self).save(*args, **kwargs)
+
 
 class Mailing_list(models.Model):
     class Meta:
@@ -42,6 +49,6 @@ class campaign(models.Model):
         verbose_name='Content', #help_text=('Email body'),
         null=True, blank=True
     )
-    #status       = models.BooleanField(default=False)
+    status       = models.BooleanField(default=False)
     def __unicode__(self):	
         return self.subject

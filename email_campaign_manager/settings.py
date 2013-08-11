@@ -20,6 +20,8 @@ import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'redis://localhost:6379/0'
 
+#Subscriptions ]-------------
+ECM_DOMAIN_NAME="http://127.0.0.1:8000/"
 
 MANAGERS = ADMINS
 

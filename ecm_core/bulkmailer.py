@@ -13,20 +13,32 @@ from django import forms
 from django.conf import settings
 from django.core.validators import email_re
 from models import Mail_address
+from django.core.mail import EmailMultiAlternatives
 #import pdb
 
-from ecm_sengrid_xsmtpapi import simple_email
-
-def send_email(obj):
+def send_email(obj,unsubscribe_url):
 	#pdb.set_trace()
 	subj=str(obj.subject)
 	html=str(obj.html)
 	sender = str(obj.sender)
 	for mlist in obj.mailing_list.all():
 		#logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
-		to_list = Mail_address.objects.filter(mail_list=mlist).values_list('mail_id')
-		simple_email(sender,subj,html,to_list)
+		to_list = Mail_address.objects.filter(mail_list=mlist)
+		simple_email(sender,subj,html,to_list,unsubscribe_url)
 
+def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
+	for mobj in mail_addr_obj:
+		if mobj.subscribed:
+			uslink=unsubscribe_url+mobj.uid+"/"
+			uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
+			try:
+				mail_body = html.format(unsubscribe=uslink_append)
+			except:
+				mail_body = html
+			#pdb.set_trace()
+			msg = EmailMultiAlternatives(subject, "", sender, [mobj.mail_id] )
+			msg.attach_alternative(mail_body, "text/html")
+			msg.send()
 
 '''def explode_mail(f,cid,sid,subject):
 	template=f.read()
