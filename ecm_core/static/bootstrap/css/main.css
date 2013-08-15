@@ -1,0 +1,5 @@
+/* These are basically bootstrap overrides */
+.nav-header {
+font-size: 12px;
+}
+.alert {margin-bottom: 10px;}

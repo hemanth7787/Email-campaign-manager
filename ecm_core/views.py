@@ -13,6 +13,14 @@ from bulkmailer import parse_csv, send_email
 from tasks import celery_sendmail_task
 
 from django.http import HttpResponse
+from django.conf import settings
+
+import urllib2
+import json
+from django.utils.encoding import iri_to_uri
+#TODO
+import logging
+logger = logging.getLogger("ecm_console")
 
 
 @login_required(login_url='/login')
@@ -67,6 +75,27 @@ def unsubscribe(request,usid):
 		except:
 			pass
 	return HttpResponse("<h2>You have successfully unsubscribed from our mailing list.</h2>", content_type="text/html")
+
+@login_required(login_url='/login')
+@csrf_protect
+def campain_report(request):
+	urlappend=""
+	for obj in campaign.objects.filter(status=True):
+		urlappend+="&category[]="+obj.subject+"-"+obj.campaign_uuid
+	apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
+	apiurl+=urlappend
+	#raise NameError(apiurl)
+	encodedurl = iri_to_uri(apiurl)
+	try:
+		see = json.load(urllib2.urlopen(encodedurl)) # pls handle invalid reqs
+	except urllib2.HTTPError, e:
+		logger.error("Campaign repot Error | Details :  {0}".format(e))
+		see={}
+	return render(request, "campain_report.html",{'see':see,})
+
+def test(request):
+	messages.success(request,"This is so awesome !!!!!!! ")
+	return render(request, "index.html")
 	
 
 #-------------------------------------------------------------------------------------
