@@ -9,7 +9,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class Importform(forms.Form):
 	csv_file = forms.FileField(label="Select CSV file")
-	mailing_list = forms.ChoiceField(choices=[(x.id, x) for x in Mailing_list.objects.all()])
+	mailing_list = forms.ModelChoiceField(queryset=Mailing_list.objects.all())
 
 class campainform(forms.Form):
 	t_file = forms.FileField(label="Click to Browse E-mail template")
