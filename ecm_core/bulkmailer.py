@@ -14,7 +14,11 @@ from django.conf import settings
 from django.core.validators import email_re
 from models import Mail_address
 from django.core.mail import EmailMultiAlternatives
-#import pdb
+import pdb
+
+import SmtpApiHeader #local file
+import json
+#from django.core.mail import EmailMultiAlternatives
 
 def send_email(obj,unsubscribe_url):
 	#pdb.set_trace()
@@ -24,7 +28,8 @@ def send_email(obj,unsubscribe_url):
 	for mlist in obj.mailing_list.all():
 		#logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
 		to_list = Mail_address.objects.filter(mail_list=mlist)
-		simple_email(sender,subj,html,to_list,unsubscribe_url)
+		#simple_email(sender,subj,html,to_list,unsubscribe_url)
+        tracked_email(obj,to_list,unsubscribe_url)
 
 def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
 	for mobj in mail_addr_obj:
@@ -39,6 +44,28 @@ def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
 			msg = EmailMultiAlternatives(subject, "", sender, [mobj.mail_id] )
 			msg.attach_alternative(mail_body, "text/html")
 			msg.send()
+
+def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
+    subj = str(campaign_obj.subject)
+    html = str(campaign_obj.html)
+    sender = str(campaign_obj.sender)
+    uuid = str(campaign_obj.campaign_uuid)
+    hdr = SmtpApiHeader.SmtpApiHeader()
+    hdr.setCategory(subj+"-"+uuid)
+    #API https://sendgrid.com/api/stats.get.json?api_user=username&api_key=password&list=true&category=category
+    #pdb.set_trace()
+    for mobj in mail_addr_obj:
+        if mobj.subscribed:
+            uslink=unsubscribe_url+mobj.uid+"/"
+            uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
+            try:
+                mail_body = html.format(unsubscribe=uslink_append)
+            except:
+                mail_body = html
+            #pdb.set_trace()
+            msg = EmailMultiAlternatives(subj, "", sender, [mobj.mail_id], headers={"X-SMTPAPI": hdr.asJSON()})
+            msg.attach_alternative(mail_body, "text/html")
+            msg.send()
 
 '''def explode_mail(f,cid,sid,subject):
 	template=f.read()
