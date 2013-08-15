@@ -50,5 +50,13 @@ class campaign(models.Model):
         null=True, blank=True
     )
     status       = models.BooleanField(default=False)
+    campaign_uuid = models.CharField(max_length=100)
     def __unicode__(self):	
         return self.subject
+    def category(self):
+        return str(self.subject+'-'+self.campaign_uuid)
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.campaign_uuid = str(uuid4())
+        super(campaign, self).save(*args, **kwargs)
+
