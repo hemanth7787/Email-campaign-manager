@@ -22,34 +22,33 @@ from django.utils.encoding import iri_to_uri
 import logging
 logger = logging.getLogger("ecm_console")
 
+from django.db.models import Count
+
 
 @login_required(login_url='/login')
 @csrf_protect
-def Import_csv(request):
-	'''def handle_uploaded_file(f,cid):
-		return #TODO handle the fun here
-		with open('/tmp/'+f.name, 'wb+') as destination:
-			for chunk in f.chunks():
-				destination.write(chunk)
-		csv_to_db(f,cid)'''
-
+def import_csv(request):
 	iform=Importform
 	if request.method == "POST":
 		iform=Importform(request.POST,request.FILES)
 		if iform.is_valid():
-			cid = request.POST['mailing_list']
+			
+			name = request.POST['name']
+			#cid = request.POST['mailing_list']
+			mlist = Mailing_list(title = name)
+			mlist.save()
 			csv_file = iform.cleaned_data.get('csv_file')
 			#TODO handle_uploaded_file(csv_file,cid)
-			parse_csv(csv_file,cid,ignore_errors=True)
+			parse_csv(csv_file,mlist.id,ignore_errors=True)
 			status="updated"
-			messages.success(request,"CSV file imported successfully")
+			messages.success(request,"Contacts imported successfully")
 			
 	return render(request,'import_csv.html',{'iform':iform ,})
 
 
 @login_required(login_url='/login')
 @csrf_protect
-def campain(request):
+def run_campaign(request):
 	cform=ListBasketForm
 	if request.method == "POST":
 		cform=ListBasketForm(request.POST,request.FILES)
@@ -78,7 +77,7 @@ def unsubscribe(request,usid):
 
 @login_required(login_url='/login')
 @csrf_protect
-def campain_report(request):
+def campaign_report(request):
 	urlappend=""
 	for obj in campaign.objects.filter(status=True):
 		urlappend+="&category[]="+obj.subject+"-"+obj.campaign_uuid
@@ -93,10 +92,32 @@ def campain_report(request):
 		see={}
 	return render(request, "campain_report.html",{'see':see,})
 
+@login_required(login_url='/login')
+@csrf_protect
+def campaign(request):
+	return render(request, "campaign.html")
+
 def test(request):
 	messages.success(request,"This is so awesome !!!!!!! ")
-	return render(request, "index.html")
-	
+	return render(request, "test.html")
+
+def contacts(request):
+	return render(request, "contacts.html")
+
+def contacts_view(request):
+	maddr = Mail_address.objects.all()
+	return render(request, "contacts_view.html",{'contacts':maddr})
+
+
+def contacts_statistics(request):
+	mlist = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
+	return render(request, "contact_statistics.html",{'mailing_list':mlist})
+
+def templates(request):
+	return render(request, "templates.html")
+
+def home(request):
+	return render(request, "home.html")
 
 #-------------------------------------------------------------------------------------
 

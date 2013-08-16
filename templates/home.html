@@ -1,20 +1,27 @@
 {% extends "base.html" %}
-{% load bootstrap_toolkit %}
-{% block head_title %} Login {% endblock %}
+
+{% block head_title %} Contacts {% endblock %}
+
+ {% block menulist %}
+            <ul class="nav nav-list">
+              <li class="nav-header">Actions</li>
+              <li class="active">
+                <a href="#">About</a>
+              </li>
+              <li>
+                <a href="#">Help</a>
+              </li>
+              <li>
+                <a href="#">Feedback</a>
+              </li>
+            </ul>
+            {% endblock %}
 
 {% block "body" %}
-  
+          <div class="hero-unit">
+            <h1>Welcome to Postmaster&trade; </h1>
+            <p class="lead">Postmaster includes  powerful contacts management features , which includes importing contacts from CSV files , searching, exporting etc</p>
+            <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+          </div>
 
-
-    <div class="container">
-
-      <form class="form-signin" method="POST" action="">
-		
-		<h1> Mailer Home.  </h1>
-<p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
-
-      </form>
-
-    </div> <!-- /container -->
-
-{% endblock %}
+          {% endblock %}

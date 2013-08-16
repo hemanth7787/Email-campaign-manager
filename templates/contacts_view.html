@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block head_title %} View Contacts {% endblock %}
+
+ {% block menulist %}
+            <ul class="nav nav-list">
+              <li class="nav-header">Actions</li>
+              <li >
+                <a href="{% url "import_csv" %}">Import contacts</a>
+              </li>
+              <li class="active">
+                <a href="#">View contacts</a>
+              </li>
+              <li class="nav-header">Analytics</li>
+              <li>
+                <a href="{% url "contacts_statistics" %}">Statistics</a>
+              </li>
+            </ul>
+            {% endblock %}
+
+{% block "body" %}
+          <div class="row-fluid">
+
+<table class="table table-bordered" id="sortTableExample">
+        <thead>
+          <tr>
+            <th class="header">#</th>
+            <th class="yellow header headerSortDown">Name</th>
+            <th class="blue header">Email</th>
+            <th class="blue header">List</th>
+            <th class="blue header">Subscribed</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+        <tr>
+            
+            {% for contact in contacts  %}
+            <td>{{forloop.counter}}</td>
+            <td>{{contact.name}}</td>
+            <td>{{contact.mail_id}}</td>
+            <td>{{contact.mail_list.title}}</td>
+            <td>{{contact.subscribed}}</td>
+          </tr>
+          {% endfor %}
+
+
+      </tbody>
+      </table>
+
+          </div>
+     
+
+          {% endblock %}

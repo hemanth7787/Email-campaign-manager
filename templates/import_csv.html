@@ -1,14 +1,29 @@
 {% extends "base.html" %}
 {% block head_title %} Login {% endblock %}
 
-{% block "body" %}
-        <p class="lead">Import address list in CSV format</p>
-        <p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
+{% block menulist %}
+            <ul class="nav nav-list">
+              <li class="nav-header">Actions</li>
+              <li class="active">
+                <a href="#">Import contacts</a>
+              </li>
+              <li >
+                <a href="{% url "contacts_view" %}">View contacts</a>
+              </li>
+              <li class="nav-header">Analytics</li>
+              <li>
+                <a href="{% url "contacts_statistics" %}">Statistics</a>
+              </li>
+            </ul>
+            {% endblock %}
+            
 
-<div class="container">
+{% block "body" %}
+
+<div class="hero-unit">
  <form  enctype="multipart/form-data" method="post" action="">
 	{% csrf_token %}
-        <h2 class="form-signin-heading">Import CSV</h2>
+        <h2 class="form-signin-heading">Import contacts</h2>
 		{{iform}}
 		<br>
 		<button class="btn btn-large btn-primary" type="submit">Save </button>
