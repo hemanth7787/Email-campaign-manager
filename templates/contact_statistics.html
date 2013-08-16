@@ -2,20 +2,8 @@
 
 {% block head_title %} View Contacts {% endblock %}
 
- {% block menulist %}
-            <ul class="nav nav-list">
-              <li class="nav-header">Actions</li>
-              <li >
-                <a href="{% url "import_csv" %}">Import contacts</a>
-              </li>
-              <li >
-                <a href="{% url "contacts_view" %}">View contacts</a>
-              </li>
-              <li class="nav-header">Analytics</li>
-              <li class="active">
-                <a href="#">Statistics</a>
-              </li>
-            </ul>
+{% block menulist %}
+{% include "snippets/contacts_menu_snippet.html" with page='contactsstatistics' %}
             {% endblock %}
 
 {% block "body" %}

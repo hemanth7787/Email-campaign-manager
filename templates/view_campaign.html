@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head_title %} Contacts {% endblock %}
+
+ {% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='viewcampaign' %}
+            {% endblock %}
+
+{% block "body" %}
+  
+         <div class="row-fluid">
+
+<table class="table table-bordered" id="sortTableExample">
+        <thead>
+          <tr>
+            <th class="header">#</th>
+            <th class="yellow header headerSortDown">Subject</th>
+            <th class="blue header">Sender</th>
+            <th class="blue header">Lists</th>
+            <th class="blue header">Date</th>
+            <th class="blue header">Send</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+        <tr>
+            
+            {% for camp in camps  %}
+            <td>{{forloop.counter}}</td>
+            <td>{{camp.subject}}</td>
+            <td>{{camp.sender}}</td>
+            <td>{{camp.mailing_list.all|join:","}}</td>
+            <td>{{camp.date_created}}</td>
+            <td>{{camp.status}}</td>
+          </tr>
+          {% endfor %}
+
+
+      </tbody>
+      </table>
+
+          </div>
+     
+          {% endblock %}

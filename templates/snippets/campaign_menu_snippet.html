@@ -1,0 +1,13 @@
+            <ul class="nav nav-list">
+              <li class="nav-header">Actions</li>
+              <li {% if page == 'newcampaign' %}class="active"{% endif %}>
+                <a href="{% url "run_campaign" %}">New campaign</a>
+              </li>
+              <li {% if page == 'viewcampaign' %}class="active"{% endif %}>
+                <a href="{% url "view_campaign" %}">View</a>
+              </li>
+              <li class="nav-header">Analytics</li>
+              <li>
+                <a href="{% url "report" %}">Report</a>
+              </li>
+            </ul>

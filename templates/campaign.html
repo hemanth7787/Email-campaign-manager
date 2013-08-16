@@ -3,19 +3,7 @@
 {% block head_title %} Contacts {% endblock %}
 
  {% block menulist %}
-            <ul class="nav nav-list">
-              <li class="nav-header">Actions</li>
-              <li class="active">
-                <a href="#">New campaign</a>
-              </li>
-              <li>
-                <a href="#">View</a>
-              </li>
-              <li class="nav-header">Analytics</li>
-              <li>
-                <a href="#">Report</a>
-              </li>
-            </ul>
+{% include "snippets/campaign_menu_snippet.html" with page='campaign' %}
             {% endblock %}
 
 {% block "body" %}

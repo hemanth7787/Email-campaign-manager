@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 
-{% block head_title %} Campaigns {% endblock %}
+{% block head_title %} New Campaign {% endblock %}
+
+ {% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='newcampaign' %}
+            {% endblock %}
 
 {% block "body" %}
-
-        <p class="lead">Import a template select a category and thats it !</p>
-        <p>Use <a href="/">Mailer </a> to send mass E-mail campains.</p>
-
 
     <div class="container">
       <form enctype="multipart/form-data" method="POST">
 		{% csrf_token %}
-        <h2 class="form-signin-heading">Run Campain</h2>
+        <h2 class="form-signin-heading">Run Campaign</h2>
 		{{ cform}}
 <br>
-        <button class="btn btn-large btn-primary" type="submit">Save </button>
+        <button class="btn btn-large btn-primary" type="submit">Save & Run </button>
       </form>
 
     </div> <!-- /container -->
 
 {% endblock %}
+
+

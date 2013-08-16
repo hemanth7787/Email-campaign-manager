@@ -51,7 +51,7 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
     sender = str(campaign_obj.sender)
     uuid = str(campaign_obj.campaign_uuid)
     hdr = SmtpApiHeader.SmtpApiHeader()
-    hdr.setCategory(subj+"-"+uuid)
+    hdr.setCategory(str(campaign_obj.category))
     #API https://sendgrid.com/api/stats.get.json?api_user=username&api_key=password&list=true&category=category
     #pdb.set_trace()
     for mobj in mail_addr_obj:

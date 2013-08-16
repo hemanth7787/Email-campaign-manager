@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from forms import Importform ,ListBasketForm #,campainform,addcform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
-from models import Mail_address, Mailing_list, campaign
+from models import Mail_address, Mailing_list, campaign as modelcampaign
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv, send_email
 
@@ -23,7 +23,7 @@ import logging
 logger = logging.getLogger("ecm_console")
 
 from django.db.models import Count
-
+from django.core.urlresolvers import get_script_prefix
 
 @login_required(login_url='/login')
 @csrf_protect
@@ -79,7 +79,7 @@ def unsubscribe(request,usid):
 @csrf_protect
 def campaign_report(request):
 	urlappend=""
-	for obj in campaign.objects.filter(status=True):
+	for obj in modelcampaign.objects.filter(status=True):
 		urlappend+="&category[]="+obj.subject+"-"+obj.campaign_uuid
 	apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
 	apiurl+=urlappend
@@ -88,18 +88,43 @@ def campaign_report(request):
 	try:
 		see = json.load(urllib2.urlopen(encodedurl)) # pls handle invalid reqs
 	except urllib2.HTTPError, e:
-		logger.error("Campaign repot Error | Details :  {0}".format(e))
+		logger.error("Campaign repot Error | Details :  {0} ".format(e))
 		see={}
 	return render(request, "campain_report.html",{'see':see,})
+
+def dummy_login_redirect(request):
+    return HttpResponse(json.dumps({'status':'login_err'}), content_type="application/json")
+
+@login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
+@csrf_protect
+def json_report(request):
+	if request.method == 'POST':
+        try:
+            category=request.POST['category']
+        except:
+            pass
+	urlappend="&category="+category
+	raise NameError(urlappend)
+	apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
+	apiurl+=urlappend
+	#raise NameError(apiurl)
+	encodedurl = iri_to_uri(apiurl)
+	try:
+		see = json.load(urllib2.urlopen(encodedurl)) # pls handle invalid reqs
+	except urllib2.HTTPError, e:
+		logger.error("Campaign repot Error | Details :  {0} ".format(e))
+		see={}
+	return render(request, "campain_report.html",{'see':see,})
+'''https://sendgrid.com/api/stats.get.json?api_user=your_sendgrid_username&api_key=your_sendgrid_password&category=categoryA'''
 
 @login_required(login_url='/login')
 @csrf_protect
 def campaign(request):
 	return render(request, "campaign.html")
 
-def test(request):
-	messages.success(request,"This is so awesome !!!!!!! ")
-	return render(request, "test.html")
+def view_campaign(request):
+	camps = modelcampaign.objects.all()
+	return render(request, "view_campaign.html",{'camps':camps})
 
 def contacts(request):
 	return render(request, "contacts.html")
@@ -121,7 +146,7 @@ def home(request):
 
 #-------------------------------------------------------------------------------------
 
-@login_required(login_url='/login')
+'''@login_required(login_url='/login')
 @csrf_protect
 def run_campain(request):
 	categories=Categories.objects.all()
@@ -178,6 +203,6 @@ def add_cat(request):
 			status='saved'
 			messages.success(request,"Successfully saved")
 		
-	return redirect('/category')
+	return redirect('/category')'''
 	
 
