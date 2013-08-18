@@ -24,6 +24,7 @@ logger = logging.getLogger("ecm_console")
 
 from django.db.models import Count
 from django.core.urlresolvers import get_script_prefix
+import pdb
 
 @login_required(login_url='/login')
 @csrf_protect
@@ -78,19 +79,9 @@ def unsubscribe(request,usid):
 @login_required(login_url='/login')
 @csrf_protect
 def campaign_report(request):
-	urlappend=""
-	for obj in modelcampaign.objects.filter(status=True):
-		urlappend+="&category[]="+obj.subject+"-"+obj.campaign_uuid
-	apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
-	apiurl+=urlappend
-	#raise NameError(apiurl)
-	encodedurl = iri_to_uri(apiurl)
-	try:
-		see = json.load(urllib2.urlopen(encodedurl)) # pls handle invalid reqs
-	except urllib2.HTTPError, e:
-		logger.error("Campaign repot Error | Details :  {0} ".format(e))
-		see={}
-	return render(request, "campain_report.html",{'see':see,})
+    camps = modelcampaign.objects.filter(status = True)
+    #pdb.set_trace()
+    return render(request, "campain_report.html",{'camps':camps,})
 
 def dummy_login_redirect(request):
     return HttpResponse(json.dumps({'status':'login_err'}), content_type="application/json")
@@ -98,24 +89,25 @@ def dummy_login_redirect(request):
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect
 def json_report(request):
-	if request.method == 'POST':
-        try:
-            category=request.POST['category']
-        except:
-            pass
-	urlappend="&category="+category
-	raise NameError(urlappend)
-	apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
-	apiurl+=urlappend
-	#raise NameError(apiurl)
-	encodedurl = iri_to_uri(apiurl)
-	try:
-		see = json.load(urllib2.urlopen(encodedurl)) # pls handle invalid reqs
-	except urllib2.HTTPError, e:
-		logger.error("Campaign repot Error | Details :  {0} ".format(e))
-		see={}
-	return render(request, "campain_report.html",{'see':see,})
-'''https://sendgrid.com/api/stats.get.json?api_user=your_sendgrid_username&api_key=your_sendgrid_password&category=categoryA'''
+    response_data = dict()
+    try:
+        category=request.POST['category']
+    except:
+        response_data['status'] = 'data_err'
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    urlappend="&category="+category
+    apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
+    apiurl+=urlappend
+    encodedurl = iri_to_uri(apiurl)
+    try:
+        response_data = json.load(urllib2.urlopen(encodedurl))[0] # This should be a dict
+        response_data[unicode('status')] = unicode("success")
+    except urllib2.HTTPError, e:
+        logger.error("Campaign repot Error | Details :  {0} ".format(e))
+        response_data['status'] = "failed"
+    #pdb.set_trace()
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 @login_required(login_url='/login')
 @csrf_protect

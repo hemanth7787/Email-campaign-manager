@@ -7,7 +7,7 @@
                 <a href="{% url "view_campaign" %}">View</a>
               </li>
               <li class="nav-header">Analytics</li>
-              <li>
+              <li {% if page == 'report' %}class="active"{% endif %}>
                 <a href="{% url "report" %}">Report</a>
               </li>
             </ul>

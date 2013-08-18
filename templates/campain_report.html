@@ -1,1 +1,56 @@
-{{see}}
+{% extends "base.html" %}
+{% block head_title %} Login {% endblock %}
+
+ {% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='report' %}
+            {% endblock %}
+            
+
+{% block "body" %}
+
+<div class="hero-unit">
+
+</div> <!-- /container -->
+{% for camp in camps %}
+{{camp.subject}}
+{% endfor %}
+{% endblock %}
+
+
+{% block "scripts" %}
+<script type="text/javascript">
+$( document ).ready(function() {
+
+    return_stats();
+});
+function return_stats(catname){
+/* -- Ajax request--*/
+ $.ajax({
+     type:"POST",
+     url:"{% url "get_json_report" %}",
+     data: {
+            'category'         : catname, // 'JSONtest2-db643453-3b88-46b3-a904-dbcb4094d39c', //todo
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+     },
+     success: function(returned_data){
+         if (returned_data['status'] == "data_err")
+        {
+		return false;
+			}
+        if (returned_data['status'] == "success")
+         {
+         //$("#"+div_id).slideToggle();
+         //$("#"+div_id).html('<div class="alert alert-success">'+returned_data['status_message']+'</div>');
+         //$("#"+div_id).slideToggle();
+         //$("#tc_data_placeholder").data("voted_entry", div_id);
+          return;
+            }
+         if (returned_data['status'] == "login_err")
+         {
+         //window.location.href="/accounts/login/?next="+location.pathname;
+         return false;
+            }
+         }
+});};
+</script>
+    {% endblock %}
