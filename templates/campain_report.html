@@ -1,29 +1,45 @@
 {% extends "base.html" %}
 {% block head_title %} Login {% endblock %}
 
+{% block head %}
+<link href="{{ STATIC_URL }}jqplot/jquery.jqplot.min.css" rel="stylesheet"> 
+{% endblock %}
+
  {% block menulist %}
 {% include "snippets/campaign_menu_snippet.html" with page='report' %}
             {% endblock %}
             
 
 {% block "body" %}
-
-<div class="hero-unit">
-
-</div> <!-- /container -->
 {% for camp in camps %}
-{{camp.subject}}
+<div class="span4">
+<P>Subject: {{camp.subject}}</p>
+            <p>Sender: {{camp.sender}}</p>
+            <p>Mailing lists: {{camp.mailing_list.all|join:","}}</p>
+            <p>Date: {{camp.date_created}}</p>
+            <p>Send: {{camp.category}}</p>
+<div id="{{camp.category}}"></div>
+</div> <!-- /container -->
 {% endfor %}
+
 {% endblock %}
 
 
 {% block "scripts" %}
-<script type="text/javascript">
-$( document ).ready(function() {
 
-    return_stats();
+<script language="javascript" type="text/javascript" src="{{ STATIC_URL }}jqplot/jquery.jqplot.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+ //return_stats("JsonTest4-087da93d-1087-4746-8dd7-9995f3826c73","chart1");
+ {% for camp in camps %}
+return_stats("{{camp.category}}","{{camp.category}}");
+{%endfor%}
 });
-function return_stats(catname){
+
+
+
+function return_stats(catname,DIV_ID){
 /* -- Ajax request--*/
  $.ajax({
      type:"POST",
@@ -32,25 +48,57 @@ function return_stats(catname){
             'category'         : catname, // 'JSONtest2-db643453-3b88-46b3-a904-dbcb4094d39c', //todo
              csrfmiddlewaretoken: '{{ csrf_token }}',
      },
-     success: function(returned_data){
-         if (returned_data['status'] == "data_err")
-        {
-		return false;
-			}
-        if (returned_data['status'] == "success")
+     success: function(json_obj){
+        if (json_obj['status'] == "success")
          {
+
+        //function ecm_draw_chart(returned_data,DIV_ID){
+             /*
+         returned_data['delivered']
+         unsubscribes
+         invalid_email
+         bounces
+         repeat_unsubscribes
+         unique_clicks
+         blocked
+         spam_drop
+         date
+         requests
+         spamreports
+         clicks
+         opens
+         unique_opens
+                */
+      var data = [
+        ['Delivered', json_obj['delivered']],['Bounces', json_obj['bounces']], ['Unsubscribes', json_obj['unsubscribes']], 
+      ];
+      var plot1 = jQuery.jqplot (DIV_ID, [data], 
+        { 
+          seriesDefaults: {
+            // Make this a pie chart.
+            renderer: jQuery.jqplot.PieRenderer, 
+            rendererOptions: {
+              // Put data labels on the pie slices.
+              // By default, labels show the percentage of the slice.
+              showDataLabels: true
+            }
+          }, 
+          legend: { show:true, location: 'e' }
+        }
+      );
+    
+
+
          //$("#"+div_id).slideToggle();
          //$("#"+div_id).html('<div class="alert alert-success">'+returned_data['status_message']+'</div>');
          //$("#"+div_id).slideToggle();
          //$("#tc_data_placeholder").data("voted_entry", div_id);
-          return;
+          return true;
             }
-         if (returned_data['status'] == "login_err")
-         {
-         //window.location.href="/accounts/login/?next="+location.pathname;
-         return false;
-            }
+            $("#"+DIV_ID).html(json_obj['status']);
+            return false;
          }
+
 });};
 </script>
     {% endblock %}
