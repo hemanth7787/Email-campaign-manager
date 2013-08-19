@@ -26,6 +26,8 @@ from django.db.models import Count
 from django.core.urlresolvers import get_script_prefix
 import pdb
 
+
+
 @login_required(login_url='/login')
 @csrf_protect
 def import_csv(request):
@@ -136,6 +138,48 @@ def templates(request):
 def home(request):
 	return render(request, "home.html")
 
+
+
+
+
+
+
+
+
+
+
+
+@csrf_protect
+def login(request):
+	pagename='login'
+	authentication_form=AuthenticationForm
+	if request.method == "POST":
+		form = authentication_form(data=request.POST)
+		if form.is_valid():
+			auth_login(request, form.get_user())
+			if request.session.test_cookie_worked():
+				request.session.delete_test_cookie()
+			context = {
+				'user': request.user,
+				}
+			messages.info(request,"Welcome "+request.user.username+" .")
+			return HttpResponseRedirect('/')
+	else:
+		form = authentication_form(request)
+	context = {
+			'form': form,
+			'pagename':pagename
+			}
+	return render(request, 'registration/login.html', context)
+
+
+def logout(request):
+    """
+    Logs out the user and displays 'You are logged out' message.
+    """
+    pagename='logout'
+    auth_logout(request)
+    return render(request, 'registration/logout.html',{'pagename':pagename})
 #-------------------------------------------------------------------------------------
 
 '''@login_required(login_url='/login')

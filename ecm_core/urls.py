@@ -20,6 +20,4 @@ urlpatterns = patterns('',
 
    url(r'^dummy/login_redirect$', 'ecm_core.views.dummy_login_redirect', name='dummy_login_redirect'),
 
-   url(r'^', 'ecm_core.views.home', name='home'),
-
 )
