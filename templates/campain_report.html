@@ -12,12 +12,12 @@
 
 {% block "body" %}
 {% for camp in camps %}
-<div class="span4">
+<div class="span well">
 <P>Subject: {{camp.subject}}</p>
             <p>Sender: {{camp.sender}}</p>
             <p>Mailing lists: {{camp.mailing_list.all|join:","}}</p>
             <p>Date: {{camp.date_created}}</p>
-            <p>Send: {{camp.category}}</p>
+            <p>Send: {{camp.status}}</p>
 <div id="{{forloop.counter}}"></div>
 </div> <!-- /container -->
 {% endfor %}
