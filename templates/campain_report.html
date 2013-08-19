@@ -18,7 +18,7 @@
             <p>Mailing lists: {{camp.mailing_list.all|join:","}}</p>
             <p>Date: {{camp.date_created}}</p>
             <p>Send: {{camp.category}}</p>
-<div id="{{camp.category}}"></div>
+<div id="{{forloop.counter}}"></div>
 </div> <!-- /container -->
 {% endfor %}
 
@@ -33,7 +33,7 @@
 $(document).ready(function(){
  //return_stats("JsonTest4-087da93d-1087-4746-8dd7-9995f3826c73","chart1");
  {% for camp in camps %}
-return_stats("{{camp.category}}","{{camp.category}}");
+return_stats("{{camp.category}}","{{forloop.counter}}");
 {%endfor%}
 });
 
@@ -95,7 +95,7 @@ function return_stats(catname,DIV_ID){
          //$("#tc_data_placeholder").data("voted_entry", div_id);
           return true;
             }
-            $("#"+DIV_ID).html(json_obj['status']);
+            $(DIV_ID).html(json_obj['status']);
             return false;
          }
 

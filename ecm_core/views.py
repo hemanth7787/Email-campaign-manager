@@ -99,9 +99,10 @@ def json_report(request):
         return HttpResponse(json.dumps(response_data), content_type="application/json")
 
     urlappend="&category="+category
-    apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
+    apiurl="https://sendgrid.com/api/stats.get.json?api_user={0}&api_key={1}&aggregate=1".format(settings.ECM_SENDGRID_USERNAME,settings.ECM_SENDGRID_PASSWORD)
     apiurl+=urlappend
     encodedurl = iri_to_uri(apiurl)
+    #logger.info(" Details :  {0} ".format(encodedurl))
     try:
         response_data = json.load(urllib2.urlopen(encodedurl))[0] # This should be a dict
         response_data[unicode('status')] = unicode("success")
