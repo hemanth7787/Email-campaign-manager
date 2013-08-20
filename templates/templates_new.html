@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head_title %} Contacts {% endblock %}
+
+ {% block menulist %}
+ {% include "snippets/template_menu_snippet.html" with page='add' %}
+             {% endblock %}
+
+{% block "body" %}
+         <div class="hero-unit">
+ <form  enctype="multipart/form-data" method="post" action="">
+  {% csrf_token %}
+        <h2 class="form-signin-heading">New Email Template</h2>
+    {{form}}
+    <br>
+    <button class="btn btn-large btn-primary" type="submit">Save </button>
+</form>
+</div> <!-- /container -->
+
+          {% endblock %}

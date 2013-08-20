@@ -1,0 +1,9 @@
+    <ul class="nav nav-list">
+              <li class="nav-header">Actions</li>
+                            <li {% if page == 'add' %}class="active"{% endif %}>
+                <a href="{% url "templates_new" %}">Add</a>
+              </li>
+              <li {% if page == 'view' %}class="active"{% endif %}>
+                <a href="{% url "templates_view" %}">View</a>
+              </li>
+            </ul>

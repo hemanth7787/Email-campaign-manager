@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.forms.fields import DateField, ChoiceField, MultipleChoiceField
 from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
 from django.forms.extras.widgets import SelectDateWidget
-from models import Mail_address, Mailing_list, campaign
+from models import Mail_address, Mailing_list, campaign, mailtemplate 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 
@@ -28,3 +28,8 @@ class ListBasketForm(forms.ModelForm):
     class Meta:
         model = campaign
         fields = ('subject','sender','html','mailing_list',)
+
+class mailtemplateform(forms.ModelForm): 
+    class Meta:
+        model = mailtemplate
+        fields = ('name','thumbnail','zipfile')

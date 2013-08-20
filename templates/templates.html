@@ -3,19 +3,8 @@
 {% block head_title %} Contacts {% endblock %}
 
  {% block menulist %}
-            <ul class="nav nav-list">
-              <li class="nav-header">Actions</li>
-              <li class="active">
-                <a href="#">View</a>
-              </li>
-              <li>
-                <a href="#">Add</a>
-              </li>
-              <li>
-                <a href="#">Edit</a>
-              </li>
-            </ul>
-            {% endblock %}
+ {% include "snippets/template_menu_snippet.html" with page='main' %}
+             {% endblock %}
 
 {% block "body" %}
           <div class="hero-unit">

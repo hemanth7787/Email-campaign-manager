@@ -3,7 +3,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import Importform ,ListBasketForm #,campainform,addcform
+from forms import Importform ,ListBasketForm ,mailtemplateform #,campainform,addcform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 from models import Mail_address, Mailing_list, campaign as modelcampaign
@@ -25,6 +25,7 @@ logger = logging.getLogger("ecm_console")
 from django.db.models import Count
 from django.core.urlresolvers import get_script_prefix
 import pdb
+import os
 
 
 
@@ -138,6 +139,29 @@ def templates(request):
 
 def home(request):
 	return render(request, "home.html")
+
+from zipfile import ZipFile
+def templates_new(request):
+	def process_zip(self):
+		path=str("media/extracted/"+obj.uuid+"/")
+		#pdb.set_trace()
+		with ZipFile(obj.zipfile, 'r') as myzip:
+			myzip.extractall(path)
+	form=mailtemplateform
+	if request.method == "POST":
+		form=mailtemplateform(request.POST,request.FILES)
+		if form.is_valid():
+			#cid = request.POST['cat_id']
+			#send_id = request.POST['email_id']
+			#send_id='noreply@orange-mailer.net'
+			#subj = request.POST['subj']
+			obj = form.save()
+			process_zip(obj)
+			messages.success(request,"Email template saved successfully")
+	return render(request, "templates_new.html",{'form':form})
+
+def templates_view(request):
+	return 1
 
 
 

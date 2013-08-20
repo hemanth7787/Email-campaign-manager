@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
 from uuid import uuid4
+import os
+from datetime import datetime
 
 class Mail_address(models.Model):
     class Meta:
@@ -50,7 +52,7 @@ class campaign(models.Model):
         null=True, blank=True
     )
     status       = models.BooleanField(default=False)
-    campaign_uuid = models.CharField(max_length=100)
+    campaign_uuid = models.CharField(editable=False, max_length=100)
     def __unicode__(self):	
         return self.subject
     def category(self):
@@ -60,3 +62,20 @@ class campaign(models.Model):
             self.campaign_uuid = str(uuid4())
         super(campaign, self).save(*args, **kwargs)
 
+class mailtemplate(models.Model):
+    def unique_image_name(instance, filename):
+        return '/'.join(['thunmbnails',datetime.today().strftime("%B_%Y"), str(uuid4())+os.path.splitext(filename)[1]])
+    def unique_file_name(instance, filename):
+        return '/'.join(['mailtemplate',datetime.today().strftime("%B_%Y"), str(uuid4())+os.path.splitext(filename)[1]])
+    name = models.CharField(max_length=50,null=True)
+    zipfile = models.FileField(upload_to=unique_file_name)
+    html = models.TextField(verbose_name='Content')
+    thumbnail = models.ImageField(upload_to=unique_image_name, blank=True, null=True)
+    date_of_creation = models.DateTimeField(editable=False, default=now()) 
+    uuid = models.CharField(editable=False, max_length=100)  
+    def __unicode__(self):
+        return self.name
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.uuid = str(uuid4())
+        super(mailtemplate, self).save(*args, **kwargs)
