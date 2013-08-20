@@ -12,6 +12,7 @@
  <form  enctype="multipart/form-data" method="post" action="">
 	{% csrf_token %}
         <h2 class="form-signin-heading">Import contacts</h2>
+         <p>( you can use standard CSV file for example <a href="{{STATIC_URL}}assets/sample.csv">sample.csv</a> )</p>
 		{{iform}}
 		<br>
 		<button class="btn btn-large btn-primary" type="submit">Save </button>

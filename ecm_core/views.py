@@ -195,6 +195,10 @@ def templates_delete(request,usid):
 			return HttpResponse("<h2>Error : Could not delete .. !</h2>", content_type="text/html")
 	return redirect("/ecm/templates-view/")
 
+def dummy(request):
+	return HttpResponse("<h2>Coming soon .. !</h2>", content_type="text/html")
+
+
 
 
 

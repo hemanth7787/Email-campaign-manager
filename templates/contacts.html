@@ -10,26 +10,26 @@
 {% block "body" %}
           <div class="hero-unit">
             <h1>Contacts</h1>
-            <p class="lead">Postmaster includes  powerful contacts management features , which includes importing contacts from CSV files , searching, exporting etc</p>
-            <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+            <p class="lead">Postmaster&trade; includes  powerful contacts management features , which includes importing contacts from CSV files , searching, exporting etc</p>
+            <p><a href="/about/help/contact" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
           </div>
           <div class="row-fluid">
             <div class="span4">
               <h2>Import</h2>
-              <p>Asynchronous email sending engine allows you to send emails without that loading page on your browser.</p>
-              <p><a class="btn" href="#">View details &raquo;</a></p>
+              <p>Import contacts from a standard CSV file</p>
+              <p><a class="btn" href="{% url "import_csv" %}">View details &raquo;</a></p>
             </div>
             <!--/span-->
             <div class="span4">
               <h2>View / search</h2>
-              <p>Supports multiple type of templates, like zip, plain html,wysiwyg editor etc</p>
-              <p><a class="btn" href="#">View details &raquo;</a></p>
+              <p>Supports standard list functions ,search, delete, export, etc.</p>
+              <p><a class="btn" href="{% url "contacts_view" %}">Coming soon &raquo;</a></p>
             </div>
             <!--/span-->
             <div class="span4">
               <h2>Export</h2>
-              <p>Includes an optional unsubscribe link</p>
-              <p><a class="btn" href="#">View details &raquo;</a></p>
+              <p>Export contats  to formats like CSV , Exel, etc.</p>
+              <p><a class="btn" href="#">Coming soon &raquo;</a></p>
             </div>
             <!--/span-->
           </div>

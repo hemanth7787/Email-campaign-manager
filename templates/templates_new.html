@@ -11,6 +11,7 @@
  <form  enctype="multipart/form-data" method="post" action="">
   {% csrf_token %}
         <h2 class="form-signin-heading">New Email Template</h2>
+        <p>(Structure of the template zip file as per <a href="{{STATIC_URL}}assets/sample.zip">sample.zip</a>)</p>
     {{form}}
     <br>
     <button class="btn btn-large btn-primary" type="submit">Save </button>
