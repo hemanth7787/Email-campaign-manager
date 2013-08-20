@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from forms import Importform ,ListBasketForm ,mailtemplateform #,campainform,addcform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
-from models import Mail_address, Mailing_list, campaign as modelcampaign
+from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv, send_email
 
@@ -140,13 +140,24 @@ def templates(request):
 def home(request):
 	return render(request, "home.html")
 
+from bs4 import BeautifulSoup
 from zipfile import ZipFile
 def templates_new(request):
-	def process_zip(self):
-		path=str("media/extracted/"+obj.uuid+"/")
+	def adapt_template(path,obj,request):
+		fp = open(path+'/index.html','r')
+		original_html = fp.read()
+		soup  = BeautifulSoup(original_html)
+		asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
+		for link in soup.find_all('img'):
+			link['src']=link['src'].replace("images",asseturl)
+		obj.html=str(soup)
+		obj.save()
 		#pdb.set_trace()
+	def process_zip(obj,request):
+		path=str("media/extracted/"+obj.uuid+"/")
 		with ZipFile(obj.zipfile, 'r') as myzip:
 			myzip.extractall(path)
+			adapt_template(path,obj,request)
 	form=mailtemplateform
 	if request.method == "POST":
 		form=mailtemplateform(request.POST,request.FILES)
@@ -156,12 +167,33 @@ def templates_new(request):
 			#send_id='noreply@orange-mailer.net'
 			#subj = request.POST['subj']
 			obj = form.save()
-			process_zip(obj)
+			process_zip(obj,request)
 			messages.success(request,"Email template saved successfully")
 	return render(request, "templates_new.html",{'form':form})
 
 def templates_view(request):
-	return 1
+	qset = mailtemplate.objects.all()
+	return render(request, "templates_view.html",{'mailtemplate':qset})
+
+def templates_preview(request,usid):
+	if not usid=='nill':
+		try:
+			temp=mailtemplate.objects.get(id=usid)
+			htm = temp.html
+		except Exception, e:
+			#logger.error(" Details :  {0} ".format(e))
+			return HttpResponse("<h2>Error : Not a valid template .. !</h2>", content_type="text/html")
+	return HttpResponse(htm, content_type="text/html")
+
+def templates_delete(request,usid):
+	if not usid=='nill':
+		try:
+			temp=mailtemplate.objects.get(id=usid)
+			temp.delete()
+		except Exception, e:
+			#logger.error(" Details :  {0} ".format(e))
+			return HttpResponse("<h2>Error : Could not delete .. !</h2>", content_type="text/html")
+	return redirect("/ecm/templates-view/")
 
 
 

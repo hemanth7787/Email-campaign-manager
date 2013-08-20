@@ -11,3 +11,18 @@ urlpatterns = patterns('',
     url(r'^$', 'ecm_core.views.home', name='home'),
 
 )
+
+
+# DEBUGing: Static file serve for DEBUG puposes
+from django.conf import settings
+if settings.DEBUG:
+    # For user-uploaded media
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+            'show_indexes': True,
+        }),
+    )
+    # For static media
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()

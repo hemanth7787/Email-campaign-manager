@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block head_title %} Contacts {% endblock %}
+
+ {% block menulist %}
+ {% include "snippets/template_menu_snippet.html" with page='view' %}
+             {% endblock %}
+
+{% block "body" %}
+          <div class="row-fluid">
+
+             
+            {% for mt in mailtemplate %}  
+            <div class="well"> 
+{{mt.name}}<br>
+{% thumbnail mt.thumbnail "100x100" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" >
+{% endthumbnail %}
+<a style="margin-left:15px" href="{% url "templates_preview" usid=mt.id %}" target="_blank" class="btn btn-primary">Preview</a> 
+<a style="margin-left:15px" href="{% url "templates_delete" usid=mt.id %}" class="btn btn-danger">Delete</a> 
+            </div>
+            {% endfor %}
+
+           </div>
+     
+
+          {% endblock %}

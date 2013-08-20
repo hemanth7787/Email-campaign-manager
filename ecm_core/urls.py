@@ -19,7 +19,10 @@ urlpatterns = patterns('',
    url(r'^templates/$', 'ecm_core.views.templates', name='templates'),
    url(r'^templates-new/$', 'ecm_core.views.templates_new', name='templates_new'),
    url(r'^templates-view/$', 'ecm_core.views.templates_view', name='templates_view'),
+   url(r'^templates-preview/(?P<usid>[\w-]+)/$', 'ecm_core.views.templates_preview', name='templates_preview'),
+   url(r'^templates-delete/(?P<usid>[\w-]+)/$', 'ecm_core.views.templates_delete', name='templates_delete'),
 
    url(r'^dummy/login_redirect$', 'ecm_core.views.dummy_login_redirect', name='dummy_login_redirect'),
 
 )
+
