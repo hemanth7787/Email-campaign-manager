@@ -120,7 +120,7 @@ function return_stats(catname,DIV_NO){
      
         $('#chart'+DIV_NO).bind('jqplotDataClick', 
             function (ev, seriesIndex, pointIndex, data) {
-                $('#info'+DIV_NO).html('<span class="label">'+full_ticks[pointIndex]+'</span>  '+data[0]);
+                $('#info'+DIV_NO).html('<span class="label">'+full_ticks[pointIndex]+'</span>  '+data[1]);
             }
         );
 
