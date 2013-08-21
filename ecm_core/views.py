@@ -26,6 +26,8 @@ from django.db.models import Count
 from django.core.urlresolvers import get_script_prefix
 import pdb
 import os
+from bs4 import BeautifulSoup
+from zipfile import ZipFile
 
 
 
@@ -92,6 +94,23 @@ def dummy_login_redirect(request):
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect
 def json_report(request):
+    '''TEST DATA -- SENDGRID Mimicry
+    json_obj=dict()
+    json_obj['requests']=1
+    json_obj['delivered']=2
+    json_obj['opens']=3
+    json_obj['unique_opens']=4
+    json_obj['clicks']=5
+    json_obj['unique_clicks']=6
+    json_obj['bounces']=7
+    json_obj['unsubscribes']=8
+    json_obj['repeat_unsubscribes']=9
+    json_obj['invalid_email']=10
+    json_obj['blocked']=11
+    json_obj['spam_drop']=12
+    json_obj['spamreports']=13
+    json_obj[unicode('status')] = unicode("success")
+    return HttpResponse(json.dumps(json_obj), content_type="application/json")'''
     response_data = dict()
     try:
         category=request.POST['category']
@@ -140,8 +159,7 @@ def templates(request):
 def home(request):
 	return render(request, "home.html")
 
-from bs4 import BeautifulSoup
-from zipfile import ZipFile
+
 def templates_new(request):
 	def adapt_template(path,obj,request):
 		fp = open(path+'/index.html','r')

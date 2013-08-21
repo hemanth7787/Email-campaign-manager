@@ -13,12 +13,14 @@
 {% block "body" %}
 {% for camp in camps %}
 <div class="span well">
-<P>Subject: {{camp.subject}}</p>
-            <p>Sender: {{camp.sender}}</p>
-            <p>Mailing lists: {{camp.mailing_list.all|join:","}}</p>
-            <p>Date: {{camp.date_created}}</p>
-            <p>Send: {{camp.status}}</p>
-<div id="{{forloop.counter}}"></div>
+<P><span class="label">Subject</span> {{camp.subject}}</p>
+            <p><span class="label">Sender</span> {{camp.sender}}</p>
+            <p><span class="label">Lists</span> {{camp.mailing_list.all|join:","}}</p>
+            <p><span class="label">Date</span> {{camp.date_created}}</p>
+            <p><span class="label">Send</span> {{camp.status}}</p>
+<div id="info{{forloop.counter}}"></div>
+<div id="chart{{forloop.counter}}"></div>
+
 </div> <!-- /container -->
 {% endfor %}
 
@@ -28,7 +30,13 @@
 {% block "scripts" %}
 
 <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}jqplot/jquery.jqplot.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+
+<script type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.barRenderer.min.js"></script>
+
+  <!--script class="include" type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.pieRenderer.min.js"></script -->
+  <script class="include" type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+  <script class="include" type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.pointLabels.min.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function(){
  //return_stats("JsonTest4-087da93d-1087-4746-8dd7-9995f3826c73","chart1");
@@ -39,7 +47,7 @@ return_stats("{{camp.category}}","{{forloop.counter}}");
 
 
 
-function return_stats(catname,DIV_ID){
+function return_stats(catname,DIV_NO){
 /* -- Ajax request--*/
  $.ajax({
      type:"POST",
@@ -68,7 +76,7 @@ function return_stats(catname,DIV_ID){
          clicks
          opens
          unique_opens
-                */
+                
       var data = [
         ['Delivered', json_obj['delivered']],['Bounces', json_obj['bounces']], ['Unsubscribes', json_obj['unsubscribes']], 
       ];
@@ -85,17 +93,40 @@ function return_stats(catname,DIV_ID){
           }, 
           legend: { show:true, location: 'e' }
         }
-      );
-    
+      );*/
 
+        $.jqplot.config.enablePlugins = true;
+        var s1 = [ json_obj['requests'], json_obj['delivered'], json_obj['opens'], json_obj['unique_opens'], json_obj['clicks'], json_obj['unique_clicks'], json_obj['bounces'], json_obj['unsubscribes'], json_obj['repeat_unsubscribes'], json_obj['invalid_email'], json_obj['blocked'], json_obj['spam_drop'], json_obj['spamreports'] ];
 
-         //$("#"+div_id).slideToggle();
-         //$("#"+div_id).html('<div class="alert alert-success">'+returned_data['status_message']+'</div>');
-         //$("#"+div_id).slideToggle();
-         //$("#tc_data_placeholder").data("voted_entry", div_id);
+        var ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces', 'Unsubscribe','Repeat unsub', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports'];
+
+        var full_ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces', 'Unsubscribes','Repeat Unsubscribes', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports'];
+        
+        plot1 = $.jqplot('chart'+DIV_NO, [s1], {
+            // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
+            animate: !$.jqplot.use_excanvas,
+            seriesDefaults:{
+                renderer:$.jqplot.BarRenderer,
+                pointLabels: { show: true }
+            },
+            axes: {
+                xaxis: {
+                    renderer: $.jqplot.CategoryAxisRenderer,
+                    ticks: ticks
+                }
+            },
+            highlighter: { show: false }
+        });
+     
+        $('#chart'+DIV_NO).bind('jqplotDataClick', 
+            function (ev, seriesIndex, pointIndex, data) {
+                $('#info'+DIV_NO).html('<span class="label">'+full_ticks[pointIndex]+'</span>  '+data[0]);
+            }
+        );
+
           return true;
             }
-            $(DIV_ID).html(json_obj['status']);
+            $('#info'+DIV_NO).html('<div class="alert alert-error">No info avaliable !</div>');
             return false;
          }
 
