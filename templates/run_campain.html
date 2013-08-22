@@ -7,18 +7,59 @@
             {% endblock %}
 
 {% block "body" %}
+<script type="text/javascript">
 
+function content_select(value){
+if (value == 'T')
+		{
+    	$('#id_html').hide();
+    	$("label[for='id_html']").hide();
+    	$('#id_template').show();
+    	$("label[for='id_template']").show();
+		}
+if (value == 'P')
+		{
+    	 $('#id_html').show();
+    	$("label[for='id_html']").show();
+    	$('#id_template').hide();
+    	$("label[for='id_template']").hide();
+		}
+if (value == 'W')
+		{
+    	 $('#id_html').show();
+    	$("label[for='id_html']").show();
+    	$('#id_template').hide();
+    	$("label[for='id_template']").hide();
+		}
+}
+
+
+</script>
     <div class="container">
       <form enctype="multipart/form-data" method="POST">
 		{% csrf_token %}
         <h2 class="form-signin-heading">Run Campaign</h2>
 		{{ cform}}
 <br>
-        <button class="btn btn-large btn-primary" type="submit">Save & Run </button>
+        <button class="btn btn-large btn-primary" type="submit">Save and Run </button>
       </form>
 
     </div> <!-- /container -->
 
 {% endblock %}
 
+
+{% block "scripts" %}
+<script type="text/javascript">
+$(document).ready(function(){
+$('#id_html').hide();
+    	$('#id_html').hide();
+    	$("label[for='id_html']").hide();
+    	$('#id_template').hide();
+    	$("label[for='id_template']").hide();
+
+});
+	
+</script>
+{% endblock %}
 

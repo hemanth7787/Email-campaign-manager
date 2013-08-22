@@ -23,11 +23,17 @@ class addcform(forms.Form):
 
 
 class ListBasketForm(forms.ModelForm): 
-    #mailing_list = forms.ChoiceField(widget=forms.CheckboxSelectMultiple, choices=[(x.id, x) for x in Mailing_list.objects.all()])
-    mailing_list = forms.ModelMultipleChoiceField(queryset=Mailing_list.objects.all(), widget=FilteredSelectMultiple("verbose name", is_stacked=False))
+    CHOICES = (('T', 'Template',),('P', 'Plain text',)) #,  ('W', 'Wysisyg editor',)
+    content_type = forms.ChoiceField(widget=forms.RadioSelect(
+    attrs={'onclick': 'content_select(value);'},)
+    , choices=CHOICES)
+    mailing_list = forms.ModelMultipleChoiceField(queryset=Mailing_list.objects.all())
+    template = forms.ModelChoiceField(queryset=mailtemplate.objects.all(),empty_label=None)
+    #html = forms.CharField(widget=forms.Textarea(attrs={'rows':'10', 'cols': '30'}))
+
     class Meta:
         model = campaign
-        fields = ('subject','sender','html','mailing_list',)
+        fields = ('subject','sender','content_type','template','html','mailing_list',)
 
 class mailtemplateform(forms.ModelForm): 
     class Meta:

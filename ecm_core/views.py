@@ -59,11 +59,20 @@ def run_campaign(request):
 	if request.method == "POST":
 		cform=ListBasketForm(request.POST,request.FILES)
 		if cform.is_valid():
+			content_type = request.POST['content_type']
+			if content_type == 'P':
+				pass
+			elif content_type == 'T':
+				temp=mailtemplate.objects.get(id=request.POST['template'])
+				cform.html=temp.html
+			elif content_type == 'W':
+				pass
 			#cid = request.POST['cat_id']
 			#send_id = request.POST['email_id']
 			#send_id='noreply@orange-mailer.net'
 			#subj = request.POST['subj']
 			#explode_mail(request.FILES['t_file'],cid,send_id,subj)
+			#pdb.set_trace()
 			obj = cform.save()
 			unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
 			#send_email(obj,unsubscribe_url)
