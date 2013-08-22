@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, render_to_response
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -30,68 +30,69 @@ from bs4 import BeautifulSoup
 from zipfile import ZipFile
 
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
 @login_required(login_url='/login')
 @csrf_protect
 def import_csv(request):
-	iform=Importform
-	if request.method == "POST":
-		iform=Importform(request.POST,request.FILES)
-		if iform.is_valid():
-			
-			name = request.POST['name']
-			#cid = request.POST['mailing_list']
-			mlist = Mailing_list(title = name)
-			mlist.save()
-			csv_file = iform.cleaned_data.get('csv_file')
-			#TODO handle_uploaded_file(csv_file,cid)
-			parse_csv(csv_file,mlist.id,ignore_errors=True)
-			status="updated"
-			messages.success(request,"Contacts imported successfully")
-			
-	return render(request,'import_csv.html',{'iform':iform ,})
+    iform=Importform
+    if request.method == "POST":
+        iform=Importform(request.POST,request.FILES)
+        if iform.is_valid():
+            
+            name = request.POST['name']
+            #cid = request.POST['mailing_list']
+            mlist = Mailing_list(title = name)
+            mlist.save()
+            csv_file = iform.cleaned_data.get('csv_file')
+            #TODO handle_uploaded_file(csv_file,cid)
+            parse_csv(csv_file,mlist.id,ignore_errors=True)
+            status="updated"
+            messages.success(request,"Contacts imported successfully")
+            
+    return render(request,'import_csv.html',{'iform':iform ,})
 
 
 @login_required(login_url='/login')
 @csrf_protect
 def run_campaign(request):
-	cform=ListBasketForm
-	if request.method == "POST":
-		cform=ListBasketForm(request.POST,request.FILES)
-		if cform.is_valid():
-			content_type = request.POST['content_type']
-			pro_campaign = cform.save(commit=False)
-			if content_type == 'P':
-				pass
-			elif content_type == 'T':
-				try:
-					temp=mailtemplate.objects.get(id=request.POST['template'])
-					pro_campaign.html=temp.html
-				except:
-					messages.error(request,"Please choose a template, or create a new one before submitting campaigns")
-					return render(request, "run_campain.html",{'cform':cform ,})
-			elif content_type == 'W':
-				pass
-			pro_campaign.save()
-			cform.save_m2m()  # PITFALL
-			#pdb.set_trace()
-			unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
-			#send_email(pro_campaign,unsubscribe_url)
-			celery_sendmail_task.delay(pro_campaign,unsubscribe_url)
-			messages.success(request,"Run campain successfull")
-	return render(request, "run_campain.html",{'cform':cform ,})
+    cform=ListBasketForm
+    if request.method == "POST":
+        cform=ListBasketForm(request.POST,request.FILES)
+        if cform.is_valid():
+            content_type = request.POST['content_type']
+            pro_campaign = cform.save(commit=False)
+            if content_type == 'P':
+                pass
+            elif content_type == 'T':
+                try:
+                    temp=mailtemplate.objects.get(id=request.POST['template'])
+                    pro_campaign.html=temp.html
+                except:
+                    messages.error(request,"Please choose a template, or create a new one before submitting campaigns")
+                    return render(request, "run_campain.html",{'cform':cform ,})
+            elif content_type == 'W':
+                pass
+            pro_campaign.save()
+            cform.save_m2m()  # PITFALL
+            #pdb.set_trace()
+            unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
+            #send_email(pro_campaign,unsubscribe_url)
+            celery_sendmail_task.delay(pro_campaign,unsubscribe_url)
+            messages.success(request,"Run campain successfull")
+    return render(request, "run_campain.html",{'cform':cform ,})
 
 def unsubscribe(request,usid):
-	if not usid=='nill':
-		try:
-			contact=Mail_address.objects.get(uid=usid)
-			contact.subscribed=False
-			contact.save()
-		except:
-			pass
-	return HttpResponse("<h2>You have successfully unsubscribed from our mailing list.</h2>", content_type="text/html")
+    if not usid=='nill':
+        try:
+            contact=Mail_address.objects.get(uid=usid)
+            contact.subscribed=False
+            contact.save()
+        except:
+            pass
+    return HttpResponse("<h2>You have successfully unsubscribed from our mailing list.</h2>", content_type="text/html")
 
 @login_required(login_url='/login')
 @csrf_protect
@@ -147,97 +148,109 @@ def json_report(request):
 @login_required(login_url='/login')
 @csrf_protect
 def campaign(request):
-	return render(request, "campaign.html")
+    return render(request, "campaign.html")
 
 def view_campaign(request):
-	camps = modelcampaign.objects.all()
-	return render(request, "view_campaign.html",{'camps':camps})
+    camps = modelcampaign.objects.all()
+    return render(request, "view_campaign.html",{'camps':camps})
 
 def contacts(request):
-	return render(request, "contacts.html")
+    return render(request, "contacts.html")
 
 def contacts_view(request):
-	maddr = Mail_address.objects.all()
-	return render(request, "contacts_view.html",{'contacts':maddr})
+    contacts = Mail_address.objects.all()
+    paginator = Paginator(contacts, 20)
+    page = request.GET.get('page')
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        contacts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        contacts = paginator.page(paginator.num_pages)
+
+    #return render_to_response(request,'contacts_view.html', {"contacts": maddr})
+    return render(request, "contacts_view.html",{'contacts':contacts})
 
 
 def contacts_statistics(request):
-	mlist = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
-	return render(request, "contact_statistics.html",{'mailing_list':mlist})
+    mlist = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
+    return render(request, "contact_statistics.html",{'mailing_list':mlist})
 
 def templates(request):
-	return render(request, "templates.html")
+    return render(request, "templates.html")
 
 def home(request):
-	return render(request, "home.html")
+    return render(request, "home.html")
 
 
 def templates_new(request):
-	def adapt_template(path,obj,request):
-		fp = open(path+'/index.html','r')
-		original_html = fp.read()
-		soup  = BeautifulSoup(original_html)
-		asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
-		for link in soup.find_all('img'):
-			link['src']=link['src'].replace("images",asseturl)
-		obj.html=str(soup)
-		obj.save()
-		#pdb.set_trace()
-	def process_zip(obj,request):
-		path=str("media/extracted/"+obj.uuid+"/")
-		with ZipFile(obj.zipfile, 'r') as myzip:
-			myzip.extractall(path)
-			adapt_template(path,obj,request)
-	form=mailtemplateform
-	if request.method == "POST":
-		form=mailtemplateform(request.POST,request.FILES)
-		if form.is_valid():
-			#cid = request.POST['cat_id']
-			#send_id = request.POST['email_id']
-			#send_id='noreply@orange-mailer.net'
-			#subj = request.POST['subj']
-			obj = form.save()
-			process_zip(obj,request)
-			messages.success(request,"Email template saved successfully")
-	return render(request, "templates_new.html",{'form':form})
+    def adapt_template(path,obj,request):
+        fp = open(path+'/index.html','r')
+        original_html = fp.read()
+        soup  = BeautifulSoup(original_html)
+        asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
+        for link in soup.find_all('img'):
+            link['src']=link['src'].replace("images",asseturl)
+        obj.html=str(soup)
+        obj.save()
+        #pdb.set_trace()
+    def process_zip(obj,request):
+        path=str("media/extracted/"+obj.uuid+"/")
+        with ZipFile(obj.zipfile, 'r') as myzip:
+            myzip.extractall(path)
+            adapt_template(path,obj,request)
+    form=mailtemplateform
+    if request.method == "POST":
+        form=mailtemplateform(request.POST,request.FILES)
+        if form.is_valid():
+            #cid = request.POST['cat_id']
+            #send_id = request.POST['email_id']
+            #send_id='noreply@orange-mailer.net'
+            #subj = request.POST['subj']
+            obj = form.save()
+            process_zip(obj,request)
+            messages.success(request,"Email template saved successfully")
+    return render(request, "templates_new.html",{'form':form})
 
 def templates_view(request):
-	qset = mailtemplate.objects.all()
-	return render(request, "templates_view.html",{'mailtemplate':qset})
+    qset = mailtemplate.objects.all()
+    return render(request, "templates_view.html",{'mailtemplate':qset})
 
 def templates_preview(request,usid):
-	if not usid=='nill':
-		try:
-			temp=mailtemplate.objects.get(id=usid)
-			htm = temp.html
-		except Exception, e:
-			#logger.error(" Details :  {0} ".format(e))
-			return HttpResponse("<h2>Error : Not a valid template .. !</h2>", content_type="text/html")
-	return HttpResponse(htm, content_type="text/html")
+    if not usid=='nill':
+        try:
+            temp=mailtemplate.objects.get(id=usid)
+            htm = temp.html
+        except Exception, e:
+            #logger.error(" Details :  {0} ".format(e))
+            return HttpResponse("<h2>Error : Not a valid template .. !</h2>", content_type="text/html")
+    return HttpResponse(htm, content_type="text/html")
 
 def templates_delete(request,usid):
-	if not usid=='nill':
-		try:
-			temp=mailtemplate.objects.get(id=usid)
-			temp.delete()
-		except Exception, e:
-			#logger.error(" Details :  {0} ".format(e))
-			return HttpResponse("<h2>Error : Could not delete .. !</h2>", content_type="text/html")
-	return redirect("/ecm/templates-view/")
+    if not usid=='nill':
+        try:
+            temp=mailtemplate.objects.get(id=usid)
+            temp.delete()
+        except Exception, e:
+            #logger.error(" Details :  {0} ".format(e))
+            return HttpResponse("<h2>Error : Could not delete .. !</h2>", content_type="text/html")
+    return redirect("/ecm/templates-view/")
 
 def dummy(request):
-	return HttpResponse("<h2>Coming soon .. !</h2>", content_type="text/html")
+    return HttpResponse("<h2>Coming soon .. !</h2>", content_type="text/html")
 
 
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect
 def contacts_search(request):
-	squery=request.POST['query']
-	results = Mail_address.objects.filter(Q(name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
-	if not results:
-		return HttpResponse("<p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
-	#pdb.set_trace()
-	return render(request, "snippets/contacts_search.html",{'contacts':results})
+    squery=request.POST['query']
+    results = Mail_address.objects.filter(Q(name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
+    if not results:
+        return HttpResponse("<p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
+    #pdb.set_trace()
+    return render(request, "snippets/contacts_search.html",{'contacts':results})
 
 
 
@@ -250,26 +263,26 @@ def contacts_search(request):
 
 @csrf_protect
 def login(request):
-	pagename='login'
-	authentication_form=AuthenticationForm
-	if request.method == "POST":
-		form = authentication_form(data=request.POST)
-		if form.is_valid():
-			auth_login(request, form.get_user())
-			if request.session.test_cookie_worked():
-				request.session.delete_test_cookie()
-			context = {
-				'user': request.user,
-				}
-			messages.info(request,"Welcome "+request.user.username+" .")
-			return HttpResponseRedirect('/')
-	else:
-		form = authentication_form(request)
-	context = {
-			'form': form,
-			'pagename':pagename
-			}
-	return render(request, 'registration/login.html', context)
+    pagename='login'
+    authentication_form=AuthenticationForm
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+            context = {
+                'user': request.user,
+                }
+            messages.info(request,"Welcome "+request.user.username+" .")
+            return HttpResponseRedirect('/')
+    else:
+        form = authentication_form(request)
+    context = {
+            'form': form,
+            'pagename':pagename
+            }
+    return render(request, 'registration/login.html', context)
 
 
 def logout(request):
@@ -285,60 +298,60 @@ def logout(request):
 '''@login_required(login_url='/login')
 @csrf_protect
 def run_campain(request):
-	categories=Categories.objects.all()
-	cform=campainform
-	status="notset"
-	if request.method == "POST":
-		cform=campainform(request.POST,request.FILES)
-		if cform.is_valid():
-			cid = request.POST['cat_id']
-			#send_id = request.POST['email_id']
-			send_id='noreply@orange-mailer.net'
-			subj = request.POST['subj']
-			explode_mail(request.FILES['t_file'],cid,send_id,subj)
-			status="updated"
-			messages.success(request,"Run campain successfull")
-	return render(request, "run_campain.html",{'cform':cform ,'categories':categories, 'status' : status})
+    categories=Categories.objects.all()
+    cform=campainform
+    status="notset"
+    if request.method == "POST":
+        cform=campainform(request.POST,request.FILES)
+        if cform.is_valid():
+            cid = request.POST['cat_id']
+            #send_id = request.POST['email_id']
+            send_id='noreply@orange-mailer.net'
+            subj = request.POST['subj']
+            explode_mail(request.FILES['t_file'],cid,send_id,subj)
+            status="updated"
+            messages.success(request,"Run campain successfull")
+    return render(request, "run_campain.html",{'cform':cform ,'categories':categories, 'status' : status})
 
 def home(request):
-	return render(request, "home.html")
+    return render(request, "home.html")
 
 @login_required(login_url='/login')
 @csrf_protect
 def category(request):
-	add_cat_form=addcform
-	status="notset"
-	categories=Categories.objects.all()
-	return render(request, "category.html",{'status':status,'categories':categories,'add_cat_form':add_cat_form})
+    add_cat_form=addcform
+    status="notset"
+    categories=Categories.objects.all()
+    return render(request, "category.html",{'status':status,'categories':categories,'add_cat_form':add_cat_form})
 
 @login_required(login_url='/login')
 @csrf_protect
 def delete_cat(request):
-	status="notset"
-	if request.method == "POST":
-		to_delete = request.POST['del_id']
-		cats=Categories.objects.get(id=to_delete)
-		cats.delete()
-		status='deleted'
-		messages.warning(request,"Successfully Deleted")
-	return redirect('/category')
+    status="notset"
+    if request.method == "POST":
+        to_delete = request.POST['del_id']
+        cats=Categories.objects.get(id=to_delete)
+        cats.delete()
+        status='deleted'
+        messages.warning(request,"Successfully Deleted")
+    return redirect('/category')
 
 @login_required(login_url='/login')
 @csrf_protect
 def add_cat(request):
-	status="notset"
-	if request.method == "POST":
-		to_add = request.POST['cat_name']
-		boll=Categories.objects.filter(cname=to_add).exists()
-		if boll:
-			messages.error(request,"Error - Category already exists")
-		else:		
-			cats=Categories()
-			cats.cname=to_add
-			cats.save()
-			status='saved'
-			messages.success(request,"Successfully saved")
-		
-	return redirect('/category')'''
-	
+    status="notset"
+    if request.method == "POST":
+        to_add = request.POST['cat_name']
+        boll=Categories.objects.filter(cname=to_add).exists()
+        if boll:
+            messages.error(request,"Error - Category already exists")
+        else:       
+            cats=Categories()
+            cats.cname=to_add
+            cats.save()
+            status='saved'
+            messages.success(request,"Successfully saved")
+        
+    return redirect('/category')'''
+    
 
