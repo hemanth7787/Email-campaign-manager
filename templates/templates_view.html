@@ -18,6 +18,7 @@
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" >
 {% endthumbnail %}
 <a style="margin-left:15px" href="{% url "templates_preview" usid=mt.id %}" target="_blank" class="btn btn-primary">Preview</a> 
+<a style="margin-left:15px" href="{{ MEDIA_URL }}{{mt.zipfile}}" target="_blank" class="btn btn-primary">Download</a> 
 <a style="margin-left:15px" href="{% url "templates_delete" usid=mt.id %}" class="btn btn-danger">Delete</a> 
             </div>
             {% endfor %}
