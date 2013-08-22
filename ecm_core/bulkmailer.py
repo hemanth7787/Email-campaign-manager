@@ -21,29 +21,29 @@ import json
 #from django.core.mail import EmailMultiAlternatives
 
 def send_email(obj,unsubscribe_url):
-	#pdb.set_trace()
-	subj=str(obj.subject)
-	html=str(obj.html)
-	sender = str(obj.sender)
-	for mlist in obj.mailing_list.all():
-		#logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
-		to_list = Mail_address.objects.filter(mail_list=mlist)
-		#simple_email(sender,subj,html,to_list,unsubscribe_url)
+    #pdb.set_trace()
+    subj=str(obj.subject)
+    html=str(obj.html)
+    sender = str(obj.sender)
+    for mlist in obj.mailing_list.all():
+        #logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
+        to_list = Mail_address.objects.filter(mail_list=mlist)
+        #simple_email(sender,subj,html,to_list,unsubscribe_url)
         tracked_email(obj,to_list,unsubscribe_url)
 
 def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
-	for mobj in mail_addr_obj:
-		if mobj.subscribed:
-			uslink=unsubscribe_url+mobj.uid+"/"
-			uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
-			try:
-				mail_body = html.format(unsubscribe=uslink_append)
-			except:
-				mail_body = html
-			#pdb.set_trace()
-			msg = EmailMultiAlternatives(subject, "", sender, [mobj.mail_id] )
-			msg.attach_alternative(mail_body, "text/html")
-			msg.send()
+    for mobj in mail_addr_obj:
+        if mobj.subscribed:
+            uslink=unsubscribe_url+mobj.uid+"/"
+            uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
+            try:
+                mail_body = html.format(unsubscribe=uslink_append)
+            except:
+                mail_body = html
+            #pdb.set_trace()
+            msg = EmailMultiAlternatives(subject, "", sender, [mobj.mail_id] )
+            msg.attach_alternative(mail_body, "text/html")
+            msg.send()
 
 def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
     subj = str(campaign_obj.subject)
@@ -68,20 +68,20 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
             msg.send()
 
 '''def explode_mail(f,cid,sid,subject):
-	template=f.read()
-	
-	#TODO: Remove below hardcoded sender email and use from_email=str(sid)
-	from_email='noreply@orange-mailer.net'
-	text_content = ''
-	#Repto='Reply-To: hemanth7787@gmail.com'
-	html_content = template
-	inbox_list=Mail_address.objects.filter(cid=cid)
-	for target_inbox in inbox_list:
-		to = str(target_inbox.mid)
-		msg = EmailMultiAlternatives(subject, text_content, from_email,[to])
-		#msg.headers= {'reply-to','hemanth@success.com'}
-		msg.attach_alternative(html_content, "text/html")	
-		msg.send()'''
+    template=f.read()
+    
+    #TODO: Remove below hardcoded sender email and use from_email=str(sid)
+    from_email='noreply@orange-mailer.net'
+    text_content = ''
+    #Repto='Reply-To: hemanth7787@gmail.com'
+    html_content = template
+    inbox_list=Mail_address.objects.filter(cid=cid)
+    for target_inbox in inbox_list:
+        to = str(target_inbox.mid)
+        msg = EmailMultiAlternatives(subject, text_content, from_email,[to])
+        #msg.headers= {'reply-to','hemanth@success.com'}
+        msg.attach_alternative(html_content, "text/html")   
+        msg.send()'''
 
 def check_email(email, ignore_errors=False):
     if settings.DEBUG:

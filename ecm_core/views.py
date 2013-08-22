@@ -60,23 +60,24 @@ def run_campaign(request):
 		cform=ListBasketForm(request.POST,request.FILES)
 		if cform.is_valid():
 			content_type = request.POST['content_type']
+			pro_campaign = cform.save(commit=False)
 			if content_type == 'P':
 				pass
 			elif content_type == 'T':
-				temp=mailtemplate.objects.get(id=request.POST['template'])
-				cform.html=temp.html
+				try:
+					temp=mailtemplate.objects.get(id=request.POST['template'])
+					pro_campaign.html=temp.html
+				except:
+					messages.error(request,"Please choose a template, or create a new one before submitting campaigns")
+					return render(request, "run_campain.html",{'cform':cform ,})
 			elif content_type == 'W':
 				pass
-			#cid = request.POST['cat_id']
-			#send_id = request.POST['email_id']
-			#send_id='noreply@orange-mailer.net'
-			#subj = request.POST['subj']
-			#explode_mail(request.FILES['t_file'],cid,send_id,subj)
+			pro_campaign.save()
+			cform.save_m2m()  # PITFALL
 			#pdb.set_trace()
-			obj = cform.save()
 			unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
-			#send_email(obj,unsubscribe_url)
-			celery_sendmail_task.delay(obj,unsubscribe_url)
+			#send_email(pro_campaign,unsubscribe_url)
+			celery_sendmail_task.delay(pro_campaign,unsubscribe_url)
 			messages.success(request,"Run campain successfull")
 	return render(request, "run_campain.html",{'cform':cform ,})
 
