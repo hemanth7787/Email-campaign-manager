@@ -15,6 +15,7 @@ urlpatterns = patterns('',
    url(r'^run-campaign/$', 'ecm_core.views.run_campaign', name='run_campaign'),
    url(r'^campaign-report/$', 'ecm_core.views.campaign_report', name='report'),
 
+
    url(r'^getreport/$', 'ecm_core.views.json_report', name='get_json_report'),
 
    url(r'^templates/$', 'ecm_core.views.templates', name='templates'),

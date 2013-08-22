@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecm_core',
+    'ecm_track',
     'django.contrib.admin',
     'south',
     'djcelery',

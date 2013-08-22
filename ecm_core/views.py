@@ -79,8 +79,10 @@ def run_campaign(request):
             cform.save_m2m()  # PITFALL
             #pdb.set_trace()
             unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
-            #send_email(pro_campaign,unsubscribe_url)
-            celery_sendmail_task.delay(pro_campaign,unsubscribe_url)
+            ecm_host = request.META['HTTP_ORIGIN']
+            #pdb.set_trace()
+            #send_email(pro_campaign,unsubscribe_url,ecm_host)
+            celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host)
             messages.success(request,"Run campain successfull")
     return render(request, "run_campain.html",{'cform':cform ,})
 
@@ -254,13 +256,6 @@ def contacts_search(request):
 
 
 
-
-
-
-
-
-
-
 @csrf_protect
 def login(request):
     pagename='login'
@@ -292,66 +287,4 @@ def logout(request):
     pagename='logout'
     auth_logout(request)
     return render(request, 'registration/logout.html',{'pagename':pagename})
-
-#-------------------------------------------------------------------------------------
-
-'''@login_required(login_url='/login')
-@csrf_protect
-def run_campain(request):
-    categories=Categories.objects.all()
-    cform=campainform
-    status="notset"
-    if request.method == "POST":
-        cform=campainform(request.POST,request.FILES)
-        if cform.is_valid():
-            cid = request.POST['cat_id']
-            #send_id = request.POST['email_id']
-            send_id='noreply@orange-mailer.net'
-            subj = request.POST['subj']
-            explode_mail(request.FILES['t_file'],cid,send_id,subj)
-            status="updated"
-            messages.success(request,"Run campain successfull")
-    return render(request, "run_campain.html",{'cform':cform ,'categories':categories, 'status' : status})
-
-def home(request):
-    return render(request, "home.html")
-
-@login_required(login_url='/login')
-@csrf_protect
-def category(request):
-    add_cat_form=addcform
-    status="notset"
-    categories=Categories.objects.all()
-    return render(request, "category.html",{'status':status,'categories':categories,'add_cat_form':add_cat_form})
-
-@login_required(login_url='/login')
-@csrf_protect
-def delete_cat(request):
-    status="notset"
-    if request.method == "POST":
-        to_delete = request.POST['del_id']
-        cats=Categories.objects.get(id=to_delete)
-        cats.delete()
-        status='deleted'
-        messages.warning(request,"Successfully Deleted")
-    return redirect('/category')
-
-@login_required(login_url='/login')
-@csrf_protect
-def add_cat(request):
-    status="notset"
-    if request.method == "POST":
-        to_add = request.POST['cat_name']
-        boll=Categories.objects.filter(cname=to_add).exists()
-        if boll:
-            messages.error(request,"Error - Category already exists")
-        else:       
-            cats=Categories()
-            cats.cname=to_add
-            cats.save()
-            status='saved'
-            messages.success(request,"Successfully saved")
-        
-    return redirect('/category')'''
-    
 

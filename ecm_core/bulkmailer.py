@@ -18,9 +18,10 @@ import pdb
 
 import SmtpApiHeader #local file
 import json
+from ecm_track.TrackHelper import TrackCode
 #from django.core.mail import EmailMultiAlternatives
 
-def send_email(obj,unsubscribe_url):
+def send_email(obj,unsubscribe_url,host):
     #pdb.set_trace()
     subj=str(obj.subject)
     html=str(obj.html)
@@ -29,7 +30,7 @@ def send_email(obj,unsubscribe_url):
         #logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
         to_list = Mail_address.objects.filter(mail_list=mlist)
         #simple_email(sender,subj,html,to_list,unsubscribe_url)
-        tracked_email(obj,to_list,unsubscribe_url)
+        tracked_email(obj,to_list,unsubscribe_url,host)
 
 def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
     for mobj in mail_addr_obj:
@@ -45,7 +46,7 @@ def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
             msg.attach_alternative(mail_body, "text/html")
             msg.send()
 
-def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
+def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     subj = str(campaign_obj.subject)
     html = str(campaign_obj.html)
     sender = str(campaign_obj.sender)
@@ -63,6 +64,9 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url):
             except:
                 mail_body = html
             #pdb.set_trace()
+            track_code= TrackCode(host,mobj,uuid)
+            #pdb.set_trace()
+            mail_body+=track_code
             msg = EmailMultiAlternatives(subj, "", sender, [mobj.mail_id], headers={"X-SMTPAPI": hdr.asJSON()})
             msg.attach_alternative(mail_body, "text/html")
             msg.send()
