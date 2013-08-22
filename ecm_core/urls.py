@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
    url(r'^contacts/$', 'ecm_core.views.contacts', name='contacts'),
    url(r'^contacts-view/$', 'ecm_core.views.contacts_view', name='contacts_view'),
+   url(r'^contacts-search/$', 'ecm_core.views.contacts_search', name='contacts_search'),
    url(r'^import/$', 'ecm_core.views.import_csv', name='import_csv'),
    url(r'^statistics/$', 'ecm_core.views.contacts_statistics', name='contacts_statistics'),
 

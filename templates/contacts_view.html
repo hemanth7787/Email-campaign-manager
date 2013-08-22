@@ -7,8 +7,16 @@
             {% endblock %}
 
 {% block "body" %}
-          <div class="row-fluid">
 
+
+
+
+
+<div class="breadcrumb">
+  <input id="key" type="text" class="input-medium search-query">
+  <button id="csearch" class="btn">Search</button></div>
+
+<div id="contacts" class="row-fluid">
 <table class="table table-bordered" id="sortTableExample">
         <thead>
           <tr>
@@ -42,3 +50,38 @@
      
 
           {% endblock %}
+
+{% block "scripts" %}
+<script type="text/javascript">
+
+$(selector).keyup(function() {
+  var textValue = $(this).val();
+  DoX();
+});
+
+$(document).ready(function(){
+  $("#csearch").click(function(){
+    $("#contacts").hide()
+    key = $('#key').val();
+    $.ajax({
+     type:"POST",
+     url:"{% url "contacts_search" %}",
+     data: {
+             query         : key, 
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+     },
+     success: function(html){
+
+         
+           $("#contacts").html(html);
+           $("#contacts").show()
+           
+       }
+     });
+
+
+    });
+});
+  
+</script>
+{% endblock %}

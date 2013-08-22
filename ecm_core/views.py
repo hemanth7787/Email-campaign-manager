@@ -29,6 +29,8 @@ import os
 from bs4 import BeautifulSoup
 from zipfile import ZipFile
 
+from django.db.models import Q
+
 
 
 @login_required(login_url='/login')
@@ -227,7 +229,15 @@ def dummy(request):
 	return HttpResponse("<h2>Coming soon .. !</h2>", content_type="text/html")
 
 
-
+@login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
+@csrf_protect
+def contacts_search(request):
+	squery=request.POST['query']
+	results = Mail_address.objects.filter(Q(name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
+	if not results:
+		return HttpResponse("<p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
+	#pdb.set_trace()
+	return render(request, "snippets/contacts_search.html",{'contacts':results})
 
 
 
@@ -269,6 +279,7 @@ def logout(request):
     pagename='logout'
     auth_logout(request)
     return render(request, 'registration/logout.html',{'pagename':pagename})
+
 #-------------------------------------------------------------------------------------
 
 '''@login_required(login_url='/login')
