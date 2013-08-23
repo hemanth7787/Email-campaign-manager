@@ -41,4 +41,4 @@ class mailtemplateform(forms.ModelForm):
         fields = ('name','thumbnail','zipfile')
 
 class campselectform(forms.Form):
-    campaign = forms.ModelChoiceField(queryset=campaign.objects.all(),empty_label=None)
+    campaign = forms.ModelChoiceField(queryset=campaign.objects.all().order_by("-date_created"),empty_label=None)
