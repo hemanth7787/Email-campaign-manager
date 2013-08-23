@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block head_title %} Login {% endblock %}
+{% block head_title %} Campaign -- Reports {% endblock %}
 
 {% block head %}
 <link href="{{ STATIC_URL }}jqplot/jquery.jqplot.min.css" rel="stylesheet"> 
@@ -11,8 +11,10 @@
             
 
 {% block "body" %}
+{% include "snippets/pagination.html" with item=camps %}
 {% for camp in camps %}
-<div class="span well">
+
+<div class="well">
 <P><span class="label">Subject</span> {{camp.subject}}</p>
             <p><span class="label">Sender</span> {{camp.sender}}</p>
             <p><span class="label">Lists</span> {{camp.mailing_list.all|join:","}}</p>

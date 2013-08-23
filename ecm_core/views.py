@@ -99,9 +99,19 @@ def unsubscribe(request,usid):
 @login_required(login_url='/login')
 @csrf_protect
 def campaign_report(request):
-    camps = modelcampaign.objects.filter(status = True)
+    camps = modelcampaign.objects.filter(status = True).order_by("-date_created")
+    paginator = Paginator(camps, 5)
+    page = request.GET.get('page')
+    try:
+        camps_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        camps_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        camps_list = paginator.page(paginator.num_pages)
     #pdb.set_trace()
-    return render(request, "campain_report.html",{'camps':camps,})
+    return render(request, "campain_report.html",{'camps':camps_list,})
 
 def dummy_login_redirect(request):
     return HttpResponse(json.dumps({'status':'login_err'}), content_type="application/json")
@@ -154,14 +164,24 @@ def campaign(request):
 
 def view_campaign(request):
     camps = modelcampaign.objects.all()
-    return render(request, "view_campaign.html",{'camps':camps})
+    paginator = Paginator(camps, 10)
+    page = request.GET.get('page')
+    try:
+        camps_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        camps_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        camps_list = paginator.page(paginator.num_pages)
+    return render(request, "view_campaign.html",{'camps':camps_list})
 
 def contacts(request):
     return render(request, "contacts.html")
 
 def contacts_view(request):
-    contacts = Mail_address.objects.all()
-    paginator = Paginator(contacts, 20)
+    contacts_list = Mail_address.objects.all()
+    paginator = Paginator(contacts_list, 10)
     page = request.GET.get('page')
     try:
         contacts = paginator.page(page)
@@ -177,8 +197,16 @@ def contacts_view(request):
 
 
 def contacts_statistics(request):
-    mlist = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
-    return render(request, "contact_statistics.html",{'mailing_list':mlist})
+    mlist_obj = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
+    paginator = Paginator(mlist_obj, 10)
+    page = request.GET.get('page')
+    try:
+        mlist = paginator.page(page)
+    except PageNotAnInteger:
+        mlist = paginator.page(1)
+    except EmptyPage:
+        mlist = paginator.page(paginator.num_pages)
+    return render(request, "contact_statistics.html" ,{'mailing_list' : mlist })
 
 def templates(request):
     return render(request, "templates.html")
@@ -218,7 +246,15 @@ def templates_new(request):
 
 def templates_view(request):
     qset = mailtemplate.objects.all()
-    return render(request, "templates_view.html",{'mailtemplate':qset})
+    paginator = Paginator(qset, 10)
+    page = request.GET.get('page')
+    try:
+        qset_modified = paginator.page(page)
+    except PageNotAnInteger:
+        qset_modified = paginator.page(1)
+    except EmptyPage:
+        qset_modified = paginator.page(paginator.num_pages)
+    return render(request, "templates_view.html",{'mailtemplate':qset_modified})
 
 def templates_preview(request,usid):
     if not usid=='nill':

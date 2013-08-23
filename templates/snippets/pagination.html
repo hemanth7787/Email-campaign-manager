@@ -1,0 +1,15 @@
+<div class="well pagination">
+    <span class="step-links">
+        {% if item.has_previous %}
+            <a href="?page={{ item.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ item.number }} of {{ item.paginator.num_pages }}.
+        </span>
+
+        {% if item.has_next %}
+            <a href="?page={{ item.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>

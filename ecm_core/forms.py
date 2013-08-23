@@ -39,3 +39,6 @@ class mailtemplateform(forms.ModelForm):
     class Meta:
         model = mailtemplate
         fields = ('name','thumbnail','zipfile')
+
+class campselectform(forms.Form):
+    campaign = forms.ModelChoiceField(queryset=campaign.objects.all(),empty_label=None)

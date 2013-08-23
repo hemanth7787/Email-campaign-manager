@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block head_title %} Login {% endblock %}
+{% block head_title %} Import Contacts {% endblock %}
 
 {% block menulist %}
 {% include "snippets/contacts_menu_snippet.html" with page='importcsv' %}
@@ -8,11 +8,11 @@
 
 {% block "body" %}
 
-<div class="hero-unit">
+<div class="well">
  <form  enctype="multipart/form-data" method="post" action="">
 	{% csrf_token %}
         <h2 class="form-signin-heading">Import contacts</h2>
-         <p>( you can use standard CSV file for example <a href="{{STATIC_URL}}assets/sample.csv">sample.csv</a> )</p>
+         <p>( you can use standard CSV file, for example <a href="{{STATIC_URL}}assets/sample.csv">sample.csv</a> )</p>
 		{{iform}}
 		<br>
 		<button class="btn btn-large btn-primary" type="submit">Save </button>

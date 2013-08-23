@@ -12,7 +12,7 @@
 
 
 
-<div class="breadcrumb">
+<div class="well">
   <input id="key" type="text" class="input-medium search-query">
   <button id="csearch" class="btn">Search</button></div>
 
@@ -48,21 +48,8 @@
 
           </div>
 
-          <div class="pagination">
-    <span class="step-links">
-        {% if contacts.has_previous %}
-            <a href="?page={{ contacts.previous_page_number }}">previous</a>
-        {% endif %}
+          {% include "snippets/pagination.html" with item=contacts %}
 
-        <span class="current">
-            Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
-        </span>
-
-        {% if contacts.has_next %}
-            <a href="?page={{ contacts.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
      
 
           {% endblock %}

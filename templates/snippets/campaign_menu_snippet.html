@@ -10,4 +10,7 @@
               <li {% if page == 'report' %}class="active"{% endif %}>
                 <a href="{% url "report" %}">Report</a>
               </li>
+              <li {% if page == 'hits' %}class="active"{% endif %}>
+                <a href="{% url "hits" usid="default" %}">Open Tracking</a>
+              </li>
             </ul>

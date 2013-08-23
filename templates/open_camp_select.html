@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head_title %} Open tracking {% endblock %}
+
+{% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='hits' %}
+            {% endblock %}
+
+{% block "body" %}
+
+<div class="well">
+ <form  enctype="multipart/form-data" method="post" action="">
+  {% csrf_token %}
+
+         <p>Select campaign to track</p>
+    {{form}}
+    <br>
+    <button class="btn  btn-primary" type="submit">Track opens </button>
+</form>
+</div> <!-- /container -->
+          {% endblock %}
+

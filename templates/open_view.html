@@ -1,32 +1,40 @@
 {% extends "base.html" %}
 
-{% block head_title %} Contacts -- Mailing lists {% endblock %}
+{% block head_title %} Open tracking {% endblock %}
 
 {% block menulist %}
-{% include "snippets/contacts_menu_snippet.html" with page='contactsstatistics' %}
+{% include "snippets/campaign_menu_snippet.html" with page='hits' %}
             {% endblock %}
 
 {% block "body" %}
-{% include "snippets/pagination.html" with item=mailing_list %}
 
-          <div class="row-fluid">
 
+
+
+
+
+{% include "snippets/pagination.html" with item=hits %}
+
+<div id="contacts" class="row-fluid">
 <table class="table table-bordered" id="sortTableExample">
         <thead>
           <tr>
             <th class="header">#</th>
             <th class="yellow header headerSortDown">Name</th>
-            <th class="yellow header headerSortDown">Contacts</th>
+            <th class="blue header">Email</th>
+ 
           </tr>
         </thead>
         <tbody>
-
+          
+          
+          
         <tr>
             
-            {% for item in mailing_list  %}
+            {% for contact in hits  %}
             <td>{{forloop.counter}}</td>
-            <td>{{item.title}}</td>
-            <td>{{item.addrcount}}</td>
+            <td>{{contact.name}}</td>
+            <td>{{contact.mail_id}}</td>
           </tr>
           {% endfor %}
 
@@ -35,6 +43,9 @@
       </table>
 
           </div>
+
+          
      
 
           {% endblock %}
+

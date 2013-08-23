@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 
-{% block head_title %} Contacts {% endblock %}
+{% block head_title %} View Templates {% endblock %}
 
  {% block menulist %}
  {% include "snippets/template_menu_snippet.html" with page='view' %}
              {% endblock %}
 
 {% block "body" %}
+{% include "snippets/pagination.html" with item=mailtemplate %}
           <div class="row-fluid">
 
              
