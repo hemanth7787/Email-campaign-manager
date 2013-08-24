@@ -22,14 +22,12 @@ from django.utils.encoding import iri_to_uri
 import logging
 logger = logging.getLogger("ecm_console")
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core.urlresolvers import get_script_prefix
 import pdb
 import os
 from bs4 import BeautifulSoup
 from zipfile import ZipFile
-
-from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -42,15 +40,18 @@ def import_csv(request):
         iform=Importform(request.POST,request.FILES)
         if iform.is_valid():
             
-            name = request.POST['name']
-            #cid = request.POST['mailing_list']
-            mlist = Mailing_list(title = name)
-            mlist.save()
-            csv_file = iform.cleaned_data.get('csv_file')
-            #TODO handle_uploaded_file(csv_file,cid)
-            parse_csv(csv_file,mlist.id,ignore_errors=True)
-            status="updated"
-            messages.success(request,"Contacts imported successfully")
+            try:
+                name = request.POST['name']
+                mlist = Mailing_list(title = name)
+                mlist.save()
+                csv_file = iform.cleaned_data.get('csv_file')
+                parse_csv(csv_file,mlist.id,ignore_errors=True)
+                status="updated"
+                messages.success(request,"Contacts imported successfully")
+            except Exception, e:
+                logger.error("Import CSV Error | Details :  {0} ".format(e))
+                messages.error(request,"Import failed, wrong CSV format..! ")
+
             
     return render(request,'import_csv.html',{'iform':iform ,})
 
@@ -151,7 +152,7 @@ def json_report(request):
     try:
         response_data = json.load(urllib2.urlopen(encodedurl))[0] # This should be a dict
         response_data[unicode('status')] = unicode("success")
-    except urllib2.HTTPError, e:
+    except Exception, e:
         logger.error("Campaign repot Error | Details :  {0} ".format(e))
         response_data['status'] = "failed"
     #pdb.set_trace()
@@ -217,7 +218,7 @@ def home(request):
 
 def templates_new(request):
     def adapt_template(path,obj,request):
-        fp = open(path+'/index.html','r')
+        fp = open(path+'index.html','r')
         original_html = fp.read()
         soup  = BeautifulSoup(original_html)
         asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
@@ -231,7 +232,7 @@ def templates_new(request):
         with ZipFile(obj.zipfile, 'r') as myzip:
             myzip.extractall(path)
             adapt_template(path,obj,request)
-    form=mailtemplateform
+    form=mailtemplateform()
     if request.method == "POST":
         form=mailtemplateform(request.POST,request.FILES)
         if form.is_valid():
@@ -240,8 +241,12 @@ def templates_new(request):
             #send_id='noreply@orange-mailer.net'
             #subj = request.POST['subj']
             obj = form.save()
-            process_zip(obj,request)
-            messages.success(request,"Email template saved successfully")
+            try:
+                process_zip(obj,request)
+                messages.success(request,"Email template saved successfully")
+            except Exception, e:
+                messages.error(request,"Saving temppate failed ..! ")
+                logger.error(" Details :  {0} ".format(e))       
     return render(request, "templates_new.html",{'form':form})
 
 def templates_view(request):
