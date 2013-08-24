@@ -31,7 +31,7 @@ def open_track_view(request,usid):
     if not usid=='default':
         try:
             hits = opens.objects.filter(campaign_uuid=usid)
-            paginator = Paginator(hits, 8)
+            paginator = Paginator(hits, 20)
             page = request.GET.get('page')
             try:
                 hits = paginator.page(page)
