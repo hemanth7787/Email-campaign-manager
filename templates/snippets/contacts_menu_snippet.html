@@ -22,4 +22,8 @@
               <li {% if page == 'spamreports' %}class="active"{% endif %}>
                 <a href="{% url "extra_spamreports" %}">Spam Reports</a>
               </li>
+              <li class="nav-header">Advanced</li>
+              <li {% if page == 'cleanup' %}class="active"{% endif %}>
+                <a href="{% url "contacts_cleanup" %}">Cleanup</a>
+              </li>
             </ul>

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block head_title %} Contacts -- Mailing lists {% endblock %}
+
+{% block menulist %}
+{% include "snippets/contacts_menu_snippet.html" with page='cleanup' %}
+            {% endblock %}
+
+{% block "body" %}
+
+<div class ="well">
+
+ <form  id="form1" enctype="multipart/form-data" method="post" action="">
+  {% csrf_token %}
+        <h2 class="form-signin-heading">Cleanup contacts</h2>
+
+         
+    {{form.as_p}}
+    <input type="hidden" name="confirm" value="0" />
+
+    <br>
+    <p id="clean" class="btn btn-large btn-danger" >Clean </p>
+
+    <p class="errorlist" style="padding: 10px 1px 1px 10px">Warning : Please note that the cleanup affects all existing mailing lists</p>
+</form>
+     </div>
+
+
+
+
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>You are going to remove invalid contacts from database,<br> are you sure want to proceed? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Go back</button>
+    <button class="btn btn-danger" onclick="clean_post('#form1')">Proceed</button>
+  </div>
+</div>
+
+          {% endblock %}
+
+{% block "scripts" %}
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+  $("#clean").click(function(){
+  $('#myModal').modal()
+  
+    });
+});
+  
+  function clean_post(formID){
+  $('input[name=confirm]').val(1);
+  $(formID).submit();
+  $("#dialog").html("<p> Please wait ..</p>");
+  $("#dialog-footer").hide()
+  $("#myModalLabel").html("<p> Cleaning up</p>");
+}
+</script>
+{% endblock %}

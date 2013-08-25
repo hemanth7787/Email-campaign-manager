@@ -42,3 +42,8 @@ class mailtemplateform(forms.ModelForm):
 
 class campselectform(forms.Form):
     campaign = forms.ModelChoiceField(queryset=campaign.objects.all().order_by("-date_created"),empty_label=None)
+
+class cleanupform(forms.Form):
+    CHOICES = (('blocks', 'Blocks',),('bounces', 'Bounces',),('unsubscribes', 'Unsubscribes',),('spamreports', 'Spam Reports',))
+    remove = forms.MultipleChoiceField(choices=CHOICES,widget=forms.CheckboxSelectMultiple,label="Select criteria")
+    
