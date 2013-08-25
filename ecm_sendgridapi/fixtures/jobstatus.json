@@ -1,0 +1,10 @@
+[
+  {
+    "pk": 1,
+    "model": "ecm_sendgridapi.JobstatusModel",
+    "fields": {
+	  "lastrun": "2013-08-23T17:07:31.447Z",
+      "purpose": "RET_BAD_EMAILS"
+    }
+  }
+]

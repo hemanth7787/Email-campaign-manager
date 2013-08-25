@@ -30,6 +30,15 @@ import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'redis://localhost:6379/0'
 
+from celery.schedules import crontab
+CELERYBEAT_SCHEDULE = {
+    'ecm_sendgrid_sync': {
+        'task': 'ecm_sendgridapi.tasks.ecm_sendgridapi_dbsync',
+        'schedule': crontab(minute=1, hour=0),
+        #'schedule': crontab(minute='*/2'), # TESTING
+    },
+}
+
 #Subscriptions ]-------------
 ECM_DOMAIN_NAME="http://127.0.0.1:8000/"
 
@@ -156,6 +165,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'ecm_core',
     'ecm_track',
+    'ecm_sendgridapi',
     'django.contrib.admin',
     'south',
     'djcelery',

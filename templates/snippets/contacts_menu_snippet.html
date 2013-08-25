@@ -6,8 +6,20 @@
               <li {% if page == 'contactsview' %}class="active"{% endif %}>
                 <a href="{% url "contacts_view" %}">View contacts</a>
               </li>
-              <li class="nav-header">More</li>
               <li {% if page == 'contactsstatistics' %}class="active"{% endif %}>
                 <a href="{% url "contacts_statistics" %}">Mailing lists</a>
+              </li>
+              <li class="nav-header">More</li>
+              <li {% if page == 'blocks' %}class="active"{% endif %}>
+                <a href="{% url "extra_blocks" %}">Blocks</a>
+              </li>
+              <li {% if page == 'bounces' %}class="active"{% endif %}>
+                <a href="{% url "extra_bounces" %}">Bounces</a>
+              </li>
+              <li {% if page == 'unsubscribes' %}class="active"{% endif %}>
+                <a href="{% url "extra_unsubscribes" %}">Unsubscribes</a>
+              </li>
+              <li {% if page == 'spamreports' %}class="active"{% endif %}>
+                <a href="{% url "extra_spamreports" %}">Spam Reports</a>
               </li>
             </ul>

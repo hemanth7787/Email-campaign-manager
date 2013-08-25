@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head_title %} Blocks {% endblock %}
+
+{% block menulist %}
+{% include "snippets/contacts_menu_snippet.html" with page='blocks' %}
+            {% endblock %}
+
+{% block "body" %}
+{% include "snippets/pagination.html" with item=qset %}
+
+<div id="contacts" class="row-fluid">
+  <table class="table table-bordered" id="sortTableExample">
+    <thead>
+      <tr>
+        <th class="header">#</th>
+        <th class="blue header">Email</th>
+      </tr>
+     </thead>
+    <tbody>  
+           {% for contact in qset  %}
+             <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{contact.email}}</td>
+             </tr>
+           {% endfor %}
+    </tbody>
+   </table>
+ </div>
+ {% endblock %}

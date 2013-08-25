@@ -39,7 +39,6 @@ def import_csv(request):
     if request.method == "POST":
         iform=Importform(request.POST,request.FILES)
         if iform.is_valid():
-            
             try:
                 name = request.POST['name']
                 mlist = Mailing_list(title = name)
@@ -52,7 +51,6 @@ def import_csv(request):
                 logger.error("Import CSV Error | Details :  {0} ".format(e))
                 messages.error(request,"Import failed, wrong CSV format..! ")
 
-            
     return render(request,'import_csv.html',{'iform':iform ,})
 
 
@@ -215,7 +213,6 @@ def templates(request):
 def home(request):
     return render(request, "home.html")
 
-
 def templates_new(request):
     def adapt_template(path,obj,request):
         fp = open(path+'index.html','r')
@@ -320,7 +317,7 @@ def login(request):
             }
     return render(request, 'registration/login.html', context)
 
-
+@csrf_protect
 def logout(request):
     """
     Logs out the user and displays 'You are logged out' message.
