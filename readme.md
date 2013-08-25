@@ -1,2 +1,3 @@
-copy PIL
-run :  manage.py loaddata jobstatus.json
+##copy PIL
+manage.py loaddata jobstatus.json
+manage.py celery worker -B
