@@ -14,9 +14,6 @@ logger = logging.getLogger("ecm_console")
 
 from models import BlocksModel, BouncesModel, UnsubscribesModel, SpamreportsModel
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-#import pdb
-import logging
-logger = logging.getLogger("ecm_console")
 
 
 @login_required(login_url='/login')
@@ -35,6 +32,8 @@ def sendgrid_blocks(request):
         qset_list = paginator.page(paginator.num_pages)
     return render(request, "sendgridapi/blocks.html",{'qset':qset_list})
 
+@login_required(login_url='/login')
+@csrf_protect
 def sendgrid_bounces(request):
     qset=BouncesModel.objects.filter(indb=True)
     paginator = Paginator(qset, 5)
@@ -49,6 +48,8 @@ def sendgrid_bounces(request):
         qset_list = paginator.page(paginator.num_pages)
     return render(request, "sendgridapi/bounces.html",{'qset':qset_list})
 
+@login_required(login_url='/login')
+@csrf_protect
 def sendgrid_unsubscribes(request):
     qset=UnsubscribesModel.objects.filter(indb=True)
     paginator = Paginator(qset, 5)
@@ -63,6 +64,8 @@ def sendgrid_unsubscribes(request):
         qset_list = paginator.page(paginator.num_pages)
     return render(request, "sendgridapi/unsubscribes.html",{'qset':qset_list})
 
+@login_required(login_url='/login')
+@csrf_protect
 def sendgrid_spamreports(request):
     qset=SpamreportsModel.objects.filter(indb=True)
     paginator = Paginator(qset, 5)

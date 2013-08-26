@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
 import base64
 import pdb
 from models import opens
@@ -25,6 +27,8 @@ def open_track(request):
         pass
     return redirect("/static/assets/ecm.gif")
 
+@login_required(login_url='/login')
+@csrf_protect
 def open_track_view(request,usid):
     #pdb.set_trace()
     # VERY HARD LOGIC PLEASE REWRITE

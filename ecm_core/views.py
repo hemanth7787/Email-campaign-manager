@@ -179,9 +179,13 @@ def view_campaign(request):
         camps_list = paginator.page(paginator.num_pages)
     return render(request, "view_campaign.html",{'camps':camps_list})
 
+@login_required(login_url='/login')
+@csrf_protect
 def contacts(request):
     return render(request, "contacts.html")
 
+@login_required(login_url='/login')
+@csrf_protect
 def contacts_view(request):
     contacts_list = Mail_address.objects.all()
     paginator = Paginator(contacts_list, 10)
@@ -198,7 +202,8 @@ def contacts_view(request):
     #return render_to_response(request,'contacts_view.html', {"contacts": maddr})
     return render(request, "contacts_view.html",{'contacts':contacts})
 
-
+@login_required(login_url='/login')
+@csrf_protect
 def contacts_statistics(request):
     mlist_obj = Mailing_list.objects.annotate(addrcount=Count('mail_address'))
     paginator = Paginator(mlist_obj, 10)
@@ -211,12 +216,17 @@ def contacts_statistics(request):
         mlist = paginator.page(paginator.num_pages)
     return render(request, "contact_statistics.html" ,{'mailing_list' : mlist })
 
+@login_required(login_url='/login')
+@csrf_protect
 def templates(request):
     return render(request, "templates.html")
 
+@csrf_protect
 def home(request):
     return render(request, "home.html")
 
+@login_required(login_url='/login')
+@csrf_protect
 def templates_new(request):
     def adapt_template(path,obj,request):
         fp = open(path+'index.html','r')
@@ -250,6 +260,8 @@ def templates_new(request):
                 logger.error(" Details :  {0} ".format(e))       
     return render(request, "templates_new.html",{'form':form})
 
+@login_required(login_url='/login')
+@csrf_protect
 def templates_view(request):
     qset = mailtemplate.objects.all()
     paginator = Paginator(qset, 10)
@@ -262,6 +274,8 @@ def templates_view(request):
         qset_modified = paginator.page(paginator.num_pages)
     return render(request, "templates_view.html",{'mailtemplate':qset_modified})
 
+@login_required(login_url='/login')
+@csrf_protect
 def templates_preview(request,usid):
     if not usid=='nill':
         try:
@@ -272,6 +286,8 @@ def templates_preview(request,usid):
             return HttpResponse("<h2>Error : Not a valid template .. !</h2>", content_type="text/html")
     return HttpResponse(htm, content_type="text/html")
 
+@login_required(login_url='/login')
+@csrf_protect
 def templates_delete(request,usid):
     if not usid=='nill':
         try:
@@ -285,7 +301,7 @@ def templates_delete(request,usid):
 def dummy(request):
     return HttpResponse("<h2>Coming soon .. !</h2>", content_type="text/html")
 
-
+#AJAX kinda
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect
 def contacts_search(request):
