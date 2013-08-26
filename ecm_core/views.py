@@ -31,6 +31,9 @@ from zipfile import ZipFile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ecm_sendgridapi.models import BlocksModel, BouncesModel, UnsubscribesModel, SpamreportsModel
 
+import csv
+import tablib
+
 
 
 @login_required(login_url='/login')
@@ -305,6 +308,41 @@ def contacts_delete(request):
     except:
         response_data['status'] = 'data_err'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+@login_required(login_url='/login')
+@csrf_protect
+def maillist_export(request,id,data_type):
+    if data_type == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="list_export.csv"'
+        addr_list = Mail_address.objects.filter(mail_list__id=id)
+        writer = csv.writer(response)
+        writer.writerow(['name', 'email'])
+        for addr in addr_list:
+            writer.writerow([addr.name, addr.mail_id])
+    else:
+        #response = HttpResponse(content_type='application/vnd.ms-excel;charset=utf-8')
+        #response['Content-Disposition'] = 'attachment; filename="list_export.xls"'
+        '''output = StringIO.StringIO()
+        book = Workbook(output)
+        sheet = book.add_worksheet()
+        sheet.write(0, 0, 'Hello, world!')
+        book.close()
+        output.seek(0)
+        
+        response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel;charset=utf-8')
+        response['Content-Disposition'] = "attachment; filename=list_export.xls"'''
+        headers = ('name', 'email')
+        data = []
+        data = tablib.Dataset(*data, headers=headers)
+        addr_list = Mail_address.objects.filter(mail_list__id=id)
+        for addr in addr_list:
+            data.append((addr.name, addr.mail_id))
+        response = HttpResponse(data.xls, content_type='application/vnd.ms-excel;charset=utf-8')
+        response['Content-Disposition'] = "attachment; filename=list_export.xls"
+
+    return response
 
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect

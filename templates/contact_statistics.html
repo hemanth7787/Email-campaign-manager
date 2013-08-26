@@ -29,6 +29,8 @@
             <td>{{forloop.counter}}</td>
             <td>{{item.title}}</td>
             <td>{{item.addrcount}}</td>
+            <td ><a class="btn btn-small btn-primary"  href="{% url "maillist_export" data_type='csv' id=item.id %}">Export CSV</a></td>
+            <td ><a class="btn btn-small btn-primary"  href="{% url "maillist_export" data_type='xls' id=item.id %}">Export Excel</a></td>
             <td  id="btn{{item.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{item.id}})">Delete</a></td>
           </tr>
           {% endfor %}
