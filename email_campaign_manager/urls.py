@@ -4,7 +4,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    url(r'^admin/$', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^ecm/', include('ecm_core.urls')),
     url(r'^fruits/', include('ecm_track.urls')),
     url(r'^analytics/', include('ecm_sendgridapi.urls')),
