@@ -5,6 +5,8 @@ urlpatterns = patterns('',
    url(r'^contacts-view/$', 'ecm_core.views.contacts_view', name='contacts_view'),
    url(r'^contacts-search/$', 'ecm_core.views.contacts_search', name='contacts_search'),
    url(r'^contacts-cleanup/$', 'ecm_core.views.contacts_cleanup', name='contacts_cleanup'),
+   url(r'^contacts-delete/$', 'ecm_core.views.contacts_delete', name='contacts_delete'),
+   url(r'^maillist-delete/$', 'ecm_core.views.maillist_delete', name='maillist_delete'),
    url(r'^import/$', 'ecm_core.views.import_csv', name='import_csv'),
    url(r'^statistics/$', 'ecm_core.views.contacts_statistics', name='contacts_statistics'),
 

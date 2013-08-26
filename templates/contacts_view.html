@@ -25,20 +25,23 @@
             <th class="blue header">Email</th>
             <th class="blue header">List</th>
             <th class="blue header">Subscribed</th>
+            <th class="yellow header headerSortDown">Operations</th>
           </tr>
         </thead>
         <tbody>
           
           
           
-        <tr>
+        
             
             {% for contact in contacts  %}
+            <tr id="row{{contact.id}}">
             <td>{{forloop.counter}}</td>
             <td>{{contact.name}}</td>
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
             <td>{{contact.subscribed}}</td>
+            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{contact.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
@@ -81,6 +84,34 @@ $(document).ready(function(){
 
     });
 });
+</script>
   
+  <script type="text/javascript">
+  function delete_item(item_id){
+  
+  /* -- Ajax request--*/
+
+ $.ajax({
+     type:"POST",
+     url:"{% url "contacts_delete" %}",
+     data: {
+            'item_id'         : item_id, // 'JSONtest2-db643453-3b88-46b3-a904-dbcb4094d39c', //todo
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+     },
+
+     success: function(json_obj){
+        if (json_obj['status'] == "success")
+         { 
+
+  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'><td class='alert'><td class='alert'></td><td class='alert'>Deleted</td>");
+  return;
+}
+else{
+   $("#btn"+item_id).html("<a class='errorlist'>Error</a>");
+return;
+}
+
+}
+}); }
 </script>
 {% endblock %}

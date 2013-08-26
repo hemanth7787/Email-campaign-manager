@@ -293,6 +293,31 @@ def contacts_search(request):
     #pdb.set_trace()
     return render(request, "snippets/contacts_search.html",{'contacts':results})
 
+#AJAX
+@login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
+@csrf_protect
+def contacts_delete(request):
+    response_data = dict()
+    try:
+        c_id=request.POST['item_id']
+        Mail_address.objects.get(id=c_id).delete()
+        response_data['status'] = 'success'
+    except:
+        response_data['status'] = 'data_err'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+@login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
+@csrf_protect
+def maillist_delete(request):
+    response_data = dict()
+    try:
+        m_id=request.POST['item_id']
+        Mailing_list.objects.get(id=m_id).delete()
+        response_data['status'] = 'success'
+    except:
+        response_data['status'] = 'data_err'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 @login_required(login_url='/login')
 @csrf_protect
 def contacts_cleanup(request):

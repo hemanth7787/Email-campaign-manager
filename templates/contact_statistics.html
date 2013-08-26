@@ -15,18 +15,21 @@
         <thead>
           <tr>
             <th class="header">#</th>
-            <th class="yellow header headerSortDown">Name</th>
+            <th class="yellow header headerSortDown">Mailing List Name</th>
             <th class="yellow header headerSortDown">Contacts</th>
+            <th class="yellow header headerSortDown">Operations</th>
           </tr>
         </thead>
         <tbody>
 
-        <tr>
+        
             
             {% for item in mailing_list  %}
+            <tr id="row{{item.id}}">
             <td>{{forloop.counter}}</td>
             <td>{{item.title}}</td>
             <td>{{item.addrcount}}</td>
+            <td  id="btn{{item.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{item.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
@@ -38,3 +41,40 @@
      
 
           {% endblock %}
+
+
+          {% block "scripts" %}
+<script type="text/javascript">
+
+
+
+  
+  function delete_item(item_id){
+  
+  /* -- Ajax request--*/
+
+ $.ajax({
+     type:"POST",
+     url:"{% url "maillist_delete" %}",
+     data: {
+            'item_id'         : item_id, // 'JSONtest2-db643453-3b88-46b3-a904-dbcb4094d39c', //todo
+             csrfmiddlewaretoken: '{{ csrf_token }}',
+     },
+
+     success: function(json_obj){
+        if (json_obj['status'] == "success")
+         {
+   
+  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'>Deleted</td>");
+  return;
+}
+else{
+  $("#btn"+item_id).html("<a class='errorlist'>Error</a>");
+return;
+}
+
+}
+}); }
+
+</script>
+{% endblock %}

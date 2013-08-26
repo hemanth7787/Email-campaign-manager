@@ -10,20 +10,23 @@
             <th class="blue header">Email</th>
             <th class="blue header">List</th>
             <th class="blue header">Subscribed</th>
+            <th class="yellow header headerSortDown">Operations</th>
           </tr>
         </thead>
         <tbody>
           
           
           
-        <tr>
+        
             
             {% for contact in contacts  %}
+            <tr id="row{{contact.id}}">
             <td>{{forloop.counter}}</td>
             <td>{{contact.name}}</td>
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
             <td>{{contact.subscribed}}</td>
+            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{contact.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
