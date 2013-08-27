@@ -376,28 +376,28 @@ def maillist_delete(request):
 @csrf_protect
 def contacts_cleanup(request):
     def clean_blocks():
-        blocks = BlocksModel.objects.filter(indb=True)
+        blocks = BlocksModel.objects.filter()
         for block in blocks:
              Mail_address.objects.filter(mail_id__exact=block.email).delete()
-             block.indb = False
+             #block.indb = False
              block.save()
     def clean_bounces():
-        bounces = BouncesModel.objects.filter(indb=True)
+        bounces = BouncesModel.objects.filter()
         for bounce in bounces:
              Mail_address.objects.filter(mail_id__exact=bounce.email).delete()
-             bounce.indb = False
+             #bounce.indb = False
              bounce.save()
     def clean_unsubscribes():
-        unsubscribes = UnsubscribesModel.objects.filter(indb=True)
+        unsubscribes = UnsubscribesModel.objects.filter()
         for unsubscribe in unsubscribes:
              Mail_address.objects.filter(mail_id__exact=unsubscribe.email).delete()
-             unsubscribe.indb = False
+             #unsubscribe.indb = False
              unsubscribe.save()
     def clean_spamreports():
-        spamreports = SpamreportsModel.objects.filter(indb=True)
+        spamreports = SpamreportsModel.objects.filter()
         for spamreport in spamreports:
              Mail_address.objects.filter(mail_id__exact=spamreport.email).delete()
-             spamreport.indb = False
+             #spamreport.indb = False
              spamreport.save()
     form = cleanupform()
     if request.method == "POST":

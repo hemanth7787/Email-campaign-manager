@@ -19,8 +19,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @login_required(login_url='/login')
 @csrf_protect
 def sendgrid_blocks(request):
-    qset=BlocksModel.objects.filter(indb=True)
-    paginator = Paginator(qset, 5)
+    qset=BlocksModel.objects.filter()
+    paginator = Paginator(qset, 15)
     page = request.GET.get('page')
     try:
         qset_list = paginator.page(page)
@@ -35,8 +35,8 @@ def sendgrid_blocks(request):
 @login_required(login_url='/login')
 @csrf_protect
 def sendgrid_bounces(request):
-    qset=BouncesModel.objects.filter(indb=True)
-    paginator = Paginator(qset, 5)
+    qset=BouncesModel.objects.filter()
+    paginator = Paginator(qset, 15)
     page = request.GET.get('page')
     try:
         qset_list = paginator.page(page)
@@ -51,8 +51,8 @@ def sendgrid_bounces(request):
 @login_required(login_url='/login')
 @csrf_protect
 def sendgrid_unsubscribes(request):
-    qset=UnsubscribesModel.objects.filter(indb=True)
-    paginator = Paginator(qset, 5)
+    qset=UnsubscribesModel.objects.filter()
+    paginator = Paginator(qset, 15)
     page = request.GET.get('page')
     try:
         qset_list = paginator.page(page)
@@ -67,8 +67,8 @@ def sendgrid_unsubscribes(request):
 @login_required(login_url='/login')
 @csrf_protect
 def sendgrid_spamreports(request):
-    qset=SpamreportsModel.objects.filter(indb=True)
-    paginator = Paginator(qset, 5)
+    qset=SpamreportsModel.objects.filter()
+    paginator = Paginator(qset, 15)
     page = request.GET.get('page')
     try:
         qset_list = paginator.page(page)

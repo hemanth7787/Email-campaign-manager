@@ -17,10 +17,9 @@ def ecm_sendgridapi_dbsync():
         if not job:
             logger.error("Critical Error : JobstatusModel not populated: Periodic tasks wont run;\n Use \"manage.py loaddata jobstatus.json\"")
             return
-        apiurl="https://sendgrid.com/api/blocks.get.json?api_user={0}&api_key={1}&date=1&start_date={2}".format(
+        apiurl="https://sendgrid.com/api/blocks.get.json?api_user={0}&api_key={1}".format(
             settings.ECM_SENDGRID_USERNAME,
-            settings.ECM_SENDGRID_PASSWORD,
-            job.lastrun.strftime("%Y-%m-%d")
+            settings.ECM_SENDGRID_PASSWORD
             )
         encodedurl = iri_to_uri(apiurl)
         try:
@@ -35,10 +34,9 @@ def ecm_sendgridapi_dbsync():
         if not job:
             logger.error("Critical Error : JobstatusModel not populated: Periodic tasks wont run;\n Use \"manage.py loaddata jobstatus.json\"")
             return
-        apiurl="https://sendgrid.com/api/bounces.get.json?api_user={0}&api_key={1}&date=1&start_date={2}".format(
+        apiurl="https://sendgrid.com/api/bounces.get.json?api_user={0}&api_key={1}".format(
             settings.ECM_SENDGRID_USERNAME,
-            settings.ECM_SENDGRID_PASSWORD,
-            job.lastrun.strftime("%Y-%m-%d")
+            settings.ECM_SENDGRID_PASSWORD
             )
         encodedurl = iri_to_uri(apiurl)
         try:
@@ -53,10 +51,9 @@ def ecm_sendgridapi_dbsync():
         if not job:
             logger.error("Critical Error : JobstatusModel not populated: Periodic tasks wont run;\n Use \"manage.py loaddata jobstatus.json\"")
             return
-        apiurl="https://sendgrid.com/api/unsubscribes.get.json?api_user={0}&api_key={1}&date=1&start_date={2}".format(
+        apiurl="https://sendgrid.com/api/unsubscribes.get.json?api_user={0}&api_key={1}".format(
             settings.ECM_SENDGRID_USERNAME,
-            settings.ECM_SENDGRID_PASSWORD,
-            job.lastrun.strftime("%Y-%m-%d")
+            settings.ECM_SENDGRID_PASSWORD
             )
         encodedurl = iri_to_uri(apiurl)
         try:
@@ -71,10 +68,9 @@ def ecm_sendgridapi_dbsync():
         if not job:
             logger.error("Critical Error : JobstatusModel not populated: Periodic tasks wont run;\n Use \"manage.py loaddata jobstatus.json\"")
             return
-        apiurl="https://sendgrid.com/api/unsubscribes.get.json?api_user={0}&api_key={1}&date=1&start_date={2}".format(
+        apiurl="https://sendgrid.com/api/spamreports.get.json?api_user={0}&api_key={1}".format(
             settings.ECM_SENDGRID_USERNAME,
             settings.ECM_SENDGRID_PASSWORD,
-            job.lastrun.strftime("%Y-%m-%d")
             )
         encodedurl = iri_to_uri(apiurl)
         try:
