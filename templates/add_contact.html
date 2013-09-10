@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block head_title %} Import Contacts {% endblock %}
+
+{% block menulist %}
+{% include "snippets/contacts_menu_snippet.html" with page='addcontact' %}
+            {% endblock %}
+            
+
+{% block "body" %}
+<script type="text/javascript">
+
+function content_select(value){
+if (value == 'E')
+		{
+    	$('#id_Group_name').hide();
+    	$("label[for='id_Group_name']").hide();
+    	$('#id_Mailing_list').show();
+    	$("label[for='id_Mailing_list']").show();
+		}
+if (value == 'N')
+		{
+    	 $('#id_Group_name').show();
+    	$("label[for='id_Group_name']").show();
+    	$('#id_Mailing_list').hide();
+    	$("label[for='id_Mailing_list']").hide();
+		}
+
+}
+
+
+</script>
+
+<div class="well">
+ <form  enctype="multipart/form-data" method="post" action="">
+	{% csrf_token %}
+        <h2 class="form-signin-heading">Add contact</h2>
+         <p>( you can use s</a> )</p>
+		{{form}}
+
+		<br>
+		<button class="btn btn-large btn-primary" type="submit">Save </button>
+</form>
+</div> <!-- /container -->
+
+{% endblock %}
+
+{% block "scripts" %}
+<script type="text/javascript">
+$(document).ready(function(){
+$('#id_html').hide();
+    	$('#id_Group_name').hide();
+    	$("label[for='id_Group_name']").hide();
+    	$('#id_Mailing_list').hide();
+    	$("label[for='id_Mailing_list']").hide();
+
+});
+	
+</script>
+{% endblock %}
