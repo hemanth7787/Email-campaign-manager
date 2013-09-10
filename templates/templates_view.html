@@ -8,6 +8,12 @@
              {% endblock %}
 
 {% block "body" %}
+<div id="ecm_data_placeholder" type="hidden"></div>
+<script type="text/javascript">
+function delete_t(tid)
+{$("#ecm_data_placeholder").data("tid",tid);}
+</script>
+
 {% include "snippets/pagination.html" with item=mailtemplate %}
           <div class="row-fluid">
 
@@ -20,11 +26,46 @@
 {% endthumbnail %}
 <a style="margin-left:15px" href="{% url "templates_preview" usid=mt.id %}" target="_blank" class="btn btn-primary">Preview</a> 
 <a style="margin-left:15px" href="{{ MEDIA_URL }}{{mt.zipfile}}" target="_blank" class="btn btn-primary">Download</a> 
-<a style="margin-left:15px" href="{% url "templates_delete" usid=mt.id %}" class="btn btn-danger">Delete</a> 
+<button  onclick="delete_t({{mt.id}})" style="margin-left:15px" class="delete btn btn-danger">Delete</button> 
             </div>
             {% endfor %}
 
            </div>
      
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>Are you sure want to remove this template ? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" onclick="clean_post()">Yes</button>
+  </div>
+</div>
 
           {% endblock %}
+
+          {% block "scripts" %}
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+  $(".delete").click(function(){
+  $('#myModal').modal()
+    });
+});
+  
+  function clean_post(){
+  $("#dialog").html("<p> Please wait ..</p>");
+  $("#dialog-footer").hide()
+  $("#myModalLabel").html("<p> Cleaning up</p>");
+  var tid = $("#ecm_data_placeholder").data("tid");
+  window.location.href="/ecm/templates-delete/"+tid+"/";
+
+}
+</script>
+{% endblock %}
