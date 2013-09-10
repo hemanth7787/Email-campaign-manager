@@ -1,5 +1,8 @@
             <ul class="nav nav-list">
               <li class="nav-header">Actions</li>
+              <li {% if page == 'addcontact' %}class="active"{% endif %}>
+                <a href="{% url "contacts_add" %}">Add contact</a>
+              </li>
               <li {% if page == 'importcsv' %}class="active"{% endif %}>
                 <a href="{% url "import_csv" %}">Import contacts</a>
               </li>

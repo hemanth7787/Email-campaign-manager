@@ -46,4 +46,24 @@ class campselectform(forms.Form):
 class cleanupform(forms.Form):
     CHOICES = (('blocks', 'Blocks',),('bounces', 'Bounces',),('unsubscribes', 'Unsubscribes',),('spamreports', 'Spam Reports',))
     remove = forms.MultipleChoiceField(choices=CHOICES,widget=forms.CheckboxSelectMultiple,label="Select criteria")
-    
+
+class singlecontactform(forms.ModelForm):
+    class Meta:
+        model = Mail_address
+        fields = ['First_Name','Middle_Name','Last_Name','Date_of_Birth',
+        'Gender','mail_id','mail_list','Country','City','Direct_Phone','Mobile','Address_1',
+        'Address_2','Zip','Telephone_1','Telephone_2','Company','Job_Title','Website']
+
+
+class listselectform(forms.Form):
+    Mailing_list = forms.ModelChoiceField(queryset=Mailing_list.objects.all().order_by("-date_of_creation"),empty_label=None)
+
+class AddContactForm(forms.Form):
+    name = forms.CharField(max_length=30)
+    mail_id = forms.CharField(max_length=30)
+    CHOICES = (('E', 'Add to existing group',),('N', 'Create new group',)) #,  ('W', 'Wysisyg editor',)
+    Options = forms.ChoiceField(widget=forms.RadioSelect(
+    attrs={'onclick': 'content_select(value);'},)
+    , choices=CHOICES)
+    Mailing_list = forms.ModelChoiceField(label="Group",queryset=Mailing_list.objects.all().order_by("-date_of_creation"),empty_label=None)
+    Group_name = forms.CharField(label="Group name",max_length=30, required=False)

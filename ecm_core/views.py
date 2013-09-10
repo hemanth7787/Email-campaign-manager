@@ -3,7 +3,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform
+from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform, singlecontactform #, listselectform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate
@@ -56,6 +56,26 @@ def import_csv(request):
                 messages.error(request,"Import failed, wrong CSV format..! ")
 
     return render(request,'import_csv.html',{'iform':iform ,})
+
+@login_required(login_url='/login')
+@csrf_protect
+def add_contact(request):
+    #mlistform = listselectform()
+    #contactfactory = formset_factory(singlecontactform, extra=2)
+    #contactformset = contactfactory()
+    #contactform = AddContactForm()
+    contactform = singlecontactform()
+    if request.method == "POST":
+        contactform=singlecontactform(request.POST)
+        if contactform.is_valid():
+            try:
+                contactform.save()
+                messages.success(request,"Contact saved successfully")
+            except Exception, e:
+                logger.error("uncaught error in add_contact() | Details :  {0} ".format(e))
+                messages.error(request,"Contact cannot be saved..! ")
+
+    return render(request,'add_contact.html',{ 'form':contactform })
 
 
 @login_required(login_url='/login')
@@ -221,6 +241,7 @@ def contacts_statistics(request):
 def templates(request):
     return render(request, "templates.html")
 
+@login_required(login_url='/login')
 @csrf_protect
 def home(request):
     return render(request, "home.html")
@@ -306,7 +327,7 @@ def dummy(request):
 @csrf_protect
 def contacts_search(request):
     squery=request.POST['query']
-    results = Mail_address.objects.filter(Q(name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
+    results = Mail_address.objects.filter(Q(First_Name__icontains=squery) | Q(Middle_Name__icontains=squery) | Q(Last_Name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
     if not results:
         return HttpResponse("<p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
     #pdb.set_trace()
@@ -334,9 +355,14 @@ def maillist_export(request,id,data_type):
         response['Content-Disposition'] = 'attachment; filename="list_export.csv"'
         addr_list = Mail_address.objects.filter(mail_list__id=id)
         writer = csv.writer(response)
-        writer.writerow(['name', 'email'])
+        #writer.writerow(['name', 'email'])
+        writer.writerow(['First Name','Middle Name','Last Name','Date of Birth',
+        'Gender','email','Country','City','Direct Phone','Mobile','Address 1',
+        'Address 2','Zip','Telephone 1','Telephone 2','Company','Job Title','Website'])
         for addr in addr_list:
-            writer.writerow([addr.name, addr.mail_id])
+            writer.writerow([addr.First_Name, addr.Middle_Name ,addr.Last_Name ,addr.Date_of_Birth ,
+            addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
+            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website])
     else:
         #response = HttpResponse(content_type='application/vnd.ms-excel;charset=utf-8')
         #response['Content-Disposition'] = 'attachment; filename="list_export.xls"'
@@ -349,12 +375,16 @@ def maillist_export(request,id,data_type):
         
         response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel;charset=utf-8')
         response['Content-Disposition'] = "attachment; filename=list_export.xls"'''
-        headers = ('name', 'email')
+        headers = ('First Name','Middle Name','Last Name','Date of Birth',
+        'Gender','email','Country','City','Direct Phone','Mobile','Address 1',
+        'Address 2','Zip','Telephone 1','Telephone 2','Company','Job Title','Website')
         data = []
         data = tablib.Dataset(*data, headers=headers)
         addr_list = Mail_address.objects.filter(mail_list__id=id)
         for addr in addr_list:
-            data.append((addr.name, addr.mail_id))
+            data.append((addr.First_Name, addr.Middle_Name ,addr.Last_Name ,addr.Date_of_Birth ,
+            addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
+            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website))
         response = HttpResponse(data.xls, content_type='application/vnd.ms-excel;charset=utf-8')
         response['Content-Disposition'] = "attachment; filename=list_export.xls"
 

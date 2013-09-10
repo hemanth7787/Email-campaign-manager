@@ -8,16 +8,33 @@ class Mail_address(models.Model):
     class Meta:
         verbose_name = 'email address'
         verbose_name_plural = 'email adresses'
+    CHOICES = (('M', 'Male',),('F', 'Female',))
+    First_Name = models.CharField(max_length=30, blank=True,null=True )
+    Middle_Name = models.CharField(max_length=30, blank=True, null=True)
+    Last_Name = models.CharField(max_length=30, blank=True, null=True)
+    Date_of_Birth = models.DateField(blank=True,null=True)
+    Gender = models.CharField(max_length=5, choices=CHOICES, blank=True,null=True)
+    mail_id = models.EmailField()
+    Country = models.CharField(max_length=30, blank=True,null=True)
+    City = models.CharField(max_length=30, blank=True,null=True)
+    Direct_Phone = models.CharField(max_length=20, blank=True,null=True)
+    Mobile = models.CharField(max_length=15, blank=True,null=True)
+    Address_1 = models.TextField(blank = True,null=True)
+    Address_2 = models.TextField(blank = True,null=True)
+    Zip = models.CharField(max_length=15, blank=True,null=True)
+    Telephone_1 = models.CharField(max_length=15, blank=True,null=True)
+    Telephone_2 = models.CharField(max_length=15, blank=True,null=True)
+    Company = models.CharField(max_length=30, blank=True,null=True)
+    Job_Title = models.CharField(max_length=30, blank=True,null=True)
+    Website = models.CharField(max_length=30, blank=True,null=True)
     mail_list = models.ForeignKey('Mailing_list')
-    mail_id = models.CharField(max_length=30)
-    #first_name = models.CharField(max_length=30)
-    #middle_name = models.CharField(max_length=30)
-    #last_name = models.CharField(max_length=30)
-    name = models.CharField(max_length=30, blank=True)
+    #name = models.CharField(max_length=30, blank=True)
     subscribed = models.BooleanField(default=True)
     uid        = models.CharField(max_length=100)
     def __unicode__(self):
         return self.mail_id
+    def full_name(self):
+        return self.First_Name+" "+self.Middle_Name+" "+self.Last_Name
     def save(self, *args, **kwargs):
         if not self.id:
             self.uid = str(uuid4())

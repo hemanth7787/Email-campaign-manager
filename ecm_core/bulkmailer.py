@@ -12,7 +12,6 @@ logger = logging.getLogger("ecm_console")
 from django import forms
 from django.conf import settings
 from django.core.validators import email_re
-from models import Mail_address
 from django.core.mail import EmailMultiAlternatives
 import pdb
 
@@ -58,9 +57,9 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     for mobj in mail_addr_obj:
         if mobj.subscribed:
             uslink=unsubscribe_url+mobj.uid+"/"
-            uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
+            #uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
             try:
-                mail_body = html.format(unsubscribe=uslink_append)
+                mail_body = html.format(unsubscribe=uslink)
             except:
                 mail_body = html
             #pdb.set_trace()
@@ -119,13 +118,37 @@ def check_name(name, ignore_errors=False):
                 "name": name,
                 "name_length": name_length})
 
-def add_contact(mailinglist, email, cname=None):
-    Mail_address(
-                 name = cname,
-                 mail_list_id = mailinglist,
-                 subscribed = True,
-                 mail_id = email,
-                 ).save()
+def vlen(data, length):
+    # VALIDATE LENGTH   
+    if len(data) <= length:
+        return data[:length]
+    else:
+        return data[:length-1]+">"
+
+def add_contact(mailinglist, contact):
+    con = Mail_address()
+    con.mail_id     = contact['email']
+    con.First_Name  = contact['first_name']
+    con.Last_Name   = contact['last_name']
+    con.Middle_Name = contact['mid_name']
+    if contact['dob']:
+        con.Date_of_Birth = contact['dob']
+    con.Gender  = contact['gender']
+    con.Country = contact['country']
+    con.City    = contact['city']
+    con.Direct_Phone  = contact['direct_phone']
+    con.Mobile      = contact['mobile']
+    con.Address_1   = contact['Address_1']
+    con.Address_2   = contact['Address_2']
+    con.Zip = contact['zipcode']
+    con.Telephone_1 = contact['telephone_1']
+    con.Telephone_2 = contact['telephone_2']
+    con.Company   = contact['company']
+    con.Job_Title = contact['job_title']
+    con.Website   = contact['website']
+    con.mail_list_id = mailinglist
+    con.subscribed = True
+    con.save()
 
 def parse_csv(myfile, mlist, ignore_errors=False):
     from ecm_core.addressimport.csv_util import UnicodeReader
@@ -149,6 +172,7 @@ def parse_csv(myfile, mlist, ignore_errors=False):
     myfile.seek(0)
 
     # Attempt to detect the dialect
+
     encodedfile = codecs.EncodedFile(myfile, charset)
     dialect = csv.Sniffer().sniff(encodedfile.read(1024))
 
@@ -162,12 +186,13 @@ def parse_csv(myfile, mlist, ignore_errors=False):
 
     firstrow = myreader.next()
 
+
     # Find name column
     colnum = 0
-    namecol = None
+    first_namecol = None
     for column in firstrow:
-        if "name" in column.lower() or ugettext("name") in column.lower():
-            namecol = colnum
+        if "first name" in column.lower() or ugettext("first name") in column.lower():
+            first_namecol = colnum
             break # First Name as name
 
             if "display" in column.lower() or \
@@ -176,12 +201,12 @@ def parse_csv(myfile, mlist, ignore_errors=False):
 
         colnum += 1
 
-    if namecol is None:
+    if first_namecol is None:
         raise forms.ValidationError(_(
             "Name column not found. The name of this column should be "
-            "either 'name' or '%s'.") % ugettext("name"))
+            "either 'first name' or '%s'.") % ugettext("first name"))
 
-    logger.debug("Name column found: '%s'", firstrow[namecol])
+    logger.debug("Name column found: '%s'", firstrow[first_namecol])
 
     # Find email column
     colnum = 0
@@ -205,9 +230,154 @@ def parse_csv(myfile, mlist, ignore_errors=False):
 
     logger.debug("E-mail column found: '%s'", firstrow[mailcol])
 
+    colnum = 0
+    last_namecol = None
+    for column in firstrow:
+        if "last name" in column.lower() or ugettext("last name") in column.lower():
+            last_namecol = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    mid_namecol = None
+    for column in firstrow:
+        if "middle name" in column.lower() or ugettext("middle name") in column.lower():
+            mid_namecol = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    dob_col = None
+    for column in firstrow:
+        if "date of birth" in column.lower() or ugettext("date of birth") in column.lower():
+            dob_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    gen_col = None
+    for column in firstrow:
+        if "gender" in column.lower() or ugettext("gender") in column.lower():
+            gen_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    country_col = None
+    for column in firstrow:
+        if "country" in column.lower() or ugettext("country") in column.lower():
+            country_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    city_col = None
+    for column in firstrow:
+        if "city" in column.lower() or ugettext("city") in column.lower():
+            city_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    direct_phone_col = None
+    for column in firstrow:
+        if "direct phone" in column.lower() or ugettext("direct phone") in column.lower():
+            direct_phone_col = colnum
+            break
+
+        colnum += 1
+
+
+    colnum = 0
+    mobile_col = None
+    for column in firstrow:
+        if "mobile" in column.lower() or ugettext("mobile") in column.lower():
+            mobile_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    Address_1_col = None
+    for column in firstrow:
+        if "address 1" in column.lower() or ugettext("address 1") in column.lower():
+            Address_1_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    Address_2_col = None
+    for column in firstrow:
+        if "address 2" in column.lower() or ugettext("address 2") in column.lower():
+            Address_2_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    zip_col = None
+    for column in firstrow:
+        if "zip" in column.lower() or ugettext("zip") in column.lower():
+            zip_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    telephone_1_col = None
+    for column in firstrow:
+        if "telephone 1" in column.lower() or ugettext("telephone 1") in column.lower():
+            telephone_1_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    telephone_2_col = None
+    for column in firstrow:
+        if "telephone 2" in column.lower() or ugettext("telephone 2") in column.lower():
+            telephone_2_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    company_col = None
+    for column in firstrow:
+        if "company" in column.lower() or ugettext("company") in column.lower():
+            company_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    job_title_col = None
+    for column in firstrow:
+        if "job title" in column.lower() or ugettext("job title") in column.lower():
+            job_title_col = colnum
+            break
+
+        colnum += 1
+
+    colnum = 0
+    website_col = None
+    for column in firstrow:
+        if "website" in column.lower() or ugettext("website") in column.lower():
+            website_col = colnum
+            break
+
+        colnum += 1
+
     #assert namecol != mailcol, \
     #    'Name and e-mail column should not be the same.'
-    if namecol == mailcol:
+    if first_namecol == mailcol:
         raise forms.ValidationError(_(
             "Could not properly determine the proper columns in the "
             "CSV-file. There should be a field called 'name' or '%(name)s' "
@@ -219,7 +389,7 @@ def parse_csv(myfile, mlist, ignore_errors=False):
 
     addresses = {}
     for row in myreader:
-        if not max(namecol, mailcol) < len(row):
+        if not max(first_namecol, mailcol) < len(row):
             logger.warn("Column count does not match for row number %d",
                         myreader.line_num, extra=dict(data={'row': row}))
 
@@ -231,16 +401,40 @@ def parse_csv(myfile, mlist, ignore_errors=False):
                     "Row with content '%(row)s' does not contain a name and "
                     "email field.") % {'row': row})
 
-        name = check_name(row[namecol], ignore_errors)
-        email = check_email(row[mailcol], ignore_errors)
+        #name = check_name(row[namecol], ignore_errors)
+        contact = dict()
+        contact['email']      = check_email(row[mailcol], ignore_errors)
+        contact['first_name'] = vlen(row[first_namecol],30)
+        contact['last_name']  = vlen(row[last_namecol],30)
+        contact['mid_name']   = vlen(row[mid_namecol],30)
+        contact['dob']        = row[dob_col]
+        contact['gender']     = vlen(row[gen_col],5)
+        contact['country']    = vlen(row[country_col],30)
+        contact['city']       = vlen(row[city_col],30)
+        contact['direct_phone'] = vlen(row[direct_phone_col],20)
+        contact['mobile']       = vlen(row[mobile_col],15)
+        contact['Address_1']    = row[Address_1_col]
+        contact['Address_2']    = row[Address_2_col]
+        contact['zipcode']      = vlen(row[zip_col],15)
+        contact['telephone_1']  = vlen(row[telephone_1_col],15)
+        contact['telephone_2']  = vlen(row[telephone_2_col],15)
+        contact['company']      = vlen(row[company_col],30)
+        contact['job_title']    = vlen(row[job_title_col],30)
+        contact['website']      = vlen(row[website_col],30)
+
+
+        '''email,first_name, last_name, mid_name, dob, gender,
+        country, city, direct_phone, mobile, Address_1,
+        Address_2, zipcode, telephone_1,telephone_2,
+        company, job_title, website'''
 
         count+=1
-        logger.debug("Going to add %s <%s> %d", name, email,count)
+        logger.debug("Going to add %s <%s> %d", contact['first_name'], contact['email'], count)
 
-        if email_re.search(email):
+        if email_re.search(contact['email']):
             #TODO addr = make_subscription(newsletter, email, name)
             #pdb.set_trace()
-            add_contact(mlist,email,name)
+            add_contact(mlist,contact)
         elif not ignore_errors:
                 raise forms.ValidationError(_(
                     "Entry '%s' does not contain a valid "
