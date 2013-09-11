@@ -19,7 +19,7 @@
             <th class="blue header">Sender</th>
             <th class="blue header">Groups</th>
             <th class="blue header">Date</th>
-            <th class="blue header">Send</th>
+            <th class="blue header">Sent</th>
           </tr>
         </thead>
         <tbody>
@@ -34,7 +34,7 @@
             <td>{{camp.sender}}</td>
             <td>{{camp.mailing_list.all|join:","}}</td>
             <td>{{camp.date_created}}</td>
-            <td>{{camp.status}}</td>
+            <td>{%if camp.status %}<label class="label label-info">Yes</label>{% else %}<label class="label label-warning">No</label>{% endif %}</td>
           </tr>
           {% endfor %}
 

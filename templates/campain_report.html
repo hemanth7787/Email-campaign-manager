@@ -14,12 +14,32 @@
 {% include "snippets/pagination.html" with item=camps %}
 {% for camp in camps %}
 
+
 <div class="well">
-<P><span class="label">Subject</span> {{camp.subject}}</p>
-            <p><span class="label">Sender</span> {{camp.sender}}</p>
-            <p><span class="label">Groups</span> {{camp.mailing_list.all|join:","}}</p>
-            <p><span class="label">Date</span> {{camp.date_created}}</p>
-            <p><span class="label">Send</span> {{camp.status}}</p>
+
+<table class="table table-bordered" id="sortTableExample">
+       <thead>
+          <tr>
+            <th class="header">#</th>
+            <th class="yellow header headerSortDown">Subject</th>
+            <th class="blue header">Sender</th>
+            <th class="blue header">Groups</th>
+            <th class="blue header">Date</th>
+            <th class="blue header">Sent</th>
+          </tr>
+        </thead>
+
+        <tbody>
+<tr>
+    <td>{{forloop.counter}}</td>
+    <td>{{camp.subject}}</td>
+            <td>{{camp.sender}}</td>
+            <td>{{camp.mailing_list.all|join:","}}</td>
+            <td>{{camp.date_created}}</td>
+            <td>{%if camp.status %}<label class="label label-info">Yes</label>{% else %}<label class="label label-warning">No</label>{% endif %}</td>
+            </tr>
+            </tbody>
+      </table>
 <div id="info{{forloop.counter}}"></div>
 <div id="chart{{forloop.counter}}"></div>
 
