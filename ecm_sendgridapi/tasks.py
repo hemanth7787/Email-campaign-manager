@@ -8,10 +8,27 @@ logger = logging.getLogger("ecm_console")
 from django.conf import settings
 import datetime
 
+from ecm_core.models import Mail_address
+
 @task.task(ignore_result=True)
 def ecm_sendgridapi_dbsync():
     job = JobstatusModel.objects.get(purpose="RET_BAD_EMAILS")
     job_status = { "blocks": False, "bounces":False, "unsubscribes": False, "spamreports": False }
+
+    def flag_emal(flag_type,email):
+        try:
+            contact = Mail_address.objects.get(mail_id__exact=email)
+            if flag_type == 'spam':
+                contact.spam_flag = True
+            elif flag_type == 'block':
+                contact.block_flag = True
+            elif flag_type == 'bounce':
+                contact.bounce_flag = True
+            elif flag_type == 'unsub':
+                contact.unsub_flag = True
+            contact.save()
+        except:
+            logger.error("Error : flagging not working ecm_sengridapi - tasks")
 
     def update_BlocksModel(job):
         if not job:
@@ -26,6 +43,7 @@ def ecm_sendgridapi_dbsync():
             response_data = json.load(urllib2.urlopen(encodedurl)) # This should be a list of dictionaries
             for data in response_data:
                 obj, created = BlocksModel.objects.get_or_create(email=data['email'])
+                flag_emal('block',data['email'])
             job_status['blocks'] = True
         except Exception, e:
             logger.error("Critical Error : update_BlocksModel: {0} ".format(e))
@@ -43,6 +61,7 @@ def ecm_sendgridapi_dbsync():
             response_data = json.load(urllib2.urlopen(encodedurl)) # This should be a list of dictionaries
             for data in response_data:
                 obj, created = BouncesModel.objects.get_or_create(email=data['email'])
+                flag_emal('bounce',data['email'])
             job_status['bounces'] = True
         except Exception, e:
             logger.error("Critical Error : update_BouncesModel: {0} ".format(e))
@@ -60,6 +79,7 @@ def ecm_sendgridapi_dbsync():
             response_data = json.load(urllib2.urlopen(encodedurl)) # This should be a list of dictionaries
             for data in response_data:
                 obj, created = UnsubscribesModel.objects.get_or_create(email=data['email'])
+                flag_emal('unsub',data['email'])
             job_status['unsubscribes'] = True
         except Exception, e:
             logger.error("Critical Error : update_UnsubscribesModel: {0} ".format(e))
@@ -77,6 +97,7 @@ def ecm_sendgridapi_dbsync():
             response_data = json.load(urllib2.urlopen(encodedurl)) # This should be a list of dictionaries
             for data in response_data:
                 obj, created = SpamreportsModel.objects.get_or_create(email=data['email'])
+                flag_emal('spam',data['email'])
             job_status['spamreports'] = True
         except Exception, e:
             logger.error("Critical Error : update_SpamreportsModel: {0} ".format(e))

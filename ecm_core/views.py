@@ -44,16 +44,26 @@ def import_csv(request):
         iform=Importform(request.POST,request.FILES)
         if iform.is_valid():
             try:
-                name = request.POST['name']
-                mlist = Mailing_list(title = name)
-                mlist.save()
+                content_type = name = request.POST['options']
+                if content_type == 'E':
+                    try:
+                        mlist = Mailing_list.objects.get(id = request.POST['group'])
+                    except:
+                        messages.error(request,"Select a group to import..! ")
+                        raise NameError("No group selected")
+                elif content_type == 'N':
+                    name = request.POST['name']
+                    mlist = Mailing_list(title = name)
+                    mlist.save()
                 csv_file = iform.cleaned_data.get('csv_file')
-                parse_csv(csv_file,mlist.id,ignore_errors=True)
-                status="updated"
+                try:
+                    parse_csv(csv_file,mlist.id,ignore_errors=True)
+                except Exception, e:
+                    messages.error(request,"Import failed, wrong CSV format..! ")
+                    raise NameError(e)
                 messages.success(request,"Contacts imported successfully")
             except Exception, e:
                 logger.error("Import CSV Error | Details :  {0} ".format(e))
-                messages.error(request,"Import failed, wrong CSV format..! ")
 
     return render(request,'import_csv.html',{'iform':iform ,})
 
@@ -86,6 +96,7 @@ def run_campaign(request):
         cform=ListBasketForm(request.POST,request.FILES)
         if cform.is_valid():
             content_type = request.POST['content_type']
+            sendopt = request.POST['send_options']
             pro_campaign = cform.save(commit=False)
             if content_type == 'P':
                 pass
@@ -104,8 +115,8 @@ def run_campaign(request):
             unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
             ecm_host = request.META['HTTP_ORIGIN']
             #pdb.set_trace()
-            #send_email(pro_campaign,unsubscribe_url,ecm_host)
-            celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host)
+            #send_email(pro_campaign,unsubscribe_url,ecm_host,sendopt)
+            celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
             messages.success(request,"Run campain successfull")
     return render(request, "run_campain.html",{'cform':cform ,})
 

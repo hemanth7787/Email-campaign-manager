@@ -9,9 +9,13 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 #NEEDED
 class Importform(forms.Form):
-	csv_file = forms.FileField(label="Select CSV file")
-	name = forms.CharField(label="Group name")
-	#mailing_list = forms.ModelChoiceField(queryset=Mailing_list.objects.all())
+    CHOICES = (('E', 'Append to existing group',),('N', 'Create new group',))
+    csv_file = forms.FileField(label="Select CSV file")
+    options = forms.ChoiceField(widget=forms.RadioSelect(
+        attrs={'onclick': 'content_select(value);'},),
+        choices=CHOICES)
+    name = forms.CharField(label="Group name",required=False)
+    group = forms.ModelChoiceField(queryset=Mailing_list.objects.all().order_by("-date_of_creation"),required=False)
 
 class addcform(forms.Form):
 	cat_name = forms.CharField(label="New category name", max_length=30,required=True)
@@ -19,11 +23,14 @@ class addcform(forms.Form):
 #NEEDED
 class ListBasketForm(forms.ModelForm): 
     CHOICES = (('T', 'Template',),('P', 'Plain text',)) #,  ('W', 'Wysisyg editor',)
+    SEND_OPT = (('Q', 'Quick send',),('N', 'Normal send',))
     content_type = forms.ChoiceField(widget=forms.RadioSelect(
     attrs={'onclick': 'content_select(value);'},)
     , choices=CHOICES)
     mailing_list = forms.ModelMultipleChoiceField(queryset=Mailing_list.objects.all(),label='Target Groups')
     template = forms.ModelChoiceField(queryset=mailtemplate.objects.all(),empty_label=None)
+    send_options = forms.ChoiceField(widget=forms.RadioSelect()
+    , choices=SEND_OPT)
     #html = forms.CharField(widget=forms.Textarea(attrs={'rows':'10', 'cols': '30'}))
 
     class Meta:

@@ -20,14 +20,17 @@ import json
 from ecm_track.TrackHelper import TrackCode
 #from django.core.mail import EmailMultiAlternatives
 
-def send_email(obj,unsubscribe_url,host):
+def send_email(obj,unsubscribe_url,host,sendopt):
     #pdb.set_trace()
     subj=str(obj.subject)
     html=str(obj.html)
     sender = str(obj.sender)
     for mlist in obj.mailing_list.all():
         #logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
-        to_list = Mail_address.objects.filter(mail_list=mlist)
+        if sendopt == 'N':
+            to_list = Mail_address.objects.filter(mail_list=mlist)
+        else: # Q
+            to_list = Mail_address.objects.filter(mail_list=mlist).exclude(spam_flag=True).exclude(unsub_flag=True).exclude(block_flag=True).exclude(bounce_flag=True)
         #simple_email(sender,subj,html,to_list,unsubscribe_url)
         tracked_email(obj,to_list,unsubscribe_url,host)
 

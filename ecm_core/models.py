@@ -30,6 +30,11 @@ class Mail_address(models.Model):
     mail_list = models.ForeignKey('Mailing_list',verbose_name='group')
     #name = models.CharField(max_length=30, blank=True)
     subscribed = models.BooleanField(default=True)
+    spam_flag  = models.BooleanField(default=False)
+    unsub_flag = models.BooleanField(default=False)
+    block_flag = models.BooleanField(default=False)
+    bounce_flag = models.BooleanField(default=False)
+
     uid        = models.CharField(max_length=100)
     def __unicode__(self):
         return self.mail_id

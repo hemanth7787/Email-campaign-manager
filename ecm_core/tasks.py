@@ -5,9 +5,9 @@ from bulkmailer import send_email
 #from django.core.mail import EmailMultiAlternatives
 
 @task.task(ignore_result=True)
-def celery_sendmail_task(obj,unsubscribe_url,host):
+def celery_sendmail_task(obj,unsubscribe_url,host,sendopt):
     #time.sleep(10)
-    send_email(obj,unsubscribe_url,host)
+    send_email(obj,unsubscribe_url,host,sendopt)
     obj.status=True
     obj.save()
 

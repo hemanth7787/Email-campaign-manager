@@ -7,7 +7,28 @@
             
 
 {% block "body" %}
+<script type="text/javascript">
 
+function content_select(value){
+
+if (value == 'E')
+		{
+    	$('#id_name').hide();
+    	$("label[for='id_name']").hide();
+    	$('#id_group').show();
+    	$("label[for='id_group']").show();
+		}
+if (value == 'N')
+		{
+    	 $('#id_name').show();
+    	$("label[for='id_name']").show();
+    	$('#id_group').hide();
+    	$("label[for='id_group']").hide();
+		}
+}
+
+
+</script>
 <div class="well">
  <form  enctype="multipart/form-data" method="post" action="">
 	{% csrf_token %}
@@ -19,4 +40,17 @@
 </form>
 </div> <!-- /container -->
 
+{% endblock %}
+
+{% block "scripts" %}
+<script type="text/javascript">
+$(document).ready(function(){
+$('#id_group').hide();
+$("label[for='id_group']").hide();
+$('#id_name').hide();
+$("label[for='id_name']").hide();
+
+});
+	
+</script>
 {% endblock %}
