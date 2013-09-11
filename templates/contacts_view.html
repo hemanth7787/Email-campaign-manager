@@ -7,6 +7,8 @@
             {% endblock %}
 
 {% block "body" %}
+<link href="{{STATIC_URL}}jquery_tablesorter/themes/blue/style.css" rel="stylesheet">
+
 <div id="ecm_data_placeholder" type="hidden"></div>
 
 
@@ -15,7 +17,7 @@
   <button id="csearch" class="btn">Search</button></div>
 
 <div id="contacts" class="row-fluid">
-<table class="table table-bordered" id="sortTableExample">
+<table class="tablesorter table table-bordered" id="contacts-table">
         <thead>
           <tr>
             <th class="header">#</th>
@@ -68,10 +70,13 @@
           {% endblock %}
 
 {% block "scripts" %}
+<script type="text/javascript" src="{{STATIC_URL}}jquery_tablesorter/jquery.tablesorter.min.js"></script> 
 <script type="text/javascript">
 
 
 $(document).ready(function(){
+  $("#contacts-table").tablesorter(); 
+
   $("#csearch").click(function(){
     $("#contacts").hide()
     key = $('#key').val();
@@ -86,7 +91,8 @@ $(document).ready(function(){
 
          
            $("#contacts").html(html);
-           $("#contacts").show()
+           $("#contacts").show();
+           $("#contacts-table").tablesorter(); 
            
        }
      });

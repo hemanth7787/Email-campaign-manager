@@ -7,11 +7,12 @@
             {% endblock %}
 
 {% block "body" %}
+<link href="{{STATIC_URL}}jquery_tablesorter/themes/blue/style.css" rel="stylesheet">
   {% include "snippets/pagination.html" with item=camps %}
          <div class="row-fluid">
 
 
-<table class="table table-bordered" id="sortTableExample">
+<table class="tablesorter table table-bordered" id="sortTableExample">
         <thead>
           <tr>
             <th class="header">#</th>
@@ -45,3 +46,15 @@
           </div>
      
           {% endblock %}
+
+                    {% block "scripts" %}
+<script type="text/javascript" src="{{STATIC_URL}}jquery_tablesorter/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+        $("#sortTableExample").tablesorter(); 
+    } 
+); 
+</script>
+{% endblock %}
+          
