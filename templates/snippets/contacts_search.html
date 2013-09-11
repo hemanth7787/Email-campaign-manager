@@ -26,7 +26,7 @@
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
             <td>{{contact.subscribed}}</td>
-            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{contact.id}})">Delete</a></td>
+            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 

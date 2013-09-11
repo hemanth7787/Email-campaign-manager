@@ -7,9 +7,7 @@
             {% endblock %}
 
 {% block "body" %}
-
-
-
+<div id="ecm_data_placeholder" type="hidden"></div>
 
 
 <div class="well">
@@ -41,7 +39,7 @@
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
             <td>{{contact.subscribed}}</td>
-            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{contact.id}})">Delete</a></td>
+            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
@@ -53,7 +51,19 @@
 
           {% include "snippets/pagination.html" with item=contacts %}
 
-     
+     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>Are you sure want to remove this item ? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" onclick="delete_item()">Yes</button>
+  </div>
+</div>
 
           {% endblock %}
 
@@ -87,10 +97,18 @@ $(document).ready(function(){
 </script>
   
   <script type="text/javascript">
-  function delete_item(item_id){
-  
-  /* -- Ajax request--*/
 
+  function pre_delete(item_id){
+    $("#ecm_data_placeholder").data("item_id",item_id);
+    $('#myModal').modal();
+  }
+  function delete_item(){
+  if($("#ecm_data_placeholder").data("item_id"))
+    {$('#myModal').modal('hide');}
+    else
+      {return false;}
+  /* -- Ajax request--*/
+ var item_id = $("#ecm_data_placeholder").data("item_id");
  $.ajax({
      type:"POST",
      url:"{% url "contacts_delete" %}",

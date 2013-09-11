@@ -29,9 +29,9 @@
             <td>{{forloop.counter}}</td>
             <td>{{item.title}}</td>
             <td>{{item.addrcount}}</td>
-            <td ><a class="btn btn-small btn-primary"  href="{% url "maillist_export" data_type='csv' id=item.id %}">Export CSV</a></td>
-            <td ><a class="btn btn-small btn-primary"  href="{% url "maillist_export" data_type='xls' id=item.id %}">Export Excel</a></td>
-            <td  id="btn{{item.id}}"><a class="btn btn-small btn-danger "onclick="delete_item({{item.id}})">Delete</a></td>
+            <td ><a class="btn btn-small btn-info"  href="{% url "maillist_export" data_type='csv' id=item.id %}">Export CSV</a></td>
+            <td ><a class="btn btn-small btn-info"  href="{% url "maillist_export" data_type='xls' id=item.id %}">Export Excel</a></td>
+            <td  id="btn{{item.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{item.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
@@ -41,19 +41,43 @@
 
           </div>
      
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>Are you sure want to remove this item ? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" onclick="delete_item()">Yes</button>
+  </div>
+</div>
 
+<div id="ecm_data_placeholder" type="hidden"></div>
           {% endblock %}
 
 
           {% block "scripts" %}
 <script type="text/javascript">
 
+function pre_delete(item_id){
+    $("#ecm_data_placeholder").data("item_id",item_id);
+    $('#myModal').modal();
+  }
 
 
   
-  function delete_item(item_id){
-  
+  function delete_item(){
+   if($("#ecm_data_placeholder").data("item_id"))
+    { 
+      $('#myModal').modal('hide');
+      }
+    else
+      {return false;}
   /* -- Ajax request--*/
+ var item_id = $("#ecm_data_placeholder").data("item_id");
 
  $.ajax({
      type:"POST",
@@ -67,7 +91,7 @@
         if (json_obj['status'] == "success")
          {
    
-  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'>Deleted</td>");
+  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'>Deleted</td>");
   return;
 }
 else{
