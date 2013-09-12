@@ -61,7 +61,8 @@ class campaign(models.Model):
         verbose_name = 'campaign'
         verbose_name_plural = 'campaigns'
     subject      = models.CharField(max_length=100,)#help_text='Email Subject.')
-    sender       = models.EmailField(blank=False, null=True)#help_text='Sender\'s Email ID. ( eg:info@gmail.com)')
+    sender_name  = models.CharField(max_length=100,verbose_name='sender\'s name',null=True)
+    sender       = models.EmailField(blank=False, null=True,verbose_name='sender\'s email')#help_text='Sender\'s Email ID. ( eg:info@gmail.com)')
     mailing_list = models.ManyToManyField(
         'Mailing_list',
         help_text='Select atleast one mailing list :  ',

@@ -21,37 +21,21 @@ from ecm_track.TrackHelper import TrackCode
 #from django.core.mail import EmailMultiAlternatives
 
 def send_email(obj,unsubscribe_url,host,sendopt):
-    #pdb.set_trace()
-    subj=str(obj.subject)
-    html=str(obj.html)
-    sender = str(obj.sender)
     for mlist in obj.mailing_list.all():
         #logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
         if sendopt == 'N':
             to_list = Mail_address.objects.filter(mail_list=mlist)
         else: # Q
             to_list = Mail_address.objects.filter(mail_list=mlist).exclude(spam_flag=True).exclude(unsub_flag=True).exclude(block_flag=True).exclude(bounce_flag=True)
-        #simple_email(sender,subj,html,to_list,unsubscribe_url)
         tracked_email(obj,to_list,unsubscribe_url,host)
-
-def simple_email(sender,subject,html,mail_addr_obj,unsubscribe_url):
-    for mobj in mail_addr_obj:
-        if mobj.subscribed:
-            uslink=unsubscribe_url+mobj.uid+"/"
-            uslink_append="If you would like to unsubscribe and stop receiving these emails <a href=\"{0}\" target=\"_blank\">click here</a>".format(uslink)
-            try:
-                mail_body = html.format(unsubscribe=uslink_append)
-            except:
-                mail_body = html
-            #pdb.set_trace()
-            msg = EmailMultiAlternatives(subject, "", sender, [mobj.mail_id] )
-            msg.attach_alternative(mail_body, "text/html")
-            msg.send()
 
 def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     subj = str(campaign_obj.subject)
     html = str(campaign_obj.html)
-    sender = str(campaign_obj.sender)
+    if campaign_obj.sender_name:
+        sender = "{0} <{1}>".format(campaign_obj.sender_name,campaign_obj.sender)
+    else:
+        sender = str(campaign_obj.sender)
     uuid = str(campaign_obj.campaign_uuid)
     hdr = SmtpApiHeader.SmtpApiHeader()
     hdr.setCategory(str(campaign_obj.category()))
