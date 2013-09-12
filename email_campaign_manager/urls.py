@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'ecm_core.views.logout', name='logout'),
     url(r'^$', 'ecm_core.views.home', name='home'),
     url(r'^about', 'ecm_core.views.dummy', name='dummy'),
+    url(r'^ckeditor/', include('ckeditor.urls')),
 
 )
 

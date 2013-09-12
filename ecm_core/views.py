@@ -91,7 +91,7 @@ def add_contact(request):
 @login_required(login_url='/login')
 @csrf_protect
 def run_campaign(request):
-    cform=ListBasketForm
+    cform=ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0]})
     if request.method == "POST":
         cform=ListBasketForm(request.POST,request.FILES)
         if cform.is_valid():

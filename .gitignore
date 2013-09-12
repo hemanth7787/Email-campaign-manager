@@ -3,3 +3,12 @@
 
 #Sqlite DB
 *.sqlite
+
+# Program generaed files
+ecm_core/migrations/
+media/cache/
+media/ckeditor/uploads/2013/
+media/extracted/
+media/mailtemplate/
+media/thunmbnails/
+static/

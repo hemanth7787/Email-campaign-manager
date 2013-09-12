@@ -6,6 +6,9 @@ TEMPLATE_DEBUG = DEBUG
 import os
 PROJECT_DIR = os.path.dirname(os.path.abspath("settings.py"))
 
+DJANGO_WYSIWYG_FLAVOR = "ckeditor"
+
+CKEDITOR_UPLOAD_PATH = "media/ckeditor/uploads"
 
 #Email Backend ] ---------
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -170,6 +173,8 @@ INSTALLED_APPS = (
     'south',
     'djcelery',
     'sorl.thumbnail',
+    'django_wysiwyg',
+    'ckeditor',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

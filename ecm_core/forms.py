@@ -6,6 +6,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from models import Mail_address, Mailing_list, campaign, mailtemplate 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+from ckeditor.widgets import CKEditorWidget
 
 #NEEDED
 class Importform(forms.Form):
@@ -22,7 +23,7 @@ class addcform(forms.Form):
 
 #NEEDED
 class ListBasketForm(forms.ModelForm): 
-    CHOICES = (('T', 'Template',),('P', 'Plain text',)) #,  ('W', 'Wysisyg editor',)
+    CHOICES = (('P', 'Rich text',),('T', 'Template',))
     SEND_OPT = (('Q', 'Quick send',),('N', 'Normal send',))
     content_type = forms.ChoiceField(widget=forms.RadioSelect(
     attrs={'onclick': 'content_select(value);'},)
@@ -31,7 +32,7 @@ class ListBasketForm(forms.ModelForm):
     template = forms.ModelChoiceField(queryset=mailtemplate.objects.all(),empty_label=None)
     send_options = forms.ChoiceField(widget=forms.RadioSelect()
     , choices=SEND_OPT)
-    #html = forms.CharField(widget=forms.Textarea(attrs={'rows':'10', 'cols': '30'}))
+    html = forms.CharField(widget=CKEditorWidget(),label='Content')
 
     class Meta:
         model = campaign
