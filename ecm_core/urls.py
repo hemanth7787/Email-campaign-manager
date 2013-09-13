@@ -21,6 +21,11 @@ urlpatterns = patterns('',
    url(r'^run-campaign/$', 'ecm_core.views.run_campaign', name='run_campaign'),
    url(r'^campaign-report/$', 'ecm_core.views.campaign_report', name='report'),
 
+   url(r'^drafts/$', 'ecm_core.views.camp_drafts', name='draft'),
+   url(r'^sent-drafts/(?P<camp_id>\d+)/$', 'ecm_core.views.camp_drafts_sent', name='draft-sent'),
+   url(r'^drafts-delete/(?P<camp_id>\d+)/$', 'ecm_core.views.camp_drafts_delete', name='draft-delete'),
+   url(r'^draft-edit/(?P<camp_id>\d+)/$', 'ecm_core.views.camp_drafts_edit', name='draft-edit'),
+
 
    url(r'^getreport/$', 'ecm_core.views.json_report', name='get_json_report'),
 

@@ -3,7 +3,7 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform, singlecontactform #, listselectform
+from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform, singlecontactform, campeditform #, listselectform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate
@@ -91,8 +91,10 @@ def add_contact(request):
 @login_required(login_url='/login')
 @csrf_protect
 def run_campaign(request):
-    cform=ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0]})
+    cform=ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],
+        },)
     if request.method == "POST":
+        #pdb.set_trace()
         cform=ListBasketForm(request.POST,request.FILES)
         if cform.is_valid():
             content_type = request.POST['content_type']
@@ -111,13 +113,15 @@ def run_campaign(request):
                 pass
             pro_campaign.save()
             cform.save_m2m()  # PITFALL
-            #pdb.set_trace()
             unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
             ecm_host = request.META['HTTP_ORIGIN']
             #pdb.set_trace()
             #send_email(pro_campaign,unsubscribe_url,ecm_host,sendopt)
-            celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
-            messages.success(request,"Run campain successfull")
+            if request.POST['campaign_opt'] == 'S':
+                messages.success(request,"Campain successfully saved")
+            else:
+                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
+                messages.success(request,"Run campain successfull")
     return render(request, "run_campain.html",{'cform':cform ,})
 
 def unsubscribe(request,usid):
@@ -196,8 +200,10 @@ def json_report(request):
 def campaign(request):
     return render(request, "campaign.html")
 
+@login_required(login_url='/login')
+@csrf_protect
 def view_campaign(request):
-    camps = modelcampaign.objects.all()
+    camps = modelcampaign.objects.filter(campaign_opt='R').order_by('-date_created')
     paginator = Paginator(camps, 10)
     page = request.GET.get('page')
     try:
@@ -209,6 +215,87 @@ def view_campaign(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         camps_list = paginator.page(paginator.num_pages)
     return render(request, "view_campaign.html",{'camps':camps_list})
+
+@login_required(login_url='/login')
+@csrf_protect
+def camp_drafts(request):
+    camps = modelcampaign.objects.filter(campaign_opt='S').order_by('-date_created')
+    paginator = Paginator(camps, 10)
+    page = request.GET.get('page')
+    try:
+        camps_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        camps_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        camps_list = paginator.page(paginator.num_pages)
+    return render(request, "view_campaign_draft.html",{'camps':camps_list})
+
+@login_required(login_url='/login')
+@csrf_protect
+def camp_drafts_sent(request,camp_id=None):
+    try:
+        if camp_id == None:
+            raise NameError("No campaign id !")
+        camp_draft = modelcampaign.objects.get(id=camp_id)
+        unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
+        ecm_host = "http://"+request.META['HTTP_HOST']+"/"
+        celery_sendmail_task.delay(camp_draft,unsubscribe_url,ecm_host,'Q')
+        messages.success(request,"campaign sent successfull")
+    except Exception,e:
+        messages.error(request,"Something went wrong.")
+        return redirect("draft")
+    return redirect("draft")
+
+@login_required(login_url='/login')
+@csrf_protect
+def camp_drafts_delete(request,camp_id=None):
+    try:
+        if camp_id == None:
+            raise NameError("No campaign id !")
+        modelcampaign.objects.get(id=camp_id).delete()
+        messages.success(request,"Draft discarded .")
+    except:
+        messages.error(request,"Something went wrong.")
+    return redirect("draft")
+
+@login_required(login_url='/login')
+@csrf_protect
+def camp_drafts_edit(request,camp_id=None):
+    try:
+        if camp_id == None:
+            raise NameError("No campaign id !")
+
+        camp = modelcampaign.objects.get(id=camp_id)
+        if request.method == "POST":
+            form=campeditform(request.POST,instance=camp)
+            if form.is_valid():
+                form.save()
+                messages.success(request,"Draft Saved.")
+                return redirect("draft")
+            else:
+               return render(request, "campaign_draft_edit.html",{'form':form}) 
+
+        form = campeditform(instance=camp)
+    except:
+        messages.error(request,"Something went wrong.")
+        return redirect("draft")
+    return render(request, "campaign_draft_edit.html",{'form':form})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @login_required(login_url='/login')
 @csrf_protect

@@ -6,6 +6,9 @@
               <li {% if page == 'viewcampaign' %}class="active"{% endif %}>
                 <a href="{% url "view_campaign" %}">View</a>
               </li>
+              <li {% if page == 'draft' %}class="active"{% endif %}>
+                <a href="{% url "draft" %}">Drafts</a>
+              </li>
               <li class="nav-header">Analytics</li>
               <li {% if page == 'report' %}class="active"{% endif %}>
                 <a href="{% url "report" %}">Campaign Reports</a>

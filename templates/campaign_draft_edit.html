@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block head_title %} Edit Campaign {% endblock %}
+
+ {% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='draft' %}
+            {% endblock %}
+
+{% block "body" %}
+
+    <div class="well">
+      <form enctype="multipart/form-data" method="POST">
+		{% csrf_token %}
+        <h2 class="form-signin-heading">Edit campaign</h2>
+		{{ form}}
+<br>
+        <button class="btn btn-large btn-primary" type="submit">Save</button>
+      </form>
+
+    </div> <!-- /container -->
+
+{% endblock %}
+
+
+
+

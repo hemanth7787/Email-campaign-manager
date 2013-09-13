@@ -37,7 +37,9 @@ if (value == 'P')
         <h2 class="form-signin-heading">Run Campaign</h2>
 		{{ cform}}
 <br>
-        <button class="btn btn-large btn-primary" type="submit">Save and Run </button>
+        <button class="btn btn-large btn-primary" onclick="set_camp_opts('R');" type="submit">Run </button>
+        &nbsp;
+        <button class="btn btn-large btn-primary" onclick="set_camp_opts('S');" type="submit">Save as Draft</button>
       </form>
 
     </div> <!-- /container -->
@@ -56,7 +58,15 @@ $('#id_html').hide();
         $('#cke_id_html').hide();
 
 });
-	
+
+function set_camp_opts(opt)	{
+    if (opt == 'R'){
+        $("#id_campaign_opt").attr('value','R');
+    }
+    else{
+        $("#id_campaign_opt").attr('value','S');
+    }
+}
 </script>
 {% endblock %}
 

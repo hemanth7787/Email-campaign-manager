@@ -25,6 +25,7 @@ class addcform(forms.Form):
 class ListBasketForm(forms.ModelForm): 
     CHOICES = (('P', 'Rich text',),('T', 'Template',))
     SEND_OPT = (('Q', 'Quick send',),('N', 'Normal send',))
+    CAMP_OPT = (('R', 'Run',),('S', 'Save',))
     content_type = forms.ChoiceField(widget=forms.RadioSelect(
     attrs={'onclick': 'content_select(value);'},)
     , choices=CHOICES)
@@ -32,11 +33,12 @@ class ListBasketForm(forms.ModelForm):
     template = forms.ModelChoiceField(queryset=mailtemplate.objects.all(),empty_label=None)
     send_options = forms.ChoiceField(widget=forms.RadioSelect()
     , choices=SEND_OPT)
-    html = forms.CharField(widget=CKEditorWidget(),label='Content')
+    html = forms.CharField(widget=CKEditorWidget(),label='Content',required=False)
+    campaign_opt = forms.ChoiceField(choices=CAMP_OPT,widget = forms.HiddenInput())
 
     class Meta:
         model = campaign
-        fields = ('subject','sender_name','sender','content_type','template','html','mailing_list',)
+        fields = ('subject','sender_name','sender','content_type','template','html','mailing_list','campaign_opt')
 
 class mailtemplateform(forms.ModelForm): 
     class Meta:
@@ -70,3 +72,8 @@ class AddContactForm(forms.Form):
     , choices=CHOICES)
     Mailing_list = forms.ModelChoiceField(label="Group",queryset=Mailing_list.objects.all().order_by("-date_of_creation"),empty_label=None)
     Group_name = forms.CharField(label="Group name",max_length=30, required=False)
+
+class campeditform(forms.ModelForm):
+    class Meta:
+        model = campaign
+        fields = ('subject','sender_name','sender','mailing_list')

@@ -9,6 +9,7 @@ def celery_sendmail_task(obj,unsubscribe_url,host,sendopt):
     #time.sleep(10)
     send_email(obj,unsubscribe_url,host,sendopt)
     obj.status=True
+    obj.campaign_opt='R'
     obj.save()
 
 '''@task()

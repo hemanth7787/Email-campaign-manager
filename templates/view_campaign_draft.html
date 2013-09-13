@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block head_title %} View Campaigns {% endblock %}
+
+ {% block menulist %}
+{% include "snippets/campaign_menu_snippet.html" with page='draft' %}
+            {% endblock %}
+
+{% block "body" %}
+<link href="{{STATIC_URL}}jquery_tablesorter/themes/blue/style.css" rel="stylesheet">
+  {% include "snippets/pagination.html" with item=camps %}
+         <div class="row-fluid">
+
+
+<table class="tablesorter table table-bordered" id="sortTableExample">
+        <thead>
+          <tr>
+            <th class="header">#</th>
+            <th class="yellow header headerSortDown">Subject</th>
+            <th class="blue header">Sender</th>
+            <th class="blue header">Groups</th>
+            <th class="blue header">Date</th>
+            <th class="blue header">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          
+          
+        <tr>
+            
+            {% for camp in camps  %}
+            <td>{{forloop.counter}}</td>
+            <td>{{camp.subject}}</td>
+            <td>{{camp.sender}}</td>
+            <td>{{camp.mailing_list.all|join:","}}</td>
+            <td>{{camp.date_created}}</td>
+            <td><a class="btn btn-small btn-info" onclick="pre_send('{% url "draft-sent" camp_id=camp.id %}');">Send</a>&nbsp;<a class="btn btn-small btn-warning " href="{% url "draft-edit" camp_id=camp.id %}">Edit</a>&nbsp;<a class="btn btn-small btn-danger" onclick="pre_delete('{% url "draft-delete" camp_id=camp.id %}');">Discard</a></td>
+          </tr>
+          {% endfor %}
+
+
+      </tbody>
+      </table>
+
+          </div>
+     
+     <div id="sendmodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>Are you sure want to run this campaign ? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-success" onclick="c_send()">Yes</button>
+  </div>
+</div>
+
+
+
+<div id="deletemodal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Confirm action</h3>
+  </div>
+  <div id="dialog" class="modal-body">
+    <p>Are you sure want to discard this campaign ? </p>
+  </div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" onclick="c_delete()">Yes</button>
+  </div>
+</div>
+<div id="ecm_data_placeholder" type="hidden"></div>
+          {% endblock %}
+
+                    {% block "scripts" %}
+<script type="text/javascript" src="{{STATIC_URL}}jquery_tablesorter/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+        $("#sortTableExample").tablesorter(); 
+    } 
+); 
+
+function pre_delete(url){
+    $("#ecm_data_placeholder").data("del_url",url);
+    $('#deletemodal').modal();
+  }
+function pre_send(url){
+    $("#ecm_data_placeholder").data("send_url",url);
+    $('#sendmodal').modal();
+  }
+function c_delete(){
+    var d_uri = $("#ecm_data_placeholder").data("del_url");
+    $("#ecm_data_placeholder").data("del_url",'');
+    $('#deletemodal').modal('hide');
+    window.location.href=d_uri;
+  }
+function c_send(){
+    var s_uri = $("#ecm_data_placeholder").data("send_url");
+    $("#ecm_data_placeholder").data("send_url",'');
+    $('#sendmodal').modal('hide');
+    window.location.href=s_uri;
+  }
+</script>
+{% endblock %}
+          
