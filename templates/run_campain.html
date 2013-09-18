@@ -39,6 +39,8 @@ if (value == 'P')
 <br>
         <button class="btn btn-large btn-primary" onclick="set_camp_opts('R');" type="submit">Run </button>
         &nbsp;
+        <button class="btn btn-large btn-primary" onclick="set_camp_opts('T');" type="submit">Test</button>
+        &nbsp;
         <button class="btn btn-large btn-primary" onclick="set_camp_opts('S');" type="submit">Save as Draft</button>
       </form>
 
@@ -63,8 +65,11 @@ function set_camp_opts(opt)	{
     if (opt == 'R'){
         $("#id_campaign_opt").attr('value','R');
     }
-    else{
+    else if(opt == 'S'){
         $("#id_campaign_opt").attr('value','S');
+    }
+    else{
+        $("#id_campaign_opt").attr('value','T');
     }
 }
 </script>

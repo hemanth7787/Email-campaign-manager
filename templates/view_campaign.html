@@ -31,7 +31,7 @@
             
             {% for camp in camps  %}
             <td>{{forloop.counter}}</td>
-            <td>{{camp.subject}}</td>
+            <td>&nbsp;{% if camp.campaign_opt == 'T' %}<label class="label label-info">Test</label>{% endif %}&nbsp;&nbsp;{{camp.subject}}</td>
             <td>{{camp.sender}}</td>
             <td>{{camp.mailing_list.all|join:","}}</td>
             <td>{{camp.date_created}}</td>

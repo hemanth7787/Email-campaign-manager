@@ -97,6 +97,7 @@ def run_campaign(request):
         #pdb.set_trace()
         cform=ListBasketForm(request.POST,request.FILES)
         if cform.is_valid():
+            #pdb.set_trace()
             content_type = request.POST['content_type']
             sendopt = request.POST['send_options']
             pro_campaign = cform.save(commit=False)
@@ -118,10 +119,15 @@ def run_campaign(request):
             #pdb.set_trace()
             #send_email(pro_campaign,unsubscribe_url,ecm_host,sendopt)
             if request.POST['campaign_opt'] == 'S':
-                messages.success(request,"Campain successfully saved")
+                messages.success(request,"Campaign successfully saved")
+            elif request.POST['campaign_opt'] == 'T':
+                messages.success(request,"Test campaign successfully sent.")
+                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
             else:
                 celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
-                messages.success(request,"Run campain successfull")
+                messages.success(request,"Campaign successfully sent.")
+                form = ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],},)
+                return render(request, "run_campain.html",{'cform':form ,})
     return render(request, "run_campain.html",{'cform':cform ,})
 
 def unsubscribe(request,usid):
@@ -203,7 +209,7 @@ def campaign(request):
 @login_required(login_url='/login')
 @csrf_protect
 def view_campaign(request):
-    camps = modelcampaign.objects.filter(campaign_opt='R').order_by('-date_created')
+    camps = modelcampaign.objects.exclude(campaign_opt='S').order_by('-date_created')
     paginator = Paginator(camps, 10)
     page = request.GET.get('page')
     try:

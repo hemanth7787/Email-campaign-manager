@@ -25,7 +25,7 @@ class addcform(forms.Form):
 class ListBasketForm(forms.ModelForm): 
     CHOICES = (('P', 'Rich text',),('T', 'Template',))
     SEND_OPT = (('Q', 'Quick send',),('N', 'Normal send',))
-    CAMP_OPT = (('R', 'Run',),('S', 'Save',))
+    CAMP_OPT = (('R', 'Run',),('S', 'Save',),('T', 'Test',))
     content_type = forms.ChoiceField(widget=forms.RadioSelect(
     attrs={'onclick': 'content_select(value);'},)
     , choices=CHOICES)
@@ -46,7 +46,7 @@ class mailtemplateform(forms.ModelForm):
         fields = ('name','zipfile', 'thumbnail')
 
 class campselectform(forms.Form):
-    campaign = forms.ModelChoiceField(queryset=campaign.objects.all().exclude(campaign_opt='S').order_by("-date_created"),empty_label=None)
+    campaign = forms.ModelChoiceField(queryset=campaign.objects.filter(campaign_opt='R').order_by("-date_created"),empty_label=None)
 
 class cleanupform(forms.Form):
     CHOICES = (('blocks', 'Blocks',),('bounces', 'Bounces',),('unsubscribes', 'Unsubscribes',),('spamreports', 'Spam Reports',))
