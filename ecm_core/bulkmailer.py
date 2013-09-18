@@ -77,8 +77,7 @@ def check_email(email, ignore_errors=False):
     if settings.DEBUG:
         logger.debug("Checking e-mail address %s", email)
 
-    email_length = 30 #\
-        #Subscription._meta.get_field_by_name('email_field')[0].max_length
+    email_length = Mail_address._meta.get_field_by_name('mail_id')[0].max_length
 
     if len(email) <= email_length or ignore_errors:
         return email[:email_length]
@@ -425,12 +424,13 @@ def parse_csv(myfile, mlist, ignore_errors=False):
         elif not ignore_errors:
                 raise forms.ValidationError(_(
                     "Entry '%s' does not contain a valid "
-                    "e-mail address.") % name)
+                    "e-mail address.") % contact['first_name'])
         else:
+            #pdb.set_trace()
             logger.warn(
                 "Entry '%s' at line %d does not contain a valid "
                 "e-mail address.",
-                name, myreader.line_num, extra=dict(data={'row': row}))
+                contact['first_name'], myreader.line_num, extra=dict(data={'row': row}))
 
         '''if addr:
             if email in addresses:
