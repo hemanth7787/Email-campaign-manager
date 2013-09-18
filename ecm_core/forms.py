@@ -46,7 +46,7 @@ class mailtemplateform(forms.ModelForm):
         fields = ('name','zipfile', 'thumbnail')
 
 class campselectform(forms.Form):
-    campaign = forms.ModelChoiceField(queryset=campaign.objects.all().order_by("-date_created"),empty_label=None)
+    campaign = forms.ModelChoiceField(queryset=campaign.objects.all().exclude(campaign_opt='S').order_by("-date_created"),empty_label=None)
 
 class cleanupform(forms.Form):
     CHOICES = (('blocks', 'Blocks',),('bounces', 'Bounces',),('unsubscribes', 'Unsubscribes',),('spamreports', 'Spam Reports',))

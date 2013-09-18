@@ -240,7 +240,7 @@ def camp_drafts_sent(request,camp_id=None):
             raise NameError("No campaign id !")
         camp_draft = modelcampaign.objects.get(id=camp_id)
         unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
-        ecm_host = "http://"+request.META['HTTP_HOST']+"/"
+        ecm_host = "http://"+request.META['HTTP_HOST']
         celery_sendmail_task.delay(camp_draft,unsubscribe_url,ecm_host,'Q')
         messages.success(request,"campaign sent successfull")
     except Exception,e:
