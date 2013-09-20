@@ -18,17 +18,19 @@ def ecm_sendgridapi_dbsync():
     def flag_emal(flag_type,email):
         try:
             contact = Mail_address.objects.get(mail_id__exact=email)
-            if flag_type == 'spam':
-                contact.spam_flag = True
-            elif flag_type == 'block':
-                contact.block_flag = True
-            elif flag_type == 'bounce':
-                contact.bounce_flag = True
-            elif flag_type == 'unsub':
-                contact.unsub_flag = True
-            contact.save()
-        except:
-            logger.error("Error : flagging not working ecm_sengridapi - tasks")
+        except Exception, e:
+            logger.warn("[ W ]ecm_sengridapi - tasks -- details: {0}".format(e))
+            return
+
+        if flag_type == 'spam':
+            contact.spam_flag = True
+        elif flag_type == 'block':
+            contact.block_flag = True
+        elif flag_type == 'bounce':
+            contact.bounce_flag = True
+        elif flag_type == 'unsub':
+            contact.unsub_flag = True
+        contact.save()
 
     def update_BlocksModel(job):
         if not job:
