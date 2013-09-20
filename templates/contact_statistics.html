@@ -18,7 +18,8 @@
             <th class="header">#</th>
             <th class="yellow header headerSortDown">Group Name</th>
             <th class="yellow header headerSortDown">Contacts</th>
-            <th class="yellow header headerSortDown">Operations</th>
+            <th class="yellow header headerSortDown">Date created</th>
+            <th class="yellow header headerSortDown">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -30,9 +31,10 @@
             <td>{{forloop.counter}}</td>
             <td>{{item.title}}</td>
             <td>{{item.addrcount}}</td>
-            <td ><a class="btn btn-small btn-info"  href="{% url "maillist_export" data_type='csv' id=item.id %}">Export CSV</a></td>
-            <td ><a class="btn btn-small btn-info"  href="{% url "maillist_export" data_type='xls' id=item.id %}">Export Excel</a></td>
-            <td  id="btn{{item.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{item.id}})">Delete</a></td>
+            <td>{{item.date_of_creation}}</td>
+            <td id="btn{{item.id}}" >&nbsp;&nbsp;&nbsp;<a class="btn"  href="{% url "maillist_export" data_type='csv' id=item.id %}">Download CSV</a>&nbsp;&nbsp;&nbsp;
+            <a class="btn"  href="{% url "maillist_export" data_type='xls' id=item.id %}">Download Excel</a>&nbsp;&nbsp;&nbsp;
+            <a  class="btn btn-danger "onclick="pre_delete({{item.id}})">Delete</a></td>
           </tr>
           {% endfor %}
 
@@ -98,11 +100,11 @@ function pre_delete(item_id){
         if (json_obj['status'] == "success")
          {
    
-  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'>Deleted</td>");
+  $("#row"+item_id).html("<td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'></td><td class='alert'>&nbsp;&nbsp;&nbsp;Deleted</td>");
   return;
 }
 else{
-  $("#btn"+item_id).html("<a class='errorlist'>Error</a>");
+  $("#btn"+item_id).html("<a class='errorlist'>Error while deleting !</a>");
 return;
 }
 

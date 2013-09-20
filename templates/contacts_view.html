@@ -19,41 +19,13 @@
 <button class="btn btn-small" onclick="delete_multiple();">Delete selected</button>
 
 <div id="contacts" class="row-fluid">
-<table class="tablesorter table table-bordered" id="contacts-table">
-        <thead>
-          <tr>
-            <th class="header"><span><input type="checkbox" id="action-toggle" style="display: inline-block;"></span>&nbsp;</th>
-            <th class="yellow header headerSortDown">Full Name</th>
-            <th class="blue header">Email</th>
-            <th class="blue header">Group</th>
-            <th class="blue header">Remarks</th>
-            <th class="yellow header headerSortDown">Operations</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-          
-  
-      
-            
-            {% for contact in contacts  %}
-            <tr id="row{{contact.id}}">
-            <td><span><input type="checkbox" class="checkboxselect" id="{{contact.id}}" style="display: inline-block;"></span>&nbsp;</td>
-            <td>{{contact.full_name}}</td>
-            <td>{{contact.mail_id}}</td>
-            <td>{{contact.mail_list.title}}</td>
-            <td>{% if contact.spam_flag %}Spam,{% endif %}{% if contact.unsub_flag %}Unsubscribed,{% endif %}{% if contact.block_flag %}Blocked,{% endif %}{% if contact.bounce_flag %}Bounced {% endif %}</td>
-            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})">Delete</a></td>
-          </tr>
-          {% endfor %}
 
+  {% include "snippets/contacts_search.html" with contacts=contacts %}
+   
 
-      </tbody>
-      </table>
+</div>
 
-          </div>
-
-          {% include "snippets/pagination.html" with item=contacts %}
+ {% include "snippets/pagination.html" with item=contacts %}
 
      <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -66,6 +38,17 @@
   <div id="dialog-footer" class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
     <button class="btn btn-danger" onclick="delete_single()">Yes</button>
+  </div>
+</div>
+
+<div id="modal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Contact Details</h3>
+  </div>
+  <div id="dialog" class="modal-body"></div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn btn-primary btn-small" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
 

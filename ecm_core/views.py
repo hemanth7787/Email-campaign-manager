@@ -87,6 +87,14 @@ def add_contact(request):
 
     return render(request,'add_contact.html',{ 'form':contactform })
 
+@login_required(login_url='/login')
+@csrf_protect
+def contacts_details(request,cid):
+    try:
+        contact=Mail_address.objects.get(id=cid)
+    except:
+        pass
+    return render(request,'snippets/contact_details.html',{'contact':contact})
 
 @login_required(login_url='/login')
 @csrf_protect
@@ -433,7 +441,7 @@ def contacts_search(request):
     squery=request.POST['query']
     results = Mail_address.objects.filter(Q(First_Name__icontains=squery) | Q(Middle_Name__icontains=squery) | Q(Last_Name__icontains=squery) | Q(mail_id__icontains=squery)).order_by('mail_list')
     if not results:
-        return HttpResponse("<p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
+        return HttpResponse("<br><p > &nbsp;&nbsp; Your search \""+ squery +"\" returned 0 records, try again ..!</p>", content_type="text/html")
     #pdb.set_trace()
     return render(request, "snippets/contacts_search.html",{'contacts':results})
 

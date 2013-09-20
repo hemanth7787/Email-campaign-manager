@@ -9,13 +9,13 @@
             <th class="yellow header headerSortDown">Full Name</th>
             <th class="blue header">Email</th>
             <th class="blue header">Group</th>
-            <th class="blue header">Subscribed</th>
-            <th class="yellow header headerSortDown">Operations</th>
+            <th class="blue header">Remarks</th>
+            <th class="yellow header headerSortDown">Actions</th>
           </tr>
         </thead>
         <tbody>
           
-          
+         
           
         
             
@@ -25,8 +25,8 @@
             <td>{{contact.full_name}}</td>
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
-            <td>{{contact.subscribed}}</td>
-            <td id="btn{{contact.id}}"><a class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})">Delete</a></td>
+            <td>{% if contact.spam_flag %}Spam,{% endif %}{% if contact.unsub_flag %}Unsubscribed,{% endif %}{% if contact.block_flag %}Blocked,{% endif %}{% if contact.bounce_flag %}Bounced {% endif %}</td>
+            <td id="btn{{contact.id}}"><a data-toggle="modal" data-target="#modal2" title="View details" class="btn btn-small btn-info" href="{% url "contacts_details" cid=contact.id %}"><icon class="icon-white icon-eye-open"></icon></a>&nbsp;&nbsp;<a title="Delete" class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})"><icon class="icon-white icon-remove"</icon></a></td>
           </tr>
           {% endfor %}
 
