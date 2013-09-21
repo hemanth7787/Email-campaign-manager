@@ -87,6 +87,30 @@ def add_contact(request):
 
     return render(request,'add_contact.html',{ 'form':contactform })
 
+
+@login_required(login_url='/login')
+@csrf_protect
+def edit_contact(request,cid):
+    try:
+        contact=Mail_address.objects.get(id=cid)
+    except:
+        messages.error(request,"Cannot open contact for editing! ")
+        return redirect("contacts_view")
+    if request.method == "POST":
+        contactform=singlecontactform(request.POST,instance=contact)
+        if contactform.is_valid():
+            try:
+                contactform.save()
+                messages.success(request,"Contact saved successfully")
+                return redirect("contacts_view")
+            except Exception, e:
+                logger.error("uncaught error in add_contact() | Details :  {0} ".format(e))
+                messages.error(request,"Contact cannot be saved..! ")
+    else:
+        contactform = singlecontactform(instance=contact)
+    return render(request,'edit_contact.html',{ 'form':contactform })
+
+
 @login_required(login_url='/login')
 @csrf_protect
 def contacts_details(request,cid):

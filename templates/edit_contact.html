@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block head_title %} Import Contacts {% endblock %}
+
+{% block menulist %}
+{% include "snippets/contacts_menu_snippet.html" with page='editcontact' %}
+            {% endblock %}
+            
+
+{% block "body" %}
+
+
+<div class="well">
+ <form  enctype="multipart/form-data" method="post" action="">
+	{% csrf_token %}
+        <h2 class="form-signin-heading">Edit contact</h2>
+         <p>( Atleast an email and a group is required</a> )</p>
+		{{form}}
+
+		<br>
+		<button class="btn btn-large btn-primary" type="submit">Save </button>
+</form>
+</div> <!-- /container -->
+
+{% endblock %}
+
