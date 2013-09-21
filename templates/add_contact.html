@@ -5,7 +5,9 @@
 {% include "snippets/contacts_menu_snippet.html" with page='addcontact' %}
             {% endblock %}
             
-
+{% block head %}
+<link href="{{ STATIC_URL }}datepicker/css/datepicker.css" rel="stylesheet"> 
+{% endblock %}
 {% block "body" %}
 <script type="text/javascript">
 
@@ -45,6 +47,7 @@ if (value == 'N')
 {% endblock %}
 
 {% block "scripts" %}
+<script type="text/javascript" src="{{ STATIC_URL }}datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 $('#id_html').hide();
@@ -52,7 +55,7 @@ $('#id_html').hide();
     	$("label[for='id_Group_name']").hide();
     	$('#id_Mailing_list').hide();
     	$("label[for='id_Mailing_list']").hide();
-
+$('#id_Date_of_Birth').datepicker({'format': 'dd-mm-yyyy'});
 });
 	
 </script>
