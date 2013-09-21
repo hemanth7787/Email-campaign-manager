@@ -169,5 +169,18 @@ return;
 
 }
 }); }
+
+
+
+
+ $("a[data-target=#modal2]").click(function(ev) {
+    ev.preventDefault();
+    var target = $(this).attr("href");
+
+    // load the url and show modal on success
+    $("#modal2 .modal-body").load(target, function() { 
+         $("#modal2").modal("show"); 
+    });
+});
 </script>
 {% endblock %}

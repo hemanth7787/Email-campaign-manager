@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-{% block head_title %} Import Contacts {% endblock %}
+{% block head_title %} Edit Contacts {% endblock %}
 
 {% block menulist %}
 {% include "snippets/contacts_menu_snippet.html" with page='editcontact' %}
             {% endblock %}
             
-
+{% block head %}
+<link href="{{ STATIC_URL }}datepicker/css/datepicker.css" rel="stylesheet"> 
+{% endblock %}
 {% block "body" %}
 
 
@@ -22,4 +24,11 @@
 </div> <!-- /container -->
 
 {% endblock %}
-
+{% block "scripts" %}
+<script type="text/javascript" src="{{ STATIC_URL }}datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#id_Date_of_Birth').datepicker({'format': 'dd-mm-yyyy'});
+    });
+</script>
+{% endblock %}

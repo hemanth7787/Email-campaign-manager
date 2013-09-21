@@ -58,6 +58,8 @@ class singlecontactform(forms.ModelForm):
         fields = ['First_Name','Middle_Name','Last_Name','Date_of_Birth',
         'Gender','mail_id','mail_list','Country','City','Direct_Phone','Mobile','Address_1',
         'Address_2','Zip','Telephone_1','Telephone_2','Company','Job_Title','Website']
+    Date_of_Birth = forms.DateField(widget=forms.DateInput(format = '%d-%m-%Y'), input_formats=('%d-%m-%Y',),
+     label = 'Date of Birth (dd-mm-yyyy)',required=False)
 
 
 class listselectform(forms.Form):
