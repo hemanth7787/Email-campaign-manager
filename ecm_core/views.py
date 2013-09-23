@@ -147,7 +147,8 @@ def run_campaign(request):
             pro_campaign.save()
             cform.save_m2m()  # PITFALL
             unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
-            ecm_host = request.META['HTTP_ORIGIN']
+            #ecm_host = request.META['HTTP_ORIGIN']
+            ecm_host = "http://"+request.META['HTTP_HOST']
             #pdb.set_trace()
             #send_email(pro_campaign,unsubscribe_url,ecm_host,sendopt)
             if request.POST['campaign_opt'] == 'S':
@@ -389,7 +390,9 @@ def templates_new(request):
         fp = open(path+'index.html','r')
         original_html = fp.read()
         soup  = BeautifulSoup(original_html)
-        asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
+        #asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
+        asseturl = "http://"+request.META['HTTP_HOST']+"/"+path+"images"
+        #pdb.set_trace()
         for link in soup.find_all('img'):
             link['src']=link['src'].replace("images",asseturl)
         obj.html=str(soup)
