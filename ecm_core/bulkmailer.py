@@ -18,11 +18,9 @@ import pdb
 import SmtpApiHeader #local file
 import json
 from ecm_track.TrackHelper import TrackCode
-#from django.core.mail import EmailMultiAlternatives
 
 def send_email(obj,unsubscribe_url,host,sendopt):
     for mlist in obj.mailing_list.all():
-        #logger.info(Mail_address.objects.filter(mail_list=mlist).values_list('mail_id',flat=True))
         if sendopt == 'N':
             to_list = Mail_address.objects.filter(mail_list=mlist)
         else: # Q
@@ -40,7 +38,6 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     hdr = SmtpApiHeader.SmtpApiHeader()
     hdr.setCategory(str(campaign_obj.category()))
     #API https://sendgrid.com/api/stats.get.json?api_user=username&api_key=password&list=true&category=category
-    #pdb.set_trace()
     for mobj in mail_addr_obj:
         if mobj.subscribed:
             uslink=unsubscribe_url+mobj.uid+"/"
@@ -49,29 +46,11 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
                 mail_body = html.format(unsubscribe=uslink)
             except:
                 mail_body = html
-            #pdb.set_trace()
             track_code= TrackCode(host,mobj,uuid)
-            #pdb.set_trace()
             mail_body+=track_code
             msg = EmailMultiAlternatives(subj, "", sender, [mobj.mail_id], headers={"X-SMTPAPI": hdr.asJSON()})
             msg.attach_alternative(mail_body, "text/html")
             msg.send()
-
-'''def explode_mail(f,cid,sid,subject):
-    template=f.read()
-    
-    #TODO: Remove below hardcoded sender email and use from_email=str(sid)
-    from_email='noreply@orange-mailer.net'
-    text_content = ''
-    #Repto='Reply-To: hemanth7787@gmail.com'
-    html_content = template
-    inbox_list=Mail_address.objects.filter(cid=cid)
-    for target_inbox in inbox_list:
-        to = str(target_inbox.mid)
-        msg = EmailMultiAlternatives(subject, text_content, from_email,[to])
-        #msg.headers= {'reply-to','hemanth@success.com'}
-        msg.attach_alternative(html_content, "text/html")   
-        msg.send()'''
 
 def check_email(email, ignore_errors=False):
     if settings.DEBUG:
@@ -87,22 +66,6 @@ def check_email(email, ignore_errors=False):
             "%(email_length)s characters.") % {
                 "email": email,
                 "email_length": email_length})
-
-def check_name(name, ignore_errors=False):
-    if settings.DEBUG:
-        logger.debug("Checking name: %s", name)
-
-    #TODO V name_length = \
-    #    Subscription._meta.get_field_by_name('name_field')[0].max_length
-    name_length=30    
-    if len(name) <= name_length or ignore_errors:
-        return name[:name_length]
-    else:
-        raise forms.ValidationError(_(
-            "Name %(name)s too long, maximum length is "
-            "%(name_length)s characters.") % {
-                "name": name,
-                "name_length": name_length})
 
 def vlen(data, length):
     # VALIDATE LENGTH   
@@ -387,16 +350,15 @@ def parse_csv(myfile, mlist, ignore_errors=False):
                     "Row with content '%(row)s' does not contain a name and "
                     "email field.") % {'row': row})
 
-        #name = check_name(row[namecol], ignore_errors)
         contact = dict()
         contact['email']      = check_email(row[mailcol], ignore_errors)
-        contact['first_name'] = vlen(row[first_namecol],30)
-        contact['last_name']  = vlen(row[last_namecol],30)
-        contact['mid_name']   = vlen(row[mid_namecol],30)
+        contact['first_name'] = vlen(row[first_namecol],100)
+        contact['last_name']  = vlen(row[last_namecol],100)
+        contact['mid_name']   = vlen(row[mid_namecol],100)
         contact['dob']        = row[dob_col]
         contact['gender']     = vlen(row[gen_col],5)
-        contact['country']    = vlen(row[country_col],30)
-        contact['city']       = vlen(row[city_col],30)
+        contact['country']    = vlen(row[country_col],100)
+        contact['city']       = vlen(row[city_col],100)
         contact['direct_phone'] = vlen(row[direct_phone_col],20)
         contact['mobile']       = vlen(row[mobile_col],15)
         contact['Address_1']    = row[Address_1_col]
@@ -404,9 +366,9 @@ def parse_csv(myfile, mlist, ignore_errors=False):
         contact['zipcode']      = vlen(row[zip_col],15)
         contact['telephone_1']  = vlen(row[telephone_1_col],15)
         contact['telephone_2']  = vlen(row[telephone_2_col],15)
-        contact['company']      = vlen(row[company_col],30)
-        contact['job_title']    = vlen(row[job_title_col],30)
-        contact['website']      = vlen(row[website_col],30)
+        contact['company']      = vlen(row[company_col],100)
+        contact['job_title']    = vlen(row[job_title_col],100)
+        contact['website']      = vlen(row[website_col],100)
 
 
         '''email,first_name, last_name, mid_name, dob, gender,
@@ -418,43 +380,13 @@ def parse_csv(myfile, mlist, ignore_errors=False):
         logger.debug("Going to add %s <%s> %d", contact['first_name'], contact['email'], count)
 
         if email_re.search(contact['email']):
-            #TODO addr = make_subscription(newsletter, email, name)
-            #pdb.set_trace()
             add_contact(mlist,contact)
         elif not ignore_errors:
                 raise forms.ValidationError(_(
                     "Entry '%s' does not contain a valid "
                     "e-mail address.") % contact['first_name'])
         else:
-            #pdb.set_trace()
             logger.warn(
                 "Entry '%s' at line %d does not contain a valid "
                 "e-mail address.",
                 contact['first_name'], myreader.line_num, extra=dict(data={'row': row}))
-
-        '''if addr:
-            if email in addresses:
-                logger.warn(
-                    "Entry '%s' at line %d contains a "
-                    "duplicate entry for '%s'",
-                    name, myreader.line_num, email,
-                    extra=dict(data={'row': row}))
-
-                if not ignore_errors:
-                    raise forms.ValidationError(_(
-                        "The address file contains duplicate entries "
-                        "for '%s'.") % email)
-
-            addresses.update({email: addr})
-        else:
-            logger.warn(
-                "Entry '%s' at line %d is already subscribed to "
-                "with email '%s'",
-                name, myreader.line_num, email, extra=dict(data={'row': row}))
-
-            if not ignore_errors:
-                raise forms.ValidationError(
-                    _("Some entries are already subscribed to."))
-
-    return addresses'''
-
