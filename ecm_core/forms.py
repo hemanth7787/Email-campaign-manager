@@ -45,8 +45,8 @@ class mailtemplateform(forms.ModelForm):
         model = mailtemplate
         fields = ('name','zipfile', 'thumbnail')
 
-class campselectform(forms.Form):
-    campaign = forms.ModelChoiceField(queryset=campaign.objects.filter(campaign_opt='R').order_by("-date_created"),empty_label=None)
+class campselectform(forms.Form): # For opentrack
+    campaign = forms.ModelChoiceField(queryset=campaign.objects.filter(status=True).order_by("-date_created"),empty_label=None)
 
 class cleanupform(forms.Form):
     CHOICES = (('blocks', 'Blocks',),('bounces', 'Bounces',),('unsubscribes', 'Unsubscribes',),('spamreports', 'Spam Reports',))
