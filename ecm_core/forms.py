@@ -43,7 +43,7 @@ class ListBasketForm(forms.ModelForm):
 class mailtemplateform(forms.ModelForm): 
     class Meta:
         model = mailtemplate
-        fields = ('name','zipfile', 'thumbnail')
+        fields = ['name','zipfile']
 
 class campselectform(forms.Form): # For opentrack
     campaign = forms.ModelChoiceField(queryset=campaign.objects.filter(status=True).order_by("-date_created"),empty_label=None)

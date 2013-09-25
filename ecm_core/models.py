@@ -93,7 +93,7 @@ class mailtemplate(models.Model):
     def unique_file_name(instance, filename):
         return '/'.join(['mailtemplate',datetime.today().strftime("%B_%Y"), str(uuid4())+os.path.splitext(filename)[1]])
     name = models.CharField(max_length=50,null=True)
-    zipfile = models.FileField(upload_to=unique_file_name)
+    zipfile = models.FileField(upload_to=unique_file_name,verbose_name='Template zip file')
     html = models.TextField(verbose_name='Content')
     thumbnail = models.ImageField(upload_to=unique_image_name, blank=True, null=True, verbose_name='Optional Thumbnail')
     date_of_creation = models.DateTimeField(editable=False, default=now()) 

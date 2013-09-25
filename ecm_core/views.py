@@ -396,6 +396,7 @@ def templates_new(request):
         for link in soup.find_all('img'):
             link['src']=link['src'].replace("images",asseturl)
         obj.html=str(soup)
+        obj.thumbnail='extracted/'+obj.uuid+'/preview.jpg'
         obj.save()
         #pdb.set_trace()
     def process_zip(obj,request):
@@ -407,10 +408,6 @@ def templates_new(request):
     if request.method == "POST":
         form=mailtemplateform(request.POST,request.FILES)
         if form.is_valid():
-            #cid = request.POST['cat_id']
-            #send_id = request.POST['email_id']
-            #send_id='noreply@orange-mailer.net'
-            #subj = request.POST['subj']
             obj = form.save()
             try:
                 process_zip(obj,request)
