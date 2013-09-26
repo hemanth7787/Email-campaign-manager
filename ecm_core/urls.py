@@ -9,6 +9,7 @@ urlpatterns = patterns('',
    url(r'^contacts-add/$', 'ecm_core.views.add_contact', name='contacts_add'),
    url(r'^contacts-edit/(?P<cid>\d+)/$', 'ecm_core.views.edit_contact', name='contacts_edit'),
    url(r'^contacts-details/(?P<cid>\d+)/$', 'ecm_core.views.contacts_details', name='contacts_details'),
+   url(r'^contacts-history/(?P<cid>\d+)/$', 'ecm_core.views.contacts_history', name='contacts_history'),
 
    url(r'^maillist-export/(?P<data_type>[\w-]+)/(?P<id>\d+)/$', 'ecm_core.views.maillist_export', name='maillist_export'),
    url(r'^maillist-delete/$', 'ecm_core.views.maillist_delete', name='maillist_delete'),

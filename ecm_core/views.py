@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform, singlecontactform, campeditform #, listselectform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
-from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate
+from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv, send_email
 
@@ -117,8 +117,19 @@ def contacts_details(request,cid):
     try:
         contact=Mail_address.objects.get(id=cid)
     except:
-        pass
+        contact=[]
     return render(request,'snippets/contact_details.html',{'contact':contact})
+
+
+@login_required(login_url='/login')
+@csrf_protect
+def contacts_history(request,cid):
+    try:
+        contact=Mail_address.objects.get(id=cid)
+        camp_hist=History.objects.get(email=contact.mail_id)
+    except:
+        camp_hist = []
+    return render(request,'snippets/contact_history.html',{'history':camp_hist})
 
 @login_required(login_url='/login')
 @csrf_protect

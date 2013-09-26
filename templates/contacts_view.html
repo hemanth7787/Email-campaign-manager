@@ -52,6 +52,16 @@
   </div>
 </div>
 
+<div id="modal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">History</h3>
+  </div>
+  <div id="dialog" class="modal-body"></div>
+  <div id="dialog-footer" class="modal-footer">
+    <button class="btn btn-primary btn-small" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
           {% endblock %}
 
 {% block "scripts" %}
@@ -176,10 +186,16 @@ return;
  $("a[data-target=#modal2]").click(function(ev) {
     ev.preventDefault();
     var target = $(this).attr("href");
-
-    // load the url and show modal on success
     $("#modal2 .modal-body").load(target, function() { 
          $("#modal2").modal("show"); 
+    });
+});
+
+  $("a[data-target=#modal3]").click(function(ev) {
+    ev.preventDefault();
+    var target = $(this).attr("href");
+    $("#modal3 .modal-body").load(target, function() { 
+         $("#modal3").modal("show"); 
     });
 });
 </script>

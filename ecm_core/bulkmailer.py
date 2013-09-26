@@ -1,5 +1,5 @@
 from django.core.mail import send_mail,EmailMultiAlternatives
-from models import Mail_address, Mailing_list, campaign
+from models import Mail_address, Mailing_list, campaign, History
 
 #Parsecsv
 from django.utils.translation import ugettext_lazy as _
@@ -28,6 +28,13 @@ def send_email(obj,unsubscribe_url,host,sendopt):
         tracked_email(obj,to_list,unsubscribe_url,host)
 
 def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
+    def add_campaign_history(email_id,camp):
+        try:
+            obj, created = History.objects.get_or_create(email=email_id)
+            obj.received_camps.add(camp)
+        except Exception, e:
+            logger.error("bulkmailer.tracked_email.add_campaign_history()| Details :  {0} ".format(e))
+
     subj = str(campaign_obj.subject)
     html = str(campaign_obj.html)
     if campaign_obj.sender_name:
@@ -51,6 +58,7 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
             msg = EmailMultiAlternatives(subj, "", sender, [mobj.mail_id], headers={"X-SMTPAPI": hdr.asJSON()})
             msg.attach_alternative(mail_body, "text/html")
             msg.send()
+            add_campaign_history(mobj.mail_id,campaign_obj)
 
 def check_email(email, ignore_errors=False):
     if settings.DEBUG:

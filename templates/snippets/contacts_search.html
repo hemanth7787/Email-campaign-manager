@@ -26,7 +26,7 @@
             <td>{{contact.mail_id}}</td>
             <td>{{contact.mail_list.title}}</td>
             <td>{% if contact.spam_flag %}Spam,{% endif %}{% if contact.unsub_flag %}Unsubscribed,{% endif %}{% if contact.block_flag %}Blocked,{% endif %}{% if contact.bounce_flag %}Bounced {% endif %}</td>
-            <td id="btn{{contact.id}}"><a data-toggle="modal" data-target="#modal2" title="View details" class="btn btn-small btn-info" href="{% url "contacts_details" cid=contact.id %}"><icon class="icon-white icon-eye-open"></icon></a>&nbsp;&nbsp;<a title="Edit" class="btn btn-small btn-warning" href="{% url "contacts_edit" cid=contact.id %}"><icon class="icon-white icon-edit"</icon></a>&nbsp;&nbsp;<a title="Delete" class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})"><icon class="icon-white icon-remove"</icon></a></td>
+            <td id="btn{{contact.id}}"><a data-toggle="modal" data-target="#modal2" title="View details" class="btn btn-small btn-info" href="{% url "contacts_details" cid=contact.id %}"><icon class="icon-white icon-eye-open"></icon></a>&nbsp;&nbsp;<a title="History" data-toggle="modal" data-target="#modal3" class="btn btn-small btn-info" href="{% url "contacts_history" cid=contact.id %}"><icon class="icon-white icon-time"</icon></a>&nbsp;&nbsp;<a title="Edit" class="btn btn-small btn-warning" href="{% url "contacts_edit" cid=contact.id %}"><icon class="icon-white icon-edit"</icon></a>&nbsp;&nbsp;<a title="Delete" class="btn btn-small btn-danger "onclick="pre_delete({{contact.id}})"><icon class="icon-white icon-remove"</icon></a></td>
           </tr>
           {% endfor %}
 

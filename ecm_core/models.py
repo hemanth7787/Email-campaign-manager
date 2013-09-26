@@ -39,7 +39,7 @@ class Mail_address(models.Model):
     def __unicode__(self):
         return self.mail_id
     def full_name(self):
-        return self.First_Name+" "+self.Middle_Name+" "+self.Last_Name
+        return (self.First_Name+" "+self.Middle_Name+" "+self.Last_Name).encode('ascii', 'ignore')
     def save(self, *args, **kwargs):
         if not self.id:
             self.uid = str(uuid4())
@@ -104,3 +104,13 @@ class mailtemplate(models.Model):
         if not self.id:
             self.uuid = str(uuid4())
         super(mailtemplate, self).save(*args, **kwargs)
+
+
+class History(models.Model):
+       email = models.EmailField()
+       received_camps = models.ManyToManyField(
+       'campaign',
+       #help_text='Select atleast one mailing list :  ',
+       blank=True, #verbose_name='Target mailing lists',
+       #limit_choices_to={'subscribed': True}
+       )   

@@ -1,0 +1,3 @@
+<table class="table table-bordered">
+    <tr> <td>Campaign History</td><td>{% if history %}{{history.received_camps.all|join:"," }}{% else %}None{% endif %}</td></tr>
+</table>
