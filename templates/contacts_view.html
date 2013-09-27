@@ -97,6 +97,23 @@ $(document).ready(function(){
         var c = this.checked;
         $(".checkboxselect").prop('checked',c);
          });
+
+
+    $("a[data-target=#modal2]").click(function(ev) {
+    ev.preventDefault();
+    var target = $(this).attr("href");
+    $("#modal2 .modal-body").load(target, function() { 
+         $("#modal2").modal("show"); 
+    });
+});
+
+  $("a[data-target=#modal3]").click(function(ev) {
+    ev.preventDefault();
+    var target = $(this).attr("href");
+    $("#modal3 .modal-body").load(target, function() { 
+         $("#modal3").modal("show"); 
+    });
+});
            
        }
      });
