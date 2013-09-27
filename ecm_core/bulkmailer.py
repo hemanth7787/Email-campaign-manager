@@ -27,6 +27,15 @@ def send_email(obj,unsubscribe_url,host,sendopt):
             to_list = Mail_address.objects.filter(mail_list=mlist).exclude(spam_flag=True).exclude(unsub_flag=True).exclude(block_flag=True).exclude(bounce_flag=True)
         tracked_email(obj,to_list,unsubscribe_url,host)
 
+'''def send_test_email(obj,unsubscribe_url,host,sendopt):
+    for mlist in obj.mailing_list.all():
+        if sendopt == 'N':
+            to_list = Mail_address.objects.filter(mail_list=mlist)
+        else: # Q
+            to_list = Mail_address.objects.filter(mail_list=mlist).exclude(spam_flag=True).exclude(unsub_flag=True).exclude(block_flag=True).exclude(bounce_flag=True)
+        tracked_email(obj,to_list,unsubscribe_url,host)'''
+
+
 def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     def add_campaign_history(email_id,camp):
         try:
@@ -358,25 +367,45 @@ def parse_csv(myfile, mlist, ignore_errors=False):
                     "Row with content '%(row)s' does not contain a name and "
                     "email field.") % {'row': row})
 
-        contact = dict()
+        contact = { 'email':'','first_name':'', 'last_name':'', 'mid_name':'', 'dob':'', 'gender':'',
+        'country':'', 'city':'', 'direct_phone':'', 'mobile':'', 'Address_1':'',
+        'Address_2':'', 'zipcode':'', 'telephone_1':'','telephone_2':'',
+        'company':'', 'job_title':'', 'website':'' }
         contact['email']      = check_email(row[mailcol], ignore_errors)
         contact['first_name'] = vlen(row[first_namecol],100)
-        contact['last_name']  = vlen(row[last_namecol],100)
-        contact['mid_name']   = vlen(row[mid_namecol],100)
-        contact['dob']        = row[dob_col]
-        contact['gender']     = vlen(row[gen_col],5)
-        contact['country']    = vlen(row[country_col],100)
-        contact['city']       = vlen(row[city_col],100)
-        contact['direct_phone'] = vlen(row[direct_phone_col],20)
-        contact['mobile']       = vlen(row[mobile_col],15)
-        contact['Address_1']    = row[Address_1_col]
-        contact['Address_2']    = row[Address_2_col]
-        contact['zipcode']      = vlen(row[zip_col],15)
-        contact['telephone_1']  = vlen(row[telephone_1_col],15)
-        contact['telephone_2']  = vlen(row[telephone_2_col],15)
-        contact['company']      = vlen(row[company_col],100)
-        contact['job_title']    = vlen(row[job_title_col],100)
-        contact['website']      = vlen(row[website_col],100)
+
+        if not last_namecol is None:
+            contact['last_name']  = vlen(row[last_namecol],100)
+        if not mid_namecol is None:
+            contact['mid_name']   = vlen(row[mid_namecol],100)
+        if not dob_col is None:
+            contact['dob']        = row[dob_col]
+        if not gen_col is None:
+            contact['gender']     = vlen(row[gen_col],10)
+        if not country_col is None:
+            contact['country']    = vlen(row[country_col],100)
+        if not city_col is None:
+            contact['city']       = vlen(row[city_col],100)
+        if not direct_phone_col is None:
+            contact['direct_phone'] = vlen(row[direct_phone_col],20)
+        if not mobile_col is None:
+            contact['mobile']       = vlen(row[mobile_col],15)
+        if not Address_1_col is None:
+            contact['Address_1']    = row[Address_1_col]
+        if not Address_2_col is None:
+            contact['Address_2']    = row[Address_2_col]
+        if not zip_col is None:
+            contact['zipcode']      = vlen(row[zip_col],15)
+        if not telephone_1_col is None:
+            contact['telephone_1']  = vlen(row[telephone_1_col],15)
+        if not telephone_2_col is None:
+            contact['telephone_2']  = vlen(row[telephone_2_col],15)
+        if not company_col is None:
+            contact['company']      = vlen(row[company_col],100)
+        if not job_title_col is None:
+            contact['job_title']    = vlen(row[job_title_col],100)
+        if not website_col is None:
+            contact['website']      = vlen(row[website_col],100)
 
 
         '''email,first_name, last_name, mid_name, dob, gender,
