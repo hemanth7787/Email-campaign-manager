@@ -333,20 +333,6 @@ def camp_drafts_edit(request,camp_id=None):
         return redirect("draft")
     return render(request, "campaign_draft_edit.html",{'form':form})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required(login_url='/login')
 @csrf_protect
 def contacts(request):
@@ -497,7 +483,29 @@ def contacts_delete(request):
 @login_required(login_url='/login')
 @csrf_protect
 def maillist_export(request,id,data_type):
+    try:
+        headers = ('First Name','Middle Name','Last Name','Date of Birth',
+        'Gender','email','Country','City','Direct Phone','Mobile','Address 1',
+        'Address 2','Zip','Telephone 1','Telephone 2','Company','Job Title','Website')
+        data = []
+        data = tablib.Dataset(*data, headers=headers)
+        group = Mailing_list.objects.get(id=id)
+        addr_list = Mail_address.objects.filter(mail_list__id=id)
+        for addr in addr_list:
+            data.append((addr.First_Name, addr.Middle_Name ,addr.Last_Name ,str(addr.Date_of_Birth) ,
+            addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
+            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website))
+    except Exception, e:
+        return HttpResponse("Error exporting list - {0}".format(e))
     if data_type == 'csv':
+        response = HttpResponse(data.csv, content_type='text/csv')
+        response['Content-Disposition'] = "attachment; filename={0}-export.csv".format(group.title)
+    else:
+        response = HttpResponse(data.xls, content_type='text/xls')
+        response['Content-Disposition'] = "attachment; filename={0}-export.xls".format(group.title)
+    return response
+
+'''    if data_type == 'csv':
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="list_export.csv"'
         addr_list = Mail_address.objects.filter(mail_list__id=id)
@@ -509,33 +517,7 @@ def maillist_export(request,id,data_type):
         for addr in addr_list:
             writer.writerow([addr.First_Name, addr.Middle_Name ,addr.Last_Name ,addr.Date_of_Birth ,
             addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
-            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website])
-    else:
-        #response = HttpResponse(content_type='application/vnd.ms-excel;charset=utf-8')
-        #response['Content-Disposition'] = 'attachment; filename="list_export.xls"'
-        '''output = StringIO.StringIO()
-        book = Workbook(output)
-        sheet = book.add_worksheet()
-        sheet.write(0, 0, 'Hello, world!')
-        book.close()
-        output.seek(0)
-        
-        response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel;charset=utf-8')
-        response['Content-Disposition'] = "attachment; filename=list_export.xls"'''
-        headers = ('First Name','Middle Name','Last Name','Date of Birth',
-        'Gender','email','Country','City','Direct Phone','Mobile','Address 1',
-        'Address 2','Zip','Telephone 1','Telephone 2','Company','Job Title','Website')
-        data = []
-        data = tablib.Dataset(*data, headers=headers)
-        addr_list = Mail_address.objects.filter(mail_list__id=id)
-        for addr in addr_list:
-            data.append((addr.First_Name, addr.Middle_Name ,addr.Last_Name ,addr.Date_of_Birth ,
-            addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
-            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website))
-        response = HttpResponse(data.xls, content_type='application/vnd.ms-excel;charset=utf-8')
-        response['Content-Disposition'] = "attachment; filename=list_export.xls"
-
-    return response
+            addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website])'''
 
 @login_required(login_url=get_script_prefix() + "ecm/dummy/login_redirect")
 @csrf_protect
