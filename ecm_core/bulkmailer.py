@@ -45,7 +45,7 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
             logger.error("bulkmailer.tracked_email.add_campaign_history()| Details :  {0} ".format(e))
 
     subj = str(campaign_obj.subject)
-    html = str(campaign_obj.html)
+    html = campaign_obj.html
     if campaign_obj.sender_name:
         sender = "{0} <{1}>".format(campaign_obj.sender_name,campaign_obj.sender)
     else:
