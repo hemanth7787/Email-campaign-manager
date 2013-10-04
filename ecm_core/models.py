@@ -60,6 +60,7 @@ class campaign(models.Model):
     class Meta:
         verbose_name = 'campaign'
         verbose_name_plural = 'campaigns'
+    campaign_name  = models.CharField(max_length=100,verbose_name='Campaign name',null=True)
     CAMP_OPT = (('R', 'Run',),('S', 'Save',),('T', 'Test',))
     subject      = models.CharField(max_length=100,)#help_text='Email Subject.')
     sender_name  = models.CharField(max_length=100,verbose_name='sender\'s name',null=True)
@@ -78,8 +79,9 @@ class campaign(models.Model):
     status       = models.BooleanField(default=False)
     campaign_uuid = models.CharField(editable=False, max_length=100)
     campaign_opt = models.CharField(max_length=5, choices=CAMP_OPT, default='R',blank=True)
+    send_options = models.CharField(max_length=5, default='Q',blank=True)
     def __unicode__(self):	
-        return self.subject
+        return self.campaign_name
     def category(self):
         return self.campaign_uuid
     def save(self, *args, **kwargs):

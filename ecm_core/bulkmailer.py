@@ -19,9 +19,9 @@ import SmtpApiHeader #local file
 import json
 from ecm_track.TrackHelper import TrackCode
 
-def send_email(obj,unsubscribe_url,host,sendopt):
+def send_email(obj,unsubscribe_url,host):
     for mlist in obj.mailing_list.all():
-        if sendopt == 'N':
+        if obj.send_options == 'N':
             to_list = Mail_address.objects.filter(mail_list=mlist)
         else: # Q
             to_list = Mail_address.objects.filter(mail_list=mlist).exclude(spam_flag=True).exclude(unsub_flag=True).exclude(block_flag=True).exclude(bounce_flag=True)

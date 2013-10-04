@@ -16,11 +16,13 @@
         <thead>
           <tr>
             <th class="header">#</th>
-            <th class="yellow header headerSortDown">Subject</th>
-            <th class="blue header">Sender</th>
-            <th class="blue header">Groups</th>
-            <th class="blue header">Date</th>
-            <th class="blue header">Operations</th>
+            <th>Name</th>
+            <th>Subject</th>
+            <th>Options</th>
+            <th>Sender</th>
+            <th>Groups</th>
+            <th>Date</th>
+            <th>Operations</th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +33,9 @@
             
             {% for camp in camps  %}
             <td>{{forloop.counter}}</td>
+            <td>{{camp.campaign_name}}</td>
             <td>{{camp.subject}}</td>
+            <td>{% if camp.send_options == 'Q' %}<label class="label label-success">Quick</label>{% else %}<label class="label label-inverse">Normal</label>{% endif %}</td>
             <td>{{camp.sender}}</td>
             <td>{{camp.mailing_list.all|join:","}}</td>
             <td>{{camp.date_created}}</td>

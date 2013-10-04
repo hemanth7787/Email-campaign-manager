@@ -38,7 +38,8 @@ class ListBasketForm(forms.ModelForm):
 
     class Meta:
         model = campaign
-        fields = ('subject','sender_name','sender','content_type','template','html','mailing_list','campaign_opt')
+        fields = ('campaign_name','subject','sender_name','sender','content_type','template',
+            'html','mailing_list','campaign_opt','send_options')
 
 class mailtemplateform(forms.ModelForm): 
     class Meta:
@@ -78,4 +79,4 @@ class AddContactForm(forms.Form):
 class campeditform(forms.ModelForm):
     class Meta:
         model = campaign
-        fields = ('subject','sender_name','sender','mailing_list')
+        fields = ('campaign_name','subject','sender_name','sender','mailing_list')

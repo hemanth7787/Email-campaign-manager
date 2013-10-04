@@ -142,7 +142,6 @@ def run_campaign(request):
         if cform.is_valid():
             #pdb.set_trace()
             content_type = request.POST['content_type']
-            sendopt = request.POST['send_options']
             pro_campaign = cform.save(commit=False)
             if content_type == 'P':
                 pass
@@ -160,15 +159,14 @@ def run_campaign(request):
             unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
             #ecm_host = request.META['HTTP_ORIGIN']
             ecm_host = "http://"+request.META['HTTP_HOST']
-            #pdb.set_trace()
-            #send_email(pro_campaign,unsubscribe_url,ecm_host,sendopt)
+            #send_email(pro_campaign,unsubscribe_url,ecm_host)
             if request.POST['campaign_opt'] == 'S':
                 messages.success(request,"Campaign successfully saved")
             elif request.POST['campaign_opt'] == 'T':
                 messages.success(request,"Test campaign successfully sent.")
-                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
+                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host)
             else:
-                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host,sendopt)
+                celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host)
                 messages.success(request,"Campaign successfully sent.")
                 form = ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],},)
                 return render(request, "run_campain.html",{'cform':form ,})
@@ -291,7 +289,7 @@ def camp_drafts_sent(request,camp_id=None):
         camp_draft = modelcampaign.objects.get(id=camp_id)
         unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
         ecm_host = "http://"+request.META['HTTP_HOST']
-        celery_sendmail_task.delay(camp_draft,unsubscribe_url,ecm_host,'Q')
+        celery_sendmail_task.delay(camp_draft,unsubscribe_url,ecm_host)
         messages.success(request,"campaign sent successfull")
     except Exception,e:
         messages.error(request,"Something went wrong.")
