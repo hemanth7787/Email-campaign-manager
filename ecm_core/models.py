@@ -81,7 +81,7 @@ class campaign(models.Model):
     def __unicode__(self):	
         return self.subject
     def category(self):
-        return str(self.subject+'-'+self.campaign_uuid)
+        return self.campaign_uuid
     def save(self, *args, **kwargs):
         if not self.id:
             self.campaign_uuid = str(uuid4())
