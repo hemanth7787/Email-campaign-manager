@@ -156,9 +156,9 @@ def run_campaign(request):
                 pass
             pro_campaign.save()
             cform.save_m2m()  # PITFALL
-            unsubscribe_url=request.build_absolute_uri()+"unsubscribe/"
             #ecm_host = request.META['HTTP_ORIGIN']
             ecm_host = "http://"+request.META['HTTP_HOST']
+            unsubscribe_url=ecm_host+"/ecm/campaign/unsubscribe/"
             #send_email(pro_campaign,unsubscribe_url,ecm_host)
             if request.POST['campaign_opt'] == 'S':
                 messages.success(request,"Campaign successfully saved")

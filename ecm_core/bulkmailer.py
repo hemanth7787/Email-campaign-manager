@@ -53,6 +53,8 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
     uuid = str(campaign_obj.campaign_uuid)
     hdr = SmtpApiHeader.SmtpApiHeader()
     hdr.setCategory(str(campaign_obj.category()))
+    if '{unsubscribe}' in html:
+        hdr.addFilterSetting('subscriptiontrack', 'enable', 0)
     #API https://sendgrid.com/api/stats.get.json?api_user=username&api_key=password&list=true&category=category
     for mobj in mail_addr_obj:
         if mobj.subscribed:
