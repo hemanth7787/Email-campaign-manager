@@ -1,0 +1,31 @@
+<VirtualHost *:80>
+        ServerAdmin hemanth@codelattice.com
+        ServerName localhost
+        ServerAlias localhost
+
+	DocumentRoot /home/hemanth/ecm/email_campaign_manager
+
+	<Directory /home/hemanth/ecm/email_campaign_manager>
+        Order allow,deny
+        Allow from all
+   		</Directory>
+
+        WSGIScriptAlias / /home/hemanth/ecm/email_campaign_manager/index.wsgi
+	
+	WSGIDaemonProcess localhost python-path=/home/hemanth/ecm/email_campaign_manager:/home/hemanth/ecm/env/lib/python2.7/site-packages  user=hemanth
+	WSGIProcessGroup localhost
+
+
+    Alias /static/ /home/hemanth/ecm/email_campaign_manager/static/
+
+	Alias /media/ /home/hemanth/ecm/email_campaign_manager/media/
+	<Directory /home/hemanth/ecm/email_campaign_manager/media/>
+        Order allow,deny
+        Allow from all
+                </Directory>
+
+        <Location "/static/">
+            Options -Indexes
+        	</Location>
+	ErrorLog /home/hemanth/ecm/email_campaign_manager/error.log
+</VirtualHost>
