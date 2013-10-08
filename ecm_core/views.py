@@ -381,8 +381,8 @@ def home(request):
 @login_required(login_url='/login')
 @csrf_protect
 def templates_new(request):
-    def adapt_template(path,obj,request):
-        fp = open(path+'index.html','r')
+    def adapt_template(fs_path,path,obj,request):
+        fp = open(fs_path+'index.html','r')
         original_html = fp.read()
         soup  = BeautifulSoup(original_html)
         #asseturl = request.META['HTTP_ORIGIN']+"/"+path+"images"
@@ -400,7 +400,7 @@ def templates_new(request):
         fs_path = settings.MEDIA_ROOT+"/extracted/"+obj.uuid+"/"
         with ZipFile(obj.zipfile, 'r') as myzip:
             myzip.extractall(fs_path)
-            adapt_template(path,obj,request)
+            adapt_template(fs_path,path,obj,request)
     form=mailtemplateform()
     if request.method == "POST":
         form=mailtemplateform(request.POST,request.FILES)
