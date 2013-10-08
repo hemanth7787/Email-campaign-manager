@@ -395,9 +395,11 @@ def templates_new(request):
         obj.save()
         #pdb.set_trace()
     def process_zip(obj,request):
+        #pdb.set_trace()
         path=str("media/extracted/"+obj.uuid+"/")
+        fs_path = settings.MEDIA_ROOT+"/extracted/"+obj.uuid+"/"
         with ZipFile(obj.zipfile, 'r') as myzip:
-            myzip.extractall(path)
+            myzip.extractall(fs_path)
             adapt_template(path,obj,request)
     form=mailtemplateform()
     if request.method == "POST":

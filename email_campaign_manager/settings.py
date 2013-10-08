@@ -1,5 +1,5 @@
 # Django settings for email_campaign_manager project.
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 #Path settings ] ---------

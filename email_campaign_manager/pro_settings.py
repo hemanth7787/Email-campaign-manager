@@ -37,6 +37,8 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+MEDIA_ROOT = os.path.join(APAC_PRJ_DIR, '../media')
+STATIC_ROOT = os.path.join(APAC_PRJ_DIR, '../static')
 
 LOGGING = {
     'version': 1,
