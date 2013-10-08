@@ -5,6 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 #Path settings ] ---------
 import os
 PROJECT_DIR = os.path.dirname(os.path.abspath("settings.py"))
+APAC_PRJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 CKEDITOR_CONFIGS = {
