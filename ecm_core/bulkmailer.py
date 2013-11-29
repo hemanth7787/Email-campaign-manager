@@ -19,6 +19,8 @@ import SmtpApiHeader #local file
 import json
 from ecm_track.TrackHelper import TrackCode
 
+from django.utils.encoding import smart_unicode, smart_str
+
 def send_email(obj,unsubscribe_url,host):
     for mlist in obj.mailing_list.all():
         if obj.send_options == 'N':
@@ -44,15 +46,16 @@ def tracked_email(campaign_obj,mail_addr_obj,unsubscribe_url,host):
         except Exception, e:
             logger.error("bulkmailer.tracked_email.add_campaign_history()| Details :  {0} ".format(e))
 
-    subj = str(campaign_obj.subject)
+    subj = campaign_obj.subject
     html = campaign_obj.html
     if campaign_obj.sender_name:
-        sender = "{0} <{1}>".format(campaign_obj.sender_name,campaign_obj.sender)
+        sender = "{0} <{1}>".format(campaign_obj.sender_name.encode('ascii', 'ignore'),campaign_obj.sender)
     else:
-        sender = str(campaign_obj.sender)
+        sender = campaign_obj.sender.encode('ascii', 'ignore')
     uuid = str(campaign_obj.campaign_uuid)
     hdr = SmtpApiHeader.SmtpApiHeader()
     hdr.setCategory(str(campaign_obj.category()))
+    #hdr.addFilterSetting('clicktrack', 'enable', 0)
     if '{unsubscribe}' in html:
         hdr.addFilterSetting('subscriptiontrack', 'enable', 0)
     #API https://sendgrid.com/api/stats.get.json?api_user=username&api_key=password&list=true&category=category
