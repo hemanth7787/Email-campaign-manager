@@ -124,11 +124,11 @@ function return_stats(catname,DIV_NO){
       );*/
 
         $.jqplot.config.enablePlugins = true;
-        var s1 = [ json_obj['requests'], json_obj['delivered'], json_obj['opens'], json_obj['unique_opens'], json_obj['clicks'], json_obj['unique_clicks'], json_obj['bounces'], json_obj['unsubscribes'], json_obj['repeat_unsubscribes'], json_obj['invalid_email'], json_obj['blocked'], json_obj['spam_drop'], json_obj['spamreports'] ];
+        var s1 = [ json_obj['requests'], json_obj['delivered'], json_obj['opens'], json_obj['unique_opens'], json_obj['clicks'], json_obj['unique_clicks'], json_obj['bounces'],json_obj['repeat_bounces'], json_obj['unsubscribes'], json_obj['repeat_unsubscribes'], json_obj['invalid_email'], json_obj['blocked'], json_obj['spam_drop'], json_obj['spamreports'],json_obj['repeat_spamreports'] ];
 
-        var ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces', 'Unsubscribe','Repeat unsub', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports'];
+        var ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces','RB', 'Unsubscribe','RU', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports','RSR'];
 
-        var full_ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces', 'Unsubscribes','Repeat Unsubscribes', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports'];
+        var full_ticks = ['Send','Delivered','Opens', 'Unique Opens', 'Clicks', 'Unique clicks', 'Bounces','Repeat bounces', 'Unsubscribes','Repeat Unsubscribes', 'Invalid Email', 'Blocked', 'Spam Drop', 'Spam Reports','Repeat spam reports'];
         
         plot1 = $.jqplot('chart'+DIV_NO, [s1], {
             // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
