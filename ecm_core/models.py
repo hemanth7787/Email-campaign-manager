@@ -51,7 +51,7 @@ class Mailing_list(models.Model):
         verbose_name = 'mailing list'
         verbose_name_plural = 'mailing lists'
     title = models.CharField(max_length=50)
-    date_of_creation = models.DateTimeField(editable=False, default=now())
+    date_of_creation = models.DateTimeField(editable=False, default=now)
     def __unicode__(self):
         return self.title
 	#client
@@ -71,7 +71,7 @@ class campaign(models.Model):
         blank=True, verbose_name='Target mailing lists',
         #limit_choices_to={'subscribed': True}
         )   
-    date_created = models.DateTimeField(editable=False, default=now())
+    date_created = models.DateTimeField(editable=False, default=now)
     html = models.TextField(
         verbose_name='Content', #help_text=('Email body'),
         null=True, blank=True
@@ -98,7 +98,7 @@ class mailtemplate(models.Model):
     zipfile = models.FileField(upload_to=unique_file_name,verbose_name='Template zip file')
     html = models.TextField(verbose_name='Content')
     thumbnail = models.ImageField(upload_to=unique_image_name, blank=True, null=True, verbose_name='Optional Thumbnail')
-    date_of_creation = models.DateTimeField(editable=False, default=now()) 
+    date_of_creation = models.DateTimeField(editable=False, default=now) 
     uuid = models.CharField(editable=False, max_length=100)  
     def __unicode__(self):
         return self.name
