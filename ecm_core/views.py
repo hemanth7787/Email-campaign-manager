@@ -492,7 +492,7 @@ def maillist_export(request,id,data_type):
         group = Mailing_list.objects.get(id=id)
         addr_list = Mail_address.objects.filter(mail_list__id=id)
         for addr in addr_list:
-            data.append((addr.First_Name, addr.Middle_Name ,addr.Last_Name ,str(addr.Date_of_Birth) ,
+            data.append((addr.First_Name, addr.Middle_Name ,addr.Last_Name ,str(addr.Date_of_Birth) if addr.Date_of_Birth else "",
             addr.Gender ,addr.mail_id ,addr.Country ,addr.City ,addr.Direct_Phone ,addr.Mobile ,addr.Address_1 ,
             addr.Address_2 ,addr.Zip ,addr.Telephone_1 ,addr.Telephone_2 ,addr.Company ,addr.Job_Title ,addr.Website))
     except Exception, e:
