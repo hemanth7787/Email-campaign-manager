@@ -384,7 +384,7 @@ def parse_csv(myfile, mlist, ignore_errors=False):
         if not mid_namecol is None:
             contact['mid_name']   = vlen(row[mid_namecol],100)
         if not dob_col is None:
-            contact['dob']        = row[dob_col]
+            contact['dob']        = row[dob_col]  if row[dob_col] != "None"  else ""
         if not gen_col is None:
             contact['gender']     = vlen(row[gen_col],10)
         if not country_col is None:
