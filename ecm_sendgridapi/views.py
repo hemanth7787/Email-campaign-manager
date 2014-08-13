@@ -144,4 +144,4 @@ def contacts_cleanup(request):
             messages.success(request,"Cleanup completed successfully ...")
             form = cleanupform()
 
-    return render(request, "contacts_cleanup.html",{'form':form})
+    return render(request, "sendgridapi/contacts_cleanup.html",{'form':form})
