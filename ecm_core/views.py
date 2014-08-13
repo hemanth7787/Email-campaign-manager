@@ -1,14 +1,14 @@
-from django.shortcuts import render, get_object_or_404, redirect, render_to_response
+from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import Importform ,ListBasketForm ,mailtemplateform, cleanupform, singlecontactform, campeditform #, listselectform
+from forms import Importform, ListBasketForm, mailtemplateform, singlecontactform, campeditform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
 from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History
 #from loaddata import csv_to_db
-from bulkmailer import parse_csv, send_email
+from bulkmailer import parse_csv
 
 from tasks import celery_sendmail_task
 
@@ -530,55 +530,6 @@ def maillist_delete(request):
     except:
         response_data['status'] = 'data_err'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-@login_required(login_url='/login')
-@csrf_protect
-def contacts_cleanup(request):
-    def clean_blocks():
-        blocks = BlocksModel.objects.filter()
-        for block in blocks:
-             Mail_address.objects.filter(mail_id__exact=block.email).delete()
-             #block.indb = False
-             block.save()
-    def clean_bounces():
-        bounces = BouncesModel.objects.filter()
-        for bounce in bounces:
-             Mail_address.objects.filter(mail_id__exact=bounce.email).delete()
-             #bounce.indb = False
-             bounce.save()
-    def clean_unsubscribes():
-        unsubscribes = UnsubscribesModel.objects.filter()
-        for unsubscribe in unsubscribes:
-             Mail_address.objects.filter(mail_id__exact=unsubscribe.email).delete()
-             #unsubscribe.indb = False
-             unsubscribe.save()
-    def clean_spamreports():
-        spamreports = SpamreportsModel.objects.filter()
-        for spamreport in spamreports:
-             Mail_address.objects.filter(mail_id__exact=spamreport.email).delete()
-             #spamreport.indb = False
-             spamreport.save()
-    form = cleanupform()
-    if request.method == "POST":
-        if int(request.POST['confirm']) == 0:
-            return render(request, "contacts_cleanup.html",{'form':form ,})
-        form=cleanupform(request.POST)
-        if form.is_valid():
-            #pdb.set_trace()
-            criteria_list = form.cleaned_data['remove']
-            if "blocks" in criteria_list:
-                clean_blocks()
-            if "bounces" in criteria_list:
-                clean_bounces()
-            if "unsubscribes" in criteria_list:
-                clean_unsubscribes()
-            if "spamreports" in criteria_list:
-                clean_spamreports()
-            messages.success(request,"Cleanup completed successfully ...")
-            form = cleanupform()
-
-    return render(request, "contacts_cleanup.html",{'form':form})
-
 
 @csrf_protect
 def login(request):

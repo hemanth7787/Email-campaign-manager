@@ -4,8 +4,9 @@ manage.py celery worker -B
 
 Pillow is dependency make sure to install libs on server
 
+install redis server
 
-sudo apt-get install python-dev python-setuptools libjpeg62-dev zlib1g-dev libfreetype6-dev
+sudo apt-get install python-dev python-setuptools libjpeg62-dev zlib1g-dev libfreetype6-dev redis-server python-virtualenv build-essential
 
 
 [ Running under Apache + mod_wsgi ]-------------------
@@ -15,3 +16,27 @@ sudo apt-get install python-dev python-setuptools libjpeg62-dev zlib1g-dev libfr
 4.sudo service apache2 reload
 5.sudo service apache2 restart
  
+
+sudo apt-get install libapache2-mod-wsgi
+sudo a2enmod wsgi
+
+sudo apt-get install redis-server
+
+
+index.wsgi not used
+
+python-virtualenv
+build-essential
+
+
+/var/log/celery-ecm.log
+/home/vikas/ecm/error.log
+
+sudo apt-get install python-virtualenv  build-essential
+cd /home/vikas/ecm
+rm -r env/
+virtualenv env
+source env/bin/activate
+pip install -r requirements2.txt
+
+

@@ -5,5 +5,6 @@ urlpatterns = patterns('',
     url(r'^bounces/$', 'ecm_sendgridapi.views.sendgrid_bounces', name='extra_bounces'),
     url(r'^unsubscribes/$', 'ecm_sendgridapi.views.sendgrid_unsubscribes', name='extra_unsubscribes'),
     url(r'^spam-reports/$', 'ecm_sendgridapi.views.sendgrid_spamreports', name='extra_spamreports'),
+    url(r'^clean-up/$', 'ecm_sendgridapi.views.contacts_cleanup', name='cleanup'),
     )
 
