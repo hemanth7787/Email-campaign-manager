@@ -1,5 +1,6 @@
 ##copy PIL
 manage.py loaddata jobstatus.json
+python manage.py loaddata sendgridquota.json
 manage.py celery worker -B
 
 Pillow is dependency make sure to install libs on server

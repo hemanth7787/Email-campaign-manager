@@ -116,3 +116,23 @@ class History(models.Model):
        blank=True, #verbose_name='Target mailing lists',
        #limit_choices_to={'subscribed': True}
        )   
+
+class SendgridEmailQuota(models.Model):
+    quota = models.IntegerField(default=0)
+    used  = models.IntegerField(default=0, editable=False)
+    def __unicode__(self):
+        return unicode(self.quota)
+    def remaining(self):
+        delta = self.quota - self.used
+        return 0 if delta < 0 else delta
+    # def save(self, *args, **kwargs):
+    #     if self.active == True:
+    #         if not self.id:
+    #             RBforum.objects.all().update(active=False)
+    #         else:
+    #             RBS = RBforum.objects.filter(active=True)
+    #             for forum in RBS:
+    #                 if forum.id != self.id:
+    #                     forum.active=False
+    #                     forum.save()
+    #     super(RBforum, self).save(*args, **kwargs)

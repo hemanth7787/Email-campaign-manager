@@ -12,3 +12,5 @@ media/extracted/
 media/mailtemplate/
 media/thunmbnails/
 ./static/
+
+env/

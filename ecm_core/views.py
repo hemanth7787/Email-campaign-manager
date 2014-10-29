@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from forms import Importform, ListBasketForm, mailtemplateform, singlecontactform, campeditform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
-from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History
+from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History, SendgridEmailQuota
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv
 
@@ -137,7 +137,7 @@ def run_campaign(request):
     cform=ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],
         },)
     if request.method == "POST":
-        #pdb.set_trace()
+        quota = SendgridEmailQuota.objects.get(pk=1)
         cform=ListBasketForm(request.POST,request.FILES)
         if cform.is_valid():
             #pdb.set_trace()
@@ -156,6 +156,17 @@ def run_campaign(request):
                 pass
             pro_campaign.save()
             cform.save_m2m()  # PITFALL
+
+            # Quota restrictions
+            count = 0
+            for mlist in pro_campaign.mailing_list.all():
+                count += Mail_address.objects.filter(mail_list=mlist).count()
+            if (quota.remaining()<count):
+                messages.error(request,"Oops, You dont have sufficient quota remaining to send this campaign\
+                    . You need {0} but only {1} remaining".format(count,quota.remaining()))
+                pro_campaign.delete()
+                return render(request, "run_campain.html",{'cform':cform ,})
+
             #ecm_host = request.META['HTTP_ORIGIN']
             ecm_host = "http://"+request.META['HTTP_HOST']
             unsubscribe_url=ecm_host+"/ecm/campaign/unsubscribe/"

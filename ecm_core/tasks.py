@@ -1,5 +1,8 @@
 from celery import task
 from bulkmailer import send_email
+from models import SendgridEmailQuota
+import logging
+logger = logging.getLogger("ecm_console")
 #import pdb
 #import time
 #from django.core.mail import EmailMultiAlternatives
@@ -13,11 +16,12 @@ def celery_sendmail_task(obj,unsubscribe_url,host):
     	obj.campaign_opt='R'
     obj.save()
 
-'''@task()
-def simple_email(sender,subject,html,to_list_unicode):
-	#pdb.set_trace()
-	time.sleep(10)
-	for i in to_list_unicode:
-		msg = EmailMultiAlternatives(subject, "", sender, i )
-		msg.attach_alternative(html, "text/html")
-		msg.send()'''
+@task.task(ignore_result=True)
+def sendgrid_quota_reset():
+	try:
+		quota = SendgridEmailQuota.objects.get(pk=1)
+		quota.used=0
+		quota.save()
+		logger.info("Success : sendgrid_quota_reset job ")
+	except Exception, e:
+		logger.error("Critical Error : sendgrid_quota_reset: {0} ".format(e))

@@ -43,8 +43,8 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-ECM_SENDGRID_USERNAME=''
-ECM_SENDGRID_PASSWORD=''
+ECM_SENDGRID_USERNAME=EMAIL_HOST_USER
+ECM_SENDGRID_PASSWORD=EMAIL_HOST_PASSWORD
 
 ADMINS = (
      ('Hemanth Kumar A.P', 'hemanth@codelattice.com'),
@@ -61,6 +61,11 @@ CELERYBEAT_SCHEDULE = {
         'task': 'ecm_sendgridapi.tasks.ecm_sendgridapi_dbsync',
         'schedule': crontab(minute=1, hour=0),
         #'schedule': crontab(minute='*/2'), # TESTING
+    },
+    'ecm_sendgrid_quota': {
+        'task': 'ecm_core.tasks.sendgrid_quota_reset',
+        'schedule': crontab(minute=0, hour=0, day_of_month='1'),
+        # Execute every 1st dayt of month
     },
 }
 
@@ -88,7 +93,7 @@ ALLOWED_HOSTS = ['*']
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Asia/Calcutta'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

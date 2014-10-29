@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Mail_address, Mailing_list, campaign, mailtemplate
+from models import Mail_address, Mailing_list, campaign, mailtemplate, SendgridEmailQuota
 
 class CampaignAdmin(admin.ModelAdmin):
     list_display = ('subject','sender_name','sender','html','campaign_opt')
@@ -17,6 +17,19 @@ class Mail_addressAdmin(admin.ModelAdmin):
     search_fields=['First_Name','Middle_Name','Last_Name','mail_id']
     list_filter = ['subscribed','spam_flag','unsub_flag','block_flag','bounce_flag','mail_list']
 
+class SendgridEmailQuotaAdmin(admin.ModelAdmin):
+    list_display = ('quota','used','remaining')
+    def has_add_permission(self, request):
+        return False if self.model.objects.count() > 0 else True
+    def has_delete_permission(self, request, obj=None):
+        return False if self.model.objects.count() <= 1 else True
+    def get_actions(self, request):
+        actions = super(SendgridEmailQuotaAdmin, self).get_actions(request)
+        if(self.model.objects.count() <= 1):
+            del actions['delete_selected']
+        return actions
 
+admin.site.register(SendgridEmailQuota, SendgridEmailQuotaAdmin)
 admin.site.register(campaign, CampaignAdmin)
 admin.site.register(Mail_address, Mail_addressAdmin)
+
