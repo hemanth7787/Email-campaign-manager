@@ -27,7 +27,7 @@ class Mail_address(models.Model):
     Company = models.CharField(max_length=100, blank=True,null=True)
     Job_Title = models.CharField(max_length=100, blank=True,null=True)
     Website = models.CharField(max_length=100, blank=True,null=True)
-    mail_list = models.ForeignKey('Mailing_list',verbose_name='group')
+    mail_list = models.ForeignKey('Mailing_list',verbose_name='group',blank=True,null=True)
     #name = models.CharField(max_length=100, blank=True)
     subscribed = models.BooleanField(default=True)
     spam_flag  = models.BooleanField(default=False)

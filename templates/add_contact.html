@@ -11,22 +11,22 @@
 {% block "body" %}
 <script type="text/javascript">
 
-function content_select(value){
-if (value == 'E')
-		{
-    	$('#id_Group_name').hide();
-    	$("label[for='id_Group_name']").hide();
-    	$('#id_Mailing_list').show();
-    	$("label[for='id_Mailing_list']").show();
-		}
-if (value == 'N')
-		{
-    	 $('#id_Group_name').show();
-    	$("label[for='id_Group_name']").show();
-    	$('#id_Mailing_list').hide();
-    	$("label[for='id_Mailing_list']").hide();
-		}
+function mlist_options(value){
 
+if (value == 'E')
+        {
+        $('#id_name').hide();
+        $("label[for='id_name']").hide();
+        $('#id_mail_list').show();
+        $("label[for='id_mail_list']").show();
+        }
+if (value == 'N')
+        {
+         $('#id_name').show();
+        $("label[for='id_name']").show();
+        $('#id_mail_list').hide();
+        $("label[for='id_mail_list']").hide();
+        }
 }
 
 
@@ -50,13 +50,20 @@ if (value == 'N')
 <script type="text/javascript" src="{{ STATIC_URL }}datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-$('#id_html').hide();
     	$('#id_Group_name').hide();
     	$("label[for='id_Group_name']").hide();
     	$('#id_Mailing_list').hide();
     	$("label[for='id_Mailing_list']").hide();
-$('#id_Date_of_Birth').datepicker({'format': 'dd-mm-yyyy'});
+        $('#id_group').hide();
+    $("label[for='id_group']").hide();
+    $('#id_name').hide();
+    $("label[for='id_name']").hide();
+    $('#id_Date_of_Birth').datepicker({'format': 'dd-mm-yyyy'});
+
+    mlist_options($("input:radio[name=options]:checked").val());
 });
+
+
 	
 </script>
 {% endblock %}

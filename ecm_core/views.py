@@ -76,17 +76,39 @@ def add_contact(request):
     #contactfactory = formset_factory(singlecontactform, extra=2)
     #contactformset = contactfactory()
     #contactform = AddContactForm()
-    contactform = singlecontactform()
     if request.method == "POST":
+        content_type = request.POST['options']
         contactform=singlecontactform(request.POST)
         if contactform.is_valid():
             try:
-                contactform.save()
+                # import ipdb
+                # ipdb.set_trace()
+                if content_type == 'E':
+                    try:
+                        mlist = Mailing_list.objects.get(id = request.POST['mail_list'])
+                    except:
+                        messages.error(request,"Please select/add a group to store contact ")
+                        raise NameError("No group selected")
+                elif content_type == 'N':
+                    if (request.POST['name'] == ""):
+                        messages.error(request,"Group name shall not be empty")
+                        raise NameError("Group name shall not be empty")
+                    mlist = Mailing_list(title = request.POST['name'])
+                    mlist.save()
+                    mlist = Mailing_list.objects.get(id = mlist.id)
+                
+
+                #contactform.mail_list=mlist
+                obj = contactform.save(commit=False)
+                obj.mail_list = mlist
+                obj.save()
                 messages.success(request,"Contact saved successfully")
             except Exception, e:
                 logger.error("uncaught error in add_contact() | Details :  {0} ".format(e))
                 messages.error(request,"Contact cannot be saved..! ")
-
+    else:
+        pass
+        contactform = singlecontactform(initial={'options':'E'})
     return render(request,'add_contact.html',{ 'form':contactform })
 
 

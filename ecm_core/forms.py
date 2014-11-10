@@ -59,8 +59,14 @@ class singlecontactform(forms.ModelForm):
     class Meta:
         model = Mail_address
         fields = ['First_Name','Middle_Name','Last_Name','Date_of_Birth',
-        'Gender','mail_id','mail_list','Country','City','Direct_Phone','Mobile','Address_1',
+        'Gender','mail_id','options','name','mail_list','Country','City','Direct_Phone','Mobile','Address_1',
         'Address_2','Zip','Telephone_1','Telephone_2','Company','Job_Title','Website']
+    CHOICES = (('E', 'Append to existing group',),('N', 'Create new group',))
+    options = forms.ChoiceField(widget=forms.RadioSelect(
+        attrs={'onclick': 'mlist_options(value);'},),
+        choices=CHOICES)
+    mail_list = forms.ModelChoiceField(queryset=Mailing_list.objects.all().order_by("-date_of_creation"),required=False,label="Group")
+    name = forms.CharField(label="Group name",required=False)
     Date_of_Birth = forms.DateField(widget=forms.DateInput(format = '%d-%m-%Y'), input_formats=('%d-%m-%Y',),
      label = 'Date of Birth (dd-mm-yyyy)',required=False)
 
@@ -69,6 +75,7 @@ class listselectform(forms.Form):
     Mailing_list = forms.ModelChoiceField(queryset=Mailing_list.objects.all().order_by("-date_of_creation"),empty_label=None)
 
 class AddContactForm(forms.Form):
+
     name = forms.CharField(max_length=30)
     mail_id = forms.CharField(max_length=30)
     CHOICES = (('E', 'Add to existing group',),('N', 'Create new group',)) #,  ('W', 'Wysisyg editor',)
