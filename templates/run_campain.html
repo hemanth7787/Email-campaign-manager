@@ -124,6 +124,16 @@ $(function () {
 
             // }
 
+if($("input:radio[name=content_type]:checked").val()!=undefined)
+{
+    //alert("CT : "+$("input:radio[name=content_type]:checked").val());
+    content_select($("input:radio[name=content_type]:checked").val());
+}
+if($("input:radio[name=run_mode]:checked").val()!=undefined)
+{
+    //alert("MS : "+$("input:radio[name=run_mode]:checked").val());
+    mode_select($("input:radio[name=run_mode]:checked").val());
+}
 
 </script>
 {% endblock %}

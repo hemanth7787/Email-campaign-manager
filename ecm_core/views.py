@@ -158,7 +158,7 @@ def contacts_history(request,cid):
 @login_required(login_url='/login')
 @csrf_protect
 def run_campaign(request):
-    cform=ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],
+    cform=ListBasketForm(initial={'content_type':'P', 'run_mode':'I', 'send_options':'Q',
         },)
     if request.method == "POST":
         quota = SendgridEmailQuota.objects.get(pk=1)
@@ -220,7 +220,7 @@ def run_campaign(request):
             else:
                 celery_sendmail_task.delay(pro_campaign,unsubscribe_url,ecm_host)
                 messages.success(request,"Campaign successfully sent.")
-                form = ListBasketForm(initial={'content_type':ListBasketForm.CHOICES[0][0],},)
+                form = ListBasketForm(initial={'content_type':'P', 'run_mode':'I', 'send_options':'Q',})
                 return render(request, "run_campain.html",{'cform':form ,})
     return render(request, "run_campain.html",{'cform':cform ,})
 
