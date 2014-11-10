@@ -26,13 +26,15 @@ class ListBasketForm(forms.ModelForm):
     CHOICES = (('P', 'Rich text',),('T', 'Template',))
     SEND_OPT = (('Q', 'Quick send',),('N', 'Normal send',))
     CAMP_OPT = (('R', 'Run',),('S', 'Save',),('T', 'Test',))
-    content_type = forms.ChoiceField(widget=forms.RadioSelect(
-    attrs={'onclick': 'content_select(value);'},)
+    RUN_OPT = (('I', 'Immediate',),('S', 'Schedule [beta] ',))
+    content_type = forms.ChoiceField(widget=forms.RadioSelect(attrs={'onclick': 'content_select(value);'},)
     , choices=CHOICES)
     mailing_list = forms.ModelMultipleChoiceField(queryset=Mailing_list.objects.all(),label='Target Groups')
     template = forms.ModelChoiceField(queryset=mailtemplate.objects.all(),empty_label=None)
     send_options = forms.ChoiceField(widget=forms.RadioSelect()
     , choices=SEND_OPT)
+    run_mode = forms.ChoiceField(required=True, widget=forms.RadioSelect(attrs={'onclick': 'mode_select(value);'},), choices=RUN_OPT,)
+    schedule_date = forms.CharField(required=False)
     html = forms.CharField(widget=CKEditorWidget(),label='Content',required=False)
     campaign_opt = forms.ChoiceField(choices=CAMP_OPT,widget = forms.HiddenInput())
 

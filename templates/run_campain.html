@@ -29,6 +29,26 @@ if (value == 'P')
 		}
 }
 
+function mode_select(value){
+if (value == 'I')
+        {
+        $("label[for='id_schedule_date']").hide();
+        $('#id_schedule_date').hide();
+        $('#btn_run').html("Run");
+        $('#btn_test').show();
+        $('#btn_save').show();
+        }
+if (value == 'S')
+        {
+        $("label[for='id_schedule_date']").show();
+        $('#id_schedule_date').show();
+        $('#btn_run').html("Schedule");
+        $('#btn_test').hide();
+        $('#btn_save').hide();
+        
+        }
+}
+
 
 </script>
     <div class="well">
@@ -37,11 +57,14 @@ if (value == 'P')
         <h2 class="form-signin-heading">Run Campaign</h2>
 		{{ cform}}
 <br>
-        <button class="btn btn-large btn-primary" onclick="set_camp_opts('R');" type="submit">Run </button>
+
+        <button id="btn_run" class="btn btn-large btn-primary" onclick="set_camp_opts('R');" type="submit">Run </button>
         &nbsp;
-        <button class="btn btn-large btn-primary" onclick="set_camp_opts('T');" type="submit">Test</button>
+        <button id="btn_test" class="btn btn-large btn-primary" onclick="set_camp_opts('T');" type="submit">Test</button>
         &nbsp;
-        <button class="btn btn-large btn-primary" onclick="set_camp_opts('S');" type="submit">Save as Draft</button>
+        <button id="btn_save"  class="btn btn-large btn-primary" onclick="set_camp_opts('S');" type="submit">Save as Draft</button>
+
+
       </form>
 
     </div> <!-- /container -->
@@ -50,6 +73,10 @@ if (value == 'P')
 
 
 {% block "scripts" %}
+
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.js"></script>
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.css" />
 <script type="text/javascript">
 $(document).ready(function(){
 $('#id_html').hide();
@@ -58,6 +85,8 @@ $('#id_html').hide();
     	$('#id_template').hide();
     	$("label[for='id_template']").hide();
         $('#cke_id_html').hide();
+        $("label[for='id_schedule_date']").hide();
+        $('#id_schedule_date').hide();
 
 });
 
@@ -72,6 +101,30 @@ function set_camp_opts(opt)	{
         $("#id_campaign_opt").attr('value','T');
     }
 }
+
+
+
+
+$(function () {
+                $('#id_schedule_date').datetimepicker({
+  format:'d-m-Y H:i',
+ // inline:true,
+
+});
+                //$('#datetimepicker1').data("DateTimePicker").setMinDate(new Date($.now()));
+            });
+
+            // function schedule(){
+            //     var date = new Date($.now());
+            //     var selected_date = new Date($('#timeselect').val());
+            //     diff_seconds = Math.round((selected_date - date)/1000);
+            //     //alert(diff_seconds);
+            //     $('#time').val(diff_seconds);
+            //     $('#time').val(selected_date);
+
+            // }
+
+
 </script>
 {% endblock %}
 

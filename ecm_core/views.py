@@ -6,11 +6,11 @@ from django.contrib.auth.decorators import login_required
 from forms import Importform, ListBasketForm, mailtemplateform, singlecontactform, campeditform
 from django.views.decorators.csrf import csrf_protect
 from django.http import HttpResponseRedirect
-from models import Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History, SendgridEmailQuota
+from models import CampaignSchedule, Mail_address, Mailing_list, campaign as modelcampaign, mailtemplate, History, SendgridEmailQuota
 #from loaddata import csv_to_db
 from bulkmailer import parse_csv
 
-from tasks import celery_sendmail_task
+from tasks import celery_scheduled_campaign, celery_sendmail_task
 
 from django.http import HttpResponse
 from django.conf import settings
@@ -33,6 +33,8 @@ from ecm_sendgridapi.models import BlocksModel, BouncesModel, UnsubscribesModel,
 
 import csv
 import tablib
+from datetime import datetime
+from django.utils.timezone import utc, get_current_timezone
 
 
 
@@ -171,7 +173,24 @@ def run_campaign(request):
             ecm_host = "http://"+request.META['HTTP_HOST']
             unsubscribe_url=ecm_host+"/ecm/campaign/unsubscribe/"
             #send_email(pro_campaign,unsubscribe_url,ecm_host)
-            if request.POST['campaign_opt'] == 'S':
+            if request.POST['run_mode'] == 'S':
+                schedule = CampaignSchedule()
+                schedule.campaign=pro_campaign
+                # import ipdb
+                # ipdb.set_trace()
+                sdate = datetime.strptime(request.POST['schedule_date'],'%d-%m-%Y %H:%M')
+                bdate=datetime(sdate.year, sdate.month, sdate.day,sdate.hour, sdate.minute, 0, 0, tzinfo=get_current_timezone())
+                return HttpResponse(str(request.POST['schedule_date'])+" ~ "+str(bdate))
+                schedule.schedule_date = bdate
+                schedule.ecm_host = ecm_host
+                schedule.unsub_url = unsubscribe_url
+                # print "$$$$$$$$$$$$$$$$$$$$$$$$ :  "+bdate.strftime('%d-%m-%Y %H:%M')
+                schedule.save()
+                celery_scheduled_campaign.apply_async(eta=bdate,
+                kwargs={'schedule_id': schedule.id })
+                messages.success(request," campaign successfully scheduled at {0}".format(str(request.POST['schedule_date'])))
+
+            elif request.POST['campaign_opt'] == 'S':
                 messages.success(request,"Campaign successfully saved")
             elif request.POST['campaign_opt'] == 'T':
                 messages.success(request,"Test campaign successfully sent.")

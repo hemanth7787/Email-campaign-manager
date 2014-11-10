@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Mail_address, Mailing_list, campaign, mailtemplate, SendgridEmailQuota
+from models import CampaignSchedule, Mail_address, Mailing_list, campaign, mailtemplate, SendgridEmailQuota
 
 class CampaignAdmin(admin.ModelAdmin):
     list_display = ('subject','sender_name','sender','html','campaign_opt')
@@ -29,6 +29,15 @@ class SendgridEmailQuotaAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
+from django.utils.timezone import localtime
+
+class CampaignScheduleAdmin(admin.ModelAdmin):
+    list_display = ('campaign','date')
+    def date(self,obj):
+        return localtime(obj.schedule_date).strftime("%d-%m-%Y %H:%M")
+
+
+admin.site.register(CampaignSchedule, CampaignScheduleAdmin)
 admin.site.register(SendgridEmailQuota, SendgridEmailQuotaAdmin)
 admin.site.register(campaign, CampaignAdmin)
 admin.site.register(Mail_address, Mail_addressAdmin)

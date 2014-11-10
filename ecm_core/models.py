@@ -45,6 +45,16 @@ class Mail_address(models.Model):
             self.uid = str(uuid4())
         super(Mail_address, self).save(*args, **kwargs)
 
+class CampaignSchedule(models.Model):
+    # class Meta:
+    #     verbose_name = 'mailing list'
+    #     verbose_name_plural = 'mailing lists'
+    campaign = models.ForeignKey('campaign')
+    schedule_date = models.DateTimeField(editable=False, default=now)
+    ecm_host = models.CharField(max_length=100,null=True, editable=False)
+    unsub_url = models.CharField(max_length=200,null=True, editable=False)
+    def __unicode__(self):
+        return str(self.schedule_date.strftime("%d-%m-%Y:%H:%M"))
 
 class Mailing_list(models.Model):
     class Meta:
