@@ -74,19 +74,30 @@ if (value == 'S')
 
 {% block "scripts" %}
 
-  <script type="text/javascript" src="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.js"></script>
+  <!-- script type="text/javascript" src="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.js"></script>
 
-  <link rel="stylesheet" href="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.css" />
-<script type="text/javascript">
+  <link rel="stylesheet" href="{{ STATIC_URL }}jquery_datetime/jquery.datetimepicker.css" /-->
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}malto-datetime/css/bootstrap-datetimepicker.min.css" />
+
+  <script type="text/javascript" src="{{ STATIC_URL }}malto-datetime/js/bootstrap-datetimepicker.min.js"></script>
+
+
+<script type="text/javascript" >
 $(document).ready(function(){
-$('#id_html').hide();
-    	$('#id_html').hide();
-    	$("label[for='id_html']").hide();
-    	$('#id_template').hide();
-    	$("label[for='id_template']").hide();
-        $('#cke_id_html').hide();
-        $("label[for='id_schedule_date']").hide();
-        $('#id_schedule_date').hide();
+        if($("input:radio[name=content_type]:checked").val()==undefined)
+        {
+            console.log("Setting content is plain text") ;
+            content_select("P"); // Default content is plain text
+        }
+        if($("input:radio[name=run_mode]:checked").val()==undefined)
+        {
+            console.log("Setting run mode is immediate") ;
+            mode_select("I"); // Default run mode is immediate
+        }
+
+
+
 
 });
 
@@ -102,14 +113,32 @@ function set_camp_opts(opt)	{
     }
 }
 
-
+function gui_sync()
+{
+    if($("input:radio[name=content_type]:checked").val()!=undefined)
+        {
+            console.log("Making gui changes for content type selected.") ;
+            content_select($("input:radio[name=content_type]:checked").val());
+        }
+    if($("input:radio[name=run_mode]:checked").val()!=undefined)
+        {
+            console.log("Making gui changes for run mode selected.") ;
+            mode_select($("input:radio[name=run_mode]:checked").val());
+        }
+    return 0;
+}
 
 
 $(function () {
-                $('#id_schedule_date').datetimepicker({
-  format:'d-m-Y H:i',
- // inline:true,
+//                 $('#id_schedule_date').datetimepicker({
+//   format:'d-m-Y H:i',
+//  // inline:true,
 
+// });
+$("#id_schedule_date").datetimepicker({
+    format: 'dd-mm-yyyy hh:ii',
+    startDate: new Date($.now()),
+    pickerPosition:"top-right"
 });
                 //$('#datetimepicker1').data("DateTimePicker").setMinDate(new Date($.now()));
             });
@@ -123,17 +152,14 @@ $(function () {
             //     $('#time').val(selected_date);
 
             // }
-
-if($("input:radio[name=content_type]:checked").val()!=undefined)
-{
-    //alert("CT : "+$("input:radio[name=content_type]:checked").val());
+gui_sync();
+CKEDITOR.on( 'instanceReady', function( evt ) {
+    console.log("Making gui changes for content type selected.") ;
     content_select($("input:radio[name=content_type]:checked").val());
-}
-if($("input:radio[name=run_mode]:checked").val()!=undefined)
-{
-    //alert("MS : "+$("input:radio[name=run_mode]:checked").val());
-    mode_select($("input:radio[name=run_mode]:checked").val());
-}
+
+} );
+
+
 
 </script>
 {% endblock %}

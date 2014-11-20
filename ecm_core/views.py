@@ -33,7 +33,7 @@ from ecm_sendgridapi.models import BlocksModel, BouncesModel, UnsubscribesModel,
 
 import csv
 import tablib
-from datetime import datetime
+import datetime
 from django.utils.timezone import utc, get_current_timezone
 
 
@@ -163,6 +163,8 @@ def run_campaign(request):
     if request.method == "POST":
         quota = SendgridEmailQuota.objects.get(pk=1)
         cform=ListBasketForm(request.POST,request.FILES)
+        if request.POST['run_mode'] == 'S':
+            cform.fields['schedule_date'].required = True
         if cform.is_valid():
             #pdb.set_trace()
             content_type = request.POST['content_type']
@@ -200,15 +202,19 @@ def run_campaign(request):
                 schedule.campaign=pro_campaign
                 # import ipdb
                 # ipdb.set_trace()
-                sdate = datetime.strptime(request.POST['schedule_date'],'%d-%m-%Y %H:%M')
-                bdate=datetime(sdate.year, sdate.month, sdate.day,sdate.hour, sdate.minute, 0, 0, tzinfo=get_current_timezone())
-                return HttpResponse(str(request.POST['schedule_date'])+" ~ "+str(bdate))
-                schedule.schedule_date = bdate
+                sdate = datetime.datetime.strptime(request.POST['schedule_date'],'%d-%m-%Y %H:%M')
+                tz=get_current_timezone()
+                # print tz.localize(sdate)
+                # //print sdate.replace(tzinfo=get_current_timezone())
+                # //print get_current_timezone()
+                # //bdate=datetime.datetime(sdate.year, sdate.month, sdate.day,sdate.hour, sdate.minute, 0, 0, tzinfo=get_current_timezone())
+                # //return HttpResponse(str(request.POST['schedule_date'])+" ~ "+str(bdate))
+                schedule.schedule_date = tz.localize(sdate)
                 schedule.ecm_host = ecm_host
                 schedule.unsub_url = unsubscribe_url
                 # print "$$$$$$$$$$$$$$$$$$$$$$$$ :  "+bdate.strftime('%d-%m-%Y %H:%M')
                 schedule.save()
-                celery_scheduled_campaign.apply_async(eta=bdate,
+                celery_scheduled_campaign.apply_async(eta=tz.localize(sdate),
                 kwargs={'schedule_id': schedule.id })
                 messages.success(request," campaign successfully scheduled at {0}".format(str(request.POST['schedule_date'])))
 
@@ -222,6 +228,9 @@ def run_campaign(request):
                 messages.success(request,"Campaign successfully sent.")
                 form = ListBasketForm(initial={'content_type':'P', 'run_mode':'I', 'send_options':'Q',})
                 return render(request, "run_campain.html",{'cform':form ,})
+        else:
+            messages.error(request,"Please correct the errors lsited below.")
+
     return render(request, "run_campain.html",{'cform':cform ,})
 
 def unsubscribe(request,usid):
