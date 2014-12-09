@@ -23,7 +23,7 @@ CKEDITOR_OPTIONS = {
             '-', 'PasteText', 'PasteFromWord',
             '-', 'Find', 'Replace','SelectAll','Scayt',
             '-', 'BulletedList', 'NumberedList',
-            '-', 'Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight',
+            '-', 'Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','BidiLtr', 'BidiRtl',
             '-', 'Image', 'Link', 'Unlink', 'Anchor', 'HorizontalRule',
             '-', 'Table', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'
             '-', 'Source','Undo', 'Redo',
