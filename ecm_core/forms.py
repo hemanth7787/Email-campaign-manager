@@ -6,7 +6,8 @@ from django.forms.extras.widgets import SelectDateWidget
 from models import Mail_address, Mailing_list, campaign, mailtemplate 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from ckeditor.widgets import CKEditorWidget
+#from ckeditor.widgets import CKEditorWidget
+from cked.widgets import CKEditorWidget
 
 #NEEDED
 class Importform(forms.Form):

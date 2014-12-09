@@ -7,8 +7,9 @@
             {% endblock %}
 
 {% block "body" %}
-{% load wysiwyg %}
-{% wysiwyg_setup %}
+{#% load wysiwyg %#}
+{#% wysiwyg_setup %#}
+{{ cform.media }}
 <script type="text/javascript">
 
 function content_select(value){
