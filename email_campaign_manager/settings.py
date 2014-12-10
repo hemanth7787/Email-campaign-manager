@@ -25,7 +25,7 @@ CKEDITOR_OPTIONS = {
             '-', 'BulletedList', 'NumberedList',
             '-', 'Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','BidiLtr', 'BidiRtl',
             '-', 'Image', 'Link', 'Unlink', 'Anchor', 'HorizontalRule',
-            '-', 'Table', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'
+            '-', 'Table', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
             '-', 'Source','Undo', 'Redo',
              'Format', 'Font', 'FontSize','TextColor', 'BGColor','Maximize', 'ShowBlocks','About'
             ],
@@ -35,7 +35,6 @@ CKEDITOR_OPTIONS = {
     'width': 900,
     'height': 480,
     'language': 'en',
-    #'Scayt':'enable'
 }
 
 # DJANGO_WYSIWYG_FLAVOR = "ckeditor"
