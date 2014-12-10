@@ -1,0 +1,3 @@
+[submodule "cked1"]
+	path = cked1
+	url = https://github.com/hemanth7787/django-cked-1.git
