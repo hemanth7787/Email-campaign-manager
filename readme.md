@@ -41,3 +41,4 @@ source env/bin/activate
 pip install -r requirements2.txt
 
 
+pip install https://github.com/hemanth7787/django-cked-1/archive/master.zip
